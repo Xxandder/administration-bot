@@ -10,6 +10,7 @@ const config = {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      port: parseInt(process.env.DB_PORT || '5432', 10)
     },
     pool: {
         min: parseInt(process.env.DB_POOL_MIN || '2', 10),
@@ -30,6 +31,7 @@ const config = {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      port: parseInt(process.env.DB_PORT || '5432', 10)
     },
     pool: {
         min: parseInt(process.env.DB_POOL_MIN || '2', 10),
