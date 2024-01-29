@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.ts",
-    "migrate:make": "npx knex migrate:make --knexfile knexfile.ts",
-    "migrate": "npx knex migrate:latest --knexfile knexfile.ts",
-    "migrate:down": "npx knex migrate:down --knexfile knexfile.ts"
+    "migrate:make": "npx knex migrate:make --knexfile ./src/db/knexfile.ts",
+    "migrate": "npx knex migrate:latest --knexfile ./src/db/knexfile.ts",
+    "migrate:down": "npx knex migrate:down --knexfile ./src/db/knexfile.ts"
   },
   "author": "",
   "license": "ISC",

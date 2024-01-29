@@ -18,7 +18,7 @@ const config = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: './src/db/migrations',
+      directory: './migrations',
     },
     seeds: {
       directory: './src/db/seeds',
@@ -39,7 +39,7 @@ const config = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: './src/db/migrations',
+      directory: './migrations',
     },
     seeds: {
       directory: './src/db/seeds',
