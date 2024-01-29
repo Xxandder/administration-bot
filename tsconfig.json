@@ -1,5 +1,5 @@
 {
-  "include": ["src", "knexfile.ts"],
+  "include": ["src", "src/db/knexfile.ts"],
   "files": ["src/index.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
