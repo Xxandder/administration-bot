@@ -9,7 +9,8 @@
     "migrate": "knex migrate:latest",
     "migrate:make": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:make -x ts",
     "migrate:down": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:down",
-    "migrate:rollback": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:rollback --all"
+    "migrate:rollback": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:rollback --all",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.10",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "node-telegram-bot-api": "^0.64.0"
   }
 }
