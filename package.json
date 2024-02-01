@@ -6,9 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/index.ts",
-    "migrate:make": "npx knex migrate:make --knexfile ./src/db/knexfile.ts",
-    "migrate": "npx knex migrate:latest --knexfile ./src/db/knexfile.ts",
-    "migrate:down": "npx knex migrate:down --knexfile ./src/db/knexfile.ts"
+    "migrate": "knex migrate:latest",
+    "migrate:make": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:make -x ts",
+    "migrate:down": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:down",
+    "migrate:rollback": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:rollback --all",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -18,13 +20,17 @@
     "knex": "^3.1.0",
     "node-telegram-bot-api": "^0.64.0",
     "nodemon": "^3.0.3",
+    "objection": "^3.1.3",
     "pg": "^8.11.3",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
     "ts-node": "^10.9.2",
+    "ts-paths-esm-loader": "^1.4.3",
     "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@types/node": "^20.11.10"
+    "@types/node": "^20.11.10",
+    "tsconfig-paths": "^4.2.0",
+    "node-telegram-bot-api": "^0.64.0"
   }
 }
