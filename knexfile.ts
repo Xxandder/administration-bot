@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-
+import { knexSnakeCaseMappers } from 'objection';
 dotenv.config();
 
 module.exports = {
@@ -25,6 +25,8 @@ module.exports = {
     seeds: {
       directory: './src/db/seeds',
     },
+    debug: false,
+    ...knexSnakeCaseMappers({ underscoreBetweenUppercaseLetters: true }),
   },
 };
 
