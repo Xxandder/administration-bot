@@ -2,8 +2,7 @@ import dotenv from 'dotenv';
 import { knexSnakeCaseMappers } from 'objection';
 
 dotenv.config();
-
-const config = {
+module.exports = {
   development: {
     client: process.env?.['DB_DIALECT'] || 'postgresql',
     connection: {
@@ -19,10 +18,10 @@ const config = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: 'src/db/migrations',
+      directory: './src/db/migrations',
     },
     seeds: {
-      directory: 'src/db/seeds',
+      directory: './src/db/seeds',
     },
     debug: false,
     ...knexSnakeCaseMappers({ underscoreBetweenUppercaseLetters: true }),
@@ -42,14 +41,12 @@ const config = {
     },
     migrations: {
       tableName: 'knex_migrations',
-      directory: 'src/db/migrations',
+      directory: './src/db/migrations',
     },
     seeds: {
-      directory: 'src/db/seeds',
+      directory: './src/db/seeds',
     },
     debug: false,
     ...knexSnakeCaseMappers({ underscoreBetweenUppercaseLetters: true }),
   },
 };
-
-export default config;
