@@ -2,7 +2,7 @@ import { RelationMappings, Model } from 'objection';
 import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/database.js';
 import { UserDetailsTableColumnName, RegistrationStageTableColumnName, UsersTableColumnName } from './libs/enums/enums.js';
 import { UserDetailsModel } from './user-details.model.js';
-import { RegistrationStageModel } from './registration-stage.model';
+import { RegistrationStageModel } from './registration-stage.model.js';
 
 class UserModel extends AbstractModel{
     public chatId!: string;

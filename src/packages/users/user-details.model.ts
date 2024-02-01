@@ -1,7 +1,7 @@
 import { RelationMappings, Model } from 'objection';
 import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/database.js';
 import { UserDetailsTableColumnName, UsersTableColumnName } from './libs/enums/enums.js';
-import { UserModel } from './users.model.js';
+import { UserModel } from './user.model.js';
 
 class UserDetailsModel extends AbstractModel{
     public phoneNumber!: string;
