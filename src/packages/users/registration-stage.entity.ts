@@ -41,9 +41,6 @@ class RegistrationStageEntity implements Entity{
         id: number | null;
         createdAt: Date | null;
         updatedAt: Date | null;
-        chatId: string;
-        isRegistered: boolean | null;
-        registrationStageId: number | null;
         name: string;
         orderNumber: number | null;
     }){
