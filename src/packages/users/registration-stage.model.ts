@@ -5,6 +5,7 @@ import { UserModel } from './user.model.js';
 
 class RegistrationStageModel extends AbstractModel{
     public name!: string;
+    public orderNumber!: number;
 
     public static override get tableName(): string{
         return DatabaseTableName.REGISTRATION_STAGE;
