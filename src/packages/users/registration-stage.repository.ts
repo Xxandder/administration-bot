@@ -75,6 +75,7 @@ class RegistrationStageRepository implements Repository{
                 .castTo<{
                     maxOrderNumber: number
                 }>();
+        console.log(result);
         return result.maxOrderNumber;
     }
 
