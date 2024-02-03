@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { knexSnakeCaseMappers } from 'objection';
 dotenv.config();
 
-module.exports = {
+export default {
   development: {
     client:'postgresql',
     connection: {
