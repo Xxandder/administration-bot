@@ -15,4 +15,4 @@ type UserQueryResponse = {
     }
 }
 
-export { UserQueryResponse };
+export { type UserQueryResponse };
