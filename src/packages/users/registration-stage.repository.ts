@@ -1,11 +1,11 @@
 import { type Repository } from "~/libs/types/types.js";
-import { RegistrationStageModel } from "./registration-stage.model";
+import { RegistrationStageModel } from "./registration-stage.model.js";
 import { DEFAULT_REGISTRATION_STAGE_ID,
 MAX_ORDER_COLUMN_NAME,
 MIN_ORDER_COLUMN_NAME } from './libs/constants/constants.js';
-import { RegistrationStageEntity } from "./registration-stage.entity";
+import { RegistrationStageEntity } from "./registration-stage.entity.js";
 import { type RegistrationStageQueryResponse } from './libs/types/types.js';
-import { RegistrationStageTableColumnName } from "./libs/enums/registration-stage-table-column-name.enum";
+import { RegistrationStageTableColumnName } from "./libs/enums/registration-stage-table-column-name.enum.js";
 
 class RegistrationStageRepository implements Repository{
     private registrationStageModel: typeof RegistrationStageModel;

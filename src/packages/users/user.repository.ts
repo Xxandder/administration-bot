@@ -1,6 +1,6 @@
 import { type Repository } from "~/libs/types/types.js";
-import { type UserModel } from "./user.model";
-import { UserEntity } from "./user.entity";
+import { type UserModel } from "./user.model.js";
+import { UserEntity } from "./user.entity.js";
 import { UserRelation } from "./libs/enums/enums.js";
 import { type UserQueryResponse } from './libs/types/types.js';
 import { DEFAULT_REGISTRATION_STAGE_ID } from './libs/constants/constants.js';
