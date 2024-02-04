@@ -82,7 +82,8 @@ class RegistrationStageRepository implements Repository{
         }
 
         const maxOrderNumber = await this.getLastOrderNumber();
-        const orderNumberToCreate = orderNumber ? Math.min(orderNumber, maxOrderNumber + 1) : maxOrderNumber + 1
+        const orderNumberToCreate = orderNumber ?
+            Math.min(orderNumber, maxOrderNumber + 1) : maxOrderNumber + 1
         
         const registrationStage = await this.registrationStageModel
             .query()
@@ -107,6 +108,20 @@ class RegistrationStageRepository implements Repository{
             orderNumber: registrationStage.orderNumber
         })
 
+    }
+
+    public update(): ReturnType<Repository['update']> {
+        return Promise.resolve(null);
+      }
+
+      public findAll(): ReturnType<Repository['findAll']> {
+        return Promise.resolve([]);
+      }
+
+    public delete(): ReturnType<Repository['delete']> {
+        const DELETED_COUNT = 0;
+    
+        return Promise.resolve(DELETED_COUNT);
     }
 
 }
