@@ -33,52 +33,26 @@ class RegistrationStageRepository implements Repository{
         })
     }
 
-    // public async create(entity: RegistrationStageEntity): Promise<RegistrationStageEntity>{
-    //     const { name, orderNumber } = entity.toNewObject();
+    public async findByOrderNumber(orderNumber: number): Promise<RegistrationStageEntity | null>{
+        const registrationStage = await this.registrationStageModel
+            .query()
+            .findOne({orderNumber})
+            .castTo<RegistrationStageQueryResponse | undefined>();
 
-    //     const maxOrderNumberRow = await this.registrationStageModel
-    //         .query()
-    //         .select()
-    //         .max(`${RegistrationStageTableColumnName.ORDER_NUMBER}
-    //              as ${MAX_ORDER_COLUMN_NAME}`)
-    //         .first()
-    //         .castTo<{
-    //             name: string,
-    //             orderNumber: number,
-    //             max_order_number: number
-    //         } | null>()
-    //     let maxOrderNumber = 0;
-    //     if(maxOrderNumberRow){
-    //         maxOrderNumber = maxOrderNumberRow[MAX_ORDER_COLUMN_NAME];
-    //     }
-    
+        if(!registrationStage){
+            return null;
+        }
 
-    //     let registrationStage;
-    //     if(orderNumber){
-    //         if(orderNumber >= maxOrderNumberRow){
-    //             registrationStage = await this.registrationStageModel
-    //                 .query()
-    //                 .insert({
-    //                     name,
-    //                     orderNumber
-    //                 })
-    //         }
-    //     }
-
-        
-    // }
-    public async getMaxOrderNumber(): Promise<number>{
-        const result = await this.registrationStageModel
-                .query()
-                .max('orderNumber as maxOrderNumber')
-                .first()
-                .castTo<{
-                    maxOrderNumber: number
-                }>();
-        console.log(result);
-        return result.maxOrderNumber;
+        return RegistrationStageEntity.initialize({
+            id: registrationStage.id,
+            createdAt: new Date(registrationStage.createdAt),
+            updatedAt:  new Date(registrationStage.updatedAt),
+            name: registrationStage.name,
+            orderNumber: registrationStage.orderNumber
+        })
     }
 
+   
 }
 
 export { RegistrationStageRepository };
