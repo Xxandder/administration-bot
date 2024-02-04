@@ -1,6 +1,6 @@
 const DEFAULT_REGISTRATION_STAGE_ID = 1;
-const MAX_ORDER_COLUMN_NAME = 'max_order_number';
-const MIN_ORDER_COLUMN_NAME = 'min_order_number';
+const MAX_ORDER_COLUMN_NAME = 'maxOrderNumber';
+const MIN_ORDER_COLUMN_NAME = 'minOrderNumber';
 
 export {
      DEFAULT_REGISTRATION_STAGE_ID,
