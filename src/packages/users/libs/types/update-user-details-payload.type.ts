@@ -1,5 +1,5 @@
 type UpdateUserDetailsPayload = {
-    chatId: string;
+    id: number;
     details: {
         [key: string]: string | null;
         phoneNumber: string | null;

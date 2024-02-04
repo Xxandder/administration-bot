@@ -93,9 +93,9 @@ class UserRepository implements Repository{
         })
     }
 
-    public async updateDetails({chatId, details}: UpdateUserDetailsPayload):
+    public async updateDetails({id, details}: UpdateUserDetailsPayload):
     Promise<UserEntity | null>{
-        const user = (await this.findByChatId(chatId));
+        const user = (await this.findById(id));
         if(!user){
             return null;
         }
@@ -127,10 +127,13 @@ class UserRepository implements Repository{
             fullName: updatedUser.details.fullName ?? null,
             phoneNumber: updatedUser.details.phoneNumber ?? null
         })
-
-        
     }
 
+    // public async updateRegistrationStage({chatback: boolean = false): 
+    //                         Promise<UserEntity | null>{
+        
+
+    // }
 
 }
 
