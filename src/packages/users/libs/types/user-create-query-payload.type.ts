@@ -3,8 +3,8 @@ type UserCreateQueryPayload = {
     isRegistered: boolean;
     registrationStageId: number;
     details: {
-        fullName: string | null;
-        phoneNumber: string | null;
+        fullName: string | null | undefined;
+        phoneNumber: string | null | undefined;
     }
 }
 
