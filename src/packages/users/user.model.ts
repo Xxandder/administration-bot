@@ -3,6 +3,7 @@ import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/datab
 import { UserDetailsTableColumnName, RegistrationStageTableColumnName, UsersTableColumnName } from './libs/enums/enums.js';
 import { UserDetailsModel } from './user-details.model.js';
 import { RegistrationStageModel } from './registration-stage.model.js';
+import { UserRelation } from './libs/enums/enums.js';
 
 class UserModel extends AbstractModel{
     public chatId!: string;
@@ -15,7 +16,7 @@ class UserModel extends AbstractModel{
 
     public static get relationMappings(): RelationMappings{
         return {
-            details: {
+            [UserRelation.DETAILS]: {
                 relation: Model.HasOneRelation,
                 modelClass: UserDetailsModel,
                 join: {
@@ -26,7 +27,7 @@ class UserModel extends AbstractModel{
                         
                 }
             },
-            registrationStage: {
+            [UserRelation.RELATION_STAGE]: {
                 relation: Model.BelongsToOneRelation,
                 modelClass: RegistrationStageModel,
                 join: {
