@@ -4,11 +4,11 @@ type UserQueryResponse = {
     updatedAt: string;
     chatId: string;
     isRegistered: boolean;
-    registrationStage?: {
+    registrationStage: {
         id: number;
         name: string;
     };
-    details?: {
+    details: {
         id: number;
         fullName: string | null;
         phoneNumber: string | null;

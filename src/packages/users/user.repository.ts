@@ -4,6 +4,7 @@ import { UserEntity } from "./user.entity.js";
 import { UserRelation } from "./libs/enums/enums.js";
 import { type UserQueryResponse } from './libs/types/types.js';
 import { DEFAULT_REGISTRATION_STAGE_ID } from './libs/constants/constants.js';
+import { registrationStageRepository } from './user.js';
 
 class UserRepository implements Repository{
     private userModel: typeof UserModel;
@@ -29,12 +30,27 @@ class UserRepository implements Repository{
             updatedAt:  new Date(user.updatedAt),
             chatId: user.chatId,
             isRegistered: user.isRegistered,
-            registrationStageId: user.registrationStage?.id ??
-                DEFAULT_REGISTRATION_STAGE_ID,
-            fullName: user.details?.fullName ?? null,
-            phoneNumber: user.details?.phoneNumber ?? null
+            registrationStageId: user.registrationStage.id,
+            fullName: user.details.fullName ?? null,
+            phoneNumber: user.details.phoneNumber ?? null
         })
     }
+
+    // public async create(entity: UserEntity): Promise<UserEntity>{
+    //     const { chatId } = entity.toNewObject();
+
+    //     const registrationStage = registrationStageRepository.findByOrderNumber(1);
+
+    //     const user = await this.userModel
+    //         .query()
+    //         .insertGraph({
+    //             chatId,
+    //             registrationStageId: 1
+    //         })
+
+    // }
+
+
 
 }
 
