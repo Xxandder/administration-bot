@@ -3,7 +3,8 @@ import { type UserModel } from "./user.model.js";
 import { UserEntity } from "./user.entity.js";
 import { UserRelation } from "./libs/enums/enums.js";
 import { type UserQueryResponse,
-type UserCreateQueryPayload } from './libs/types/types.js';
+type UserCreateQueryPayload,
+type UpdateUserDetailsPayload } from './libs/types/types.js';
 import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER } from './libs/constants/constants.js';
 import { registrationStageRepository } from './user.js';
 
@@ -37,7 +38,7 @@ class UserRepository implements Repository{
         })
     }
 
-    public async findByChatId(chatId: number): Promise<UserEntity | null>{
+    public async findByChatId(chatId: string): Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
             .withGraphJoined([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
@@ -90,7 +91,44 @@ class UserRepository implements Repository{
             fullName: user.details.fullName ?? null,
             phoneNumber: user.details.phoneNumber ?? null
         })
+    }
 
+    public async updateDetails({chatId, details}: UpdateUserDetailsPayload):
+    Promise<UserEntity | null>{
+        const user = (await this.findByChatId(chatId));
+        if(!user){
+            return null;
+        }
+        const userObj = user.toObject();
+        const detailsToUpdate = Object.fromEntries(
+            Object.entries(details).filter(([key, value]) => value !== undefined)
+          );
+
+        await this.userModel
+          .relatedQuery(UserRelation.DETAILS)
+          .for(userObj.id)
+          .patch({
+            detailsToUpdate
+          })
+
+        const updatedUser = await this.userModel
+            .query()
+            .withGraphJoined(UserRelation.DETAILS)
+            .findById(userObj.id)
+            .castTo<UserQueryResponse>();
+      
+        return UserEntity.initialize({
+            id: updatedUser.id,
+            createdAt: new Date(updatedUser.createdAt),
+            updatedAt:  new Date(updatedUser.updatedAt),
+            chatId: updatedUser.chatId,
+            isRegistered: updatedUser.isRegistered,
+            registrationStageId: updatedUser.registrationStage.id,
+            fullName: updatedUser.details.fullName ?? null,
+            phoneNumber: updatedUser.details.phoneNumber ?? null
+        })
+
+        
     }
 
 
