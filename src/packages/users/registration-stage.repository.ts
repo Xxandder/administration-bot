@@ -1,6 +1,6 @@
 import { type Repository } from "~/libs/types/types.js";
 import { RegistrationStageModel } from "./registration-stage.model.js";
-import { DEFAULT_REGISTRATION_STAGE_ID,
+import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER,
 MAX_ORDER_COLUMN_NAME,
 MIN_ORDER_COLUMN_NAME } from './libs/constants/constants.js';
 import { RegistrationStageEntity } from "./registration-stage.entity.js";
