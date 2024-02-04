@@ -37,6 +37,29 @@ class UserRepository implements Repository{
         })
     }
 
+    public async findByChatId(chatId: number): Promise<UserEntity | null>{
+        const user = await this.userModel
+            .query()
+            .withGraphJoined([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .findOne({chatId})
+            .castTo<UserQueryResponse | undefined>();
+
+        if(!user){
+            return null;
+        }
+
+        return UserEntity.initialize({
+            id: user.id,
+            createdAt: new Date(user.createdAt),
+            updatedAt:  new Date(user.updatedAt),
+            chatId: user.chatId,
+            isRegistered: user.isRegistered,
+            registrationStageId: user.registrationStage.id,
+            fullName: user.details.fullName ?? null,
+            phoneNumber: user.details.phoneNumber ?? null
+        })
+    }
+
     public async create(entity: UserEntity): Promise<UserEntity>{
         const { chatId } = entity.toNewObject();
 
@@ -69,7 +92,6 @@ class UserRepository implements Repository{
         })
 
     }
-
 
 
 }
