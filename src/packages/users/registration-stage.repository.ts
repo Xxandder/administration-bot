@@ -53,8 +53,6 @@ class RegistrationStageRepository implements Repository{
             orderNumber: registrationStage.orderNumber
         })
     }
-
-    
         
     public async getLastOrderNumber(): Promise<number>{
         const result = await this.registrationStageModel
@@ -74,6 +72,41 @@ class RegistrationStageRepository implements Repository{
                 .first()
                 .castTo<RegistrationStageWithMinOrderNumberQueryResponse>();
         return result[MIN_ORDER_COLUMN_NAME];
+    }
+
+    public async create(entity: RegistrationStageEntity): Promise<RegistrationStageEntity>{
+        const { name, orderNumber } = entity.toNewObject();
+
+        if(orderNumber && orderNumber <= 0){
+            throw Error('orderNumber field must be a positive number.');
+        }
+
+        const maxOrderNumber = await this.getLastOrderNumber();
+        const orderNumberToCreate = orderNumber ? Math.min(orderNumber, maxOrderNumber + 1) : maxOrderNumber + 1
+        
+        const registrationStage = await this.registrationStageModel
+            .query()
+            .insert({
+                name,
+                orderNumber: orderNumberToCreate
+            })
+            .castTo<RegistrationStageQueryResponse>();
+            
+        await this.registrationStageModel
+            .query()
+            .where(RegistrationStageTableColumnName.ORDER_NUMBER,
+                '>=', orderNumberToCreate)
+            .increment(RegistrationStageTableColumnName.ORDER_NUMBER, 1)
+            
+     
+        return RegistrationStageEntity.initialize({
+            id: registrationStage.id,
+            createdAt: new Date(registrationStage.createdAt),
+            updatedAt:  new Date(registrationStage.updatedAt),
+            name: registrationStage.name,
+            orderNumber: registrationStage.orderNumber
+        })
+
     }
 
 }
