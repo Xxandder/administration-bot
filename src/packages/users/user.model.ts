@@ -7,6 +7,7 @@ import { RegistrationStageModel } from './registration-stage.model.js';
 class UserModel extends AbstractModel{
     public chatId!: string;
     public isRegistered!: boolean;
+    public registrationStageId!: number;
 
     public static override get tableName(): string{
         return DatabaseTableName.USERS;
