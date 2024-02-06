@@ -64,10 +64,11 @@ class UserRepository implements Repository{
     }
 
     public async create(entity: UserEntity): Promise<UserEntity>{
-        console.log('here++++++++++++++++++++')
+       
         const { chatId } = entity.toNewObject();
 
         const registrationStage = await registrationStageRepository.findByOrderNumber(DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER);
+        
         const registrationStageId = registrationStage?.toObject().id;
 
         const user = await this.userModel
@@ -81,19 +82,7 @@ class UserRepository implements Repository{
                     fullName: null
                 }
             } as UserCreateQueryPayload)
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
-            .castTo<UserQueryResponse>();
-        
-        return UserEntity.initialize({
-            id: user.id,
-            createdAt: new Date(user.createdAt),
-            updatedAt:  new Date(user.updatedAt),
-            chatId: user.chatId,
-            isRegistered: user.isRegistered,
-            registrationStageId: user.registrationStage.id,
-            fullName: user.details.fullName ?? null,
-            phoneNumber: user.details.phoneNumber ?? null
-        })
+        return await this.findById(user.id) as UserEntity;
     }
 
     public async updateDetails({id, details}: UpdateUserDetailsPayload):
@@ -136,7 +125,7 @@ class UserRepository implements Repository{
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphFetched(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>();
         if(!user){
@@ -145,18 +134,17 @@ class UserRepository implements Repository{
         const newRegistrationStage = !backwards ? await registrationStageRepository.getNext(
             user.registrationStage.orderNumber) : await registrationStageRepository.getPrevious(
                 user.registrationStage.orderNumber);
-        
         await this.userModel
-            .relatedQuery(UserRelation.RELATION_STAGE)
-            .for(id)
-            .patch({ orderNumber: newRegistrationStage?.toObject().orderNumber});
+            .query()
+            .patch({ registrationStageId: newRegistrationStage?.toObject().orderNumber as number})
+            .where({ id });
         
         const updatedUser = await this.userModel
             .query()
-            .withGraphFetched(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>(); 
-
+        
         return UserEntity.initialize({
                 id: updatedUser.id,
                 createdAt: new Date(updatedUser.createdAt),
