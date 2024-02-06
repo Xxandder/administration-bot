@@ -1,5 +1,5 @@
 import { type UserRepository } from "./user.repository.js"
-import { type UserEntity } from "./user.entity.js";
+import { UserEntity } from "./user.entity.js";
 import { type UpdateUserDetailsPayload } from "./libs/types/types.js";
 
 type UserServiceDependencies = {
@@ -56,10 +56,16 @@ class UserService {
     }
 
     public async create(chatId: string){
-        const item = await this.findByChatId(chatId);
-        if(item){
+        try{
+            const item = await this.findByChatId(chatId);
             throw new Error('User already exists');
+        }catch(e){
+            const user = await this.userRepository.create(UserEntity.initializeNew({
+                chatId
+            }))
+            return user.toObject();
         }
+
     }
 }
 
