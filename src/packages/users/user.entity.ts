@@ -80,14 +80,7 @@ class UserEntity implements Entity{
     public static initializeNew({
         chatId,
     }: {
-        id: number | null;
-        createdAt: Date | null;
-        updatedAt: Date | null;
         chatId: string;
-        isRegistered: boolean | null;
-        registrationStageId: number | null;
-        phoneNumber: string | null;
-        fullName: string | null;
     }){
         return new UserEntity({
             id: null, 
