@@ -93,15 +93,13 @@ class UserRepository implements Repository{
         }
         const userObj = user.toObject();
         const detailsToUpdate = Object.fromEntries(
-            Object.entries(details).filter(([key, value]) => value !== undefined)
+            Object.entries(details).filter(([key, value]) => value !== undefined && value !== null)
           );
 
         await this.userModel
           .relatedQuery(UserRelation.DETAILS)
           .for(userObj.id)
-          .patch({
-            detailsToUpdate
-          })
+          .patch(detailsToUpdate)
 
         const updatedUser = await this.userModel
             .query()
