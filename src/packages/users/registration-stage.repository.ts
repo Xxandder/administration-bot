@@ -74,6 +74,26 @@ class RegistrationStageRepository implements Repository{
         return result[MIN_ORDER_COLUMN_NAME];
     }
 
+    public async getNext(id: number): Promise<RegistrationStageEntity | null>{
+        const currentRegistrationStage = (await this.findById(id))?.toObject();
+        const lastOrderNumber = await this.getLastOrderNumber();
+        if(!currentRegistrationStage){
+            return null;
+        }
+        return await this.findByOrderNumber(Math.min(
+            currentRegistrationStage.orderNumber + 1, lastOrderNumber));
+    }
+
+    public async getPrevious(id: number): Promise<RegistrationStageEntity | null>{
+        const currentRegistrationStage = (await this.findById(id))?.toObject();
+        const firstOrderNumber = await this.getFirstOrderNumber();
+        if(!currentRegistrationStage){
+            return null;
+        }
+        return await this.findByOrderNumber(Math.max(
+            currentRegistrationStage.orderNumber - 1, firstOrderNumber));
+    }
+
     public async create(entity: RegistrationStageEntity): Promise<RegistrationStageEntity>{
         const { name, orderNumber } = entity.toNewObject();
 
@@ -109,6 +129,8 @@ class RegistrationStageRepository implements Repository{
         })
 
     }
+
+
 
     public update(): ReturnType<Repository['update']> {
         return Promise.resolve(null);
