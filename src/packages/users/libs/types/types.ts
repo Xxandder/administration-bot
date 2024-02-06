@@ -4,3 +4,4 @@ export { type RegistrationStageWithMaxOrderNumberQueryResponse } from './registr
 export { type RegistrationStageWithMinOrderNumberQueryResponse } from './registration-stage-with-min-order-number-query-response.type.js';
 export { type UserCreateQueryPayload } from './user-create-query-payload.type.js';
 export { type UpdateUserDetailsPayload } from './update-user-details-payload.type.js';
+export { type UpdateRegistrationStagePayload } from './update-registration-stage-payload.type.js';
