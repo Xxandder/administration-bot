@@ -4,7 +4,8 @@ import { UserEntity } from "./user.entity.js";
 import { UserRelation } from "./libs/enums/enums.js";
 import { type UserQueryResponse,
 type UserCreateQueryPayload,
-type UpdateUserDetailsPayload } from './libs/types/types.js';
+type UpdateUserDetailsPayload,
+type UpdateRegistrationStagePayload } from './libs/types/types.js';
 import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER } from './libs/constants/constants.js';
 import { registrationStageRepository } from './user.js';
 
@@ -129,11 +130,43 @@ class UserRepository implements Repository{
         })
     }
 
-    // public async updateRegistrationStage({chatback: boolean = false): 
-    //                         Promise<UserEntity | null>{
+    public async updateRegistrationStage({id, backwards = false}: UpdateRegistrationStagePayload): 
+            Promise<UserEntity | null>{
+        const user = await this.userModel
+            .query()
+            .withGraphFetched([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .findById(id)
+            .castTo<UserQueryResponse>();
+        if(!user){
+            return null;
+        }
+        const newRegistrationStage = !backwards ? await registrationStageRepository.getNext(
+            user.registrationStage.orderNumber) : await registrationStageRepository.getPrevious(
+                user.registrationStage.orderNumber);
         
+        await this.userModel
+            .relatedQuery(UserRelation.RELATION_STAGE)
+            .for(id)
+            .patch({ orderNumber: newRegistrationStage?.toObject().orderNumber});
+        
+        const updatedUser = await this.userModel
+            .query()
+            .withGraphFetched([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .findById(id)
+            .castTo<UserQueryResponse>(); 
 
-    // }
+        return UserEntity.initialize({
+                id: updatedUser.id,
+                createdAt: new Date(updatedUser.createdAt),
+                updatedAt:  new Date(updatedUser.updatedAt),
+                chatId: updatedUser.chatId,
+                isRegistered: updatedUser.isRegistered,
+                registrationStageId: updatedUser.registrationStage.id,
+                fullName: updatedUser.details.fullName ?? null,
+                phoneNumber: updatedUser.details.phoneNumber ?? null
+            })
+
+    }
 
 }
 
