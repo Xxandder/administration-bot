@@ -7,6 +7,7 @@ type UserQueryResponse = {
     registrationStage: {
         id: number;
         name: string;
+        orderNumber: number;
     };
     details: {
         id: number;
