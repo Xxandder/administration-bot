@@ -19,7 +19,7 @@ class UserRepository implements Repository{
     public async findById(id: number): Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphJoined([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse | undefined>();
 
@@ -40,9 +40,10 @@ class UserRepository implements Repository{
     }
 
     public async findByChatId(chatId: string): Promise<UserEntity | null>{
+        
         const user = await this.userModel
             .query()
-            .withGraphJoined([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findOne({chatId})
             .castTo<UserQueryResponse | undefined>();
 
@@ -63,6 +64,7 @@ class UserRepository implements Repository{
     }
 
     public async create(entity: UserEntity): Promise<UserEntity>{
+        console.log('here++++++++++++++++++++')
         const { chatId } = entity.toNewObject();
 
         const registrationStage = await registrationStageRepository.findByOrderNumber(DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER);
@@ -79,7 +81,7 @@ class UserRepository implements Repository{
                     fullName: null
                 }
             } as UserCreateQueryPayload)
-            .withGraphJoined([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .castTo<UserQueryResponse>();
         
         return UserEntity.initialize({
@@ -114,7 +116,7 @@ class UserRepository implements Repository{
 
         const updatedUser = await this.userModel
             .query()
-            .withGraphJoined(UserRelation.DETAILS)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findById(userObj.id)
             .castTo<UserQueryResponse>();
       
@@ -134,7 +136,7 @@ class UserRepository implements Repository{
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphFetched([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .withGraphFetched(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>();
         if(!user){
@@ -151,7 +153,7 @@ class UserRepository implements Repository{
         
         const updatedUser = await this.userModel
             .query()
-            .withGraphFetched([UserRelation.DETAILS, UserRelation.RELATION_STAGE])
+            .withGraphFetched(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>(); 
 
