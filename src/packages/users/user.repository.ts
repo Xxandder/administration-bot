@@ -165,7 +165,20 @@ class UserRepository implements Repository{
                 fullName: updatedUser.details.fullName ?? null,
                 phoneNumber: updatedUser.details.phoneNumber ?? null
             })
+    }
 
+    public update(): ReturnType<Repository['update']> {
+        return Promise.resolve(null);
+      }
+
+      public findAll(): ReturnType<Repository['findAll']> {
+        return Promise.resolve([]);
+      }
+
+    public delete(): ReturnType<Repository['delete']> {
+        const DELETED_COUNT = 0;
+    
+        return Promise.resolve(DELETED_COUNT);
     }
 
 }
