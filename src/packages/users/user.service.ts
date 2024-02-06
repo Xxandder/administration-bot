@@ -54,6 +54,13 @@ class UserService {
         }
         return updatedUser.toObject();
     }
+
+    public async create(chatId: string){
+        const item = await this.findByChatId(chatId);
+        if(item){
+            throw new Error('User already exists');
+        }
+    }
 }
 
 export { UserService };
