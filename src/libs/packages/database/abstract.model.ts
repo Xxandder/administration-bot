@@ -19,7 +19,6 @@ class Abstract extends Model{
 
         this.updatedAt = insertDate;
     }
-
 }
 
 export { Abstract };
