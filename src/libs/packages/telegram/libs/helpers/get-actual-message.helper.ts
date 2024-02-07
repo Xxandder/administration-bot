@@ -32,7 +32,6 @@ const getActualMessageObject = async (chatId: string, stage: RegistrationStageVa
             }
         default: 
             throw new Error('Such stage doesn\'t exist');
-           
     }
 }
 

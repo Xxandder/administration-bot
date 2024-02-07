@@ -19,10 +19,9 @@ class TelegramBotService {
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', this.messageHandler);
-
-        
     }
 
     private async messageHandler(message: TelegramBot.Message) {
@@ -96,14 +95,14 @@ class TelegramBotService {
     }
 
     private async handleStart(chatId: string){
-        const user = userService.create(chatId);
+        const user = await userService.create(chatId);
         await this.sendActualMessage(chatId);
     }
     
     private async sendActualMessage(chatId: string){
         try{
             const user = await userService.findByChatId(chatId);
-            const registrationStage = await userService.getRegistrationStageByUserId(user?.registrationStageId ?? 1);
+            const registrationStage = await userService.getRegistrationStageByUserId(user?.id as number);
             const messageObject = await getActualMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
             await this.sendMessage(chatId, 
                 messageObject.text, 
@@ -114,6 +113,7 @@ class TelegramBotService {
     }
 
     private async sendMessage(chatId: string, text: string, keyboard?: InlineKeyboard | CommonKeyboard) {
+        
         this.bot.sendMessage(parseInt(chatId), text, keyboard);
     }
 
