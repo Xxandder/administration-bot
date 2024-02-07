@@ -13,8 +13,16 @@ class TelegramBotService {
     private bot: TelegramBot;
 
     public constructor(){
-        this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '');
-        this.bot.on('message', this.messageHandler)
+        this.checkIsMessageHasOnlyText = this.checkIsMessageHasOnlyText.bind(this);
+        this.messageHandler = this.messageHandler.bind(this);
+        this.handleUserRegistration = this.handleUserRegistration.bind(this);
+        this.handleStart = this.handleStart.bind(this);
+        this.sendActualMessage = this.sendActualMessage.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
+        this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
+        this.bot.on('message', this.messageHandler);
+
+        
     }
 
     private async messageHandler(message: TelegramBot.Message) {
