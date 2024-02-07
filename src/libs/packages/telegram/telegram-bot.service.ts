@@ -29,6 +29,12 @@ class TelegramBotService {
         let user;
         try{
             user = await userService.findByChatId(chatId);
+            if(user && !user.isRegistered){
+                await this.handleUserRegistration(message);
+            }
+            else{
+                console.log('registered user')
+            }
         }catch(e){
             if(message.text &&
                  message.text === InlineCommands.START && 
@@ -36,24 +42,24 @@ class TelegramBotService {
                 await this.handleStart(chatId);
             }
             else{
-                if(user && user.isRegistered){
-                    await this.handleUserRegistration(message);
-                }
-                else{
-                    console.log('registered user')
-                }
+               
+                
             }
         }
     }
 
     private async handleUserRegistration(message: TelegramBot.Message){
+       
         const chatId = message.chat.id.toString();
+        // console.log('message contacts: ', message.contact);
+        // console.log('message user id: ', message.contact?.user_id);
+        // console.log('message chat id: ', parseInt(chatId));
         try{
             const user = await userService.findByChatId(chatId);
             if(!user){
                 return null;
             }
-            const registrationStage = await userService.getRegistrationStageByUserId(user?.registrationStageId ?? 1);
+            const registrationStage = await userService.getRegistrationStageByUserId(user.id as number);
             switch (registrationStage?.name){
                 case RegistrationStage.SENDING_PHONE_NUMBER:
                     if(message.contact &&
@@ -65,6 +71,8 @@ class TelegramBotService {
                                     fullName: null
                                 }
                             })
+                            await userService.moveToNextRegistrationStage(user.id);
+                            await this.sendActualMessage(chatId);
                     }else{
                         await this.sendActualMessage(chatId);
                     }
