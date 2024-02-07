@@ -48,12 +48,20 @@ class TelegramBotService {
         }
     }
 
+    private async callbackHandler(chatId: string, callbackData: string){
+        try{
+            const user = await userService.findByChatId(chatId);
+            if(!user){
+                return null;
+            }
+        }
+    
+
+    }
+
     private async handleUserRegistration(message: TelegramBot.Message){
        
         const chatId = message.chat.id.toString();
-        // console.log('message contacts: ', message.contact);
-        // console.log('message user id: ', message.contact?.user_id);
-        // console.log('message chat id: ', parseInt(chatId));
         try{
             const user = await userService.findByChatId(chatId);
             if(!user){
@@ -85,6 +93,13 @@ class TelegramBotService {
                                 error.details[0]?.message as string, 
                                 EnterFullName);
                         }else{
+                            await userService.updateDetails({
+                                id: user.id as number,
+                                details: {
+                                    phoneNumber: null,
+                                    fullName: message.text as string
+                                }
+                            })
                             await userService.moveToNextRegistrationStage(user.id);
                             await this.sendActualMessage(chatId);
                         }
@@ -98,7 +113,7 @@ class TelegramBotService {
                     break;
             }
         }catch(e){
-            
+            throw e;
         }
     }
 
@@ -116,7 +131,7 @@ class TelegramBotService {
                 messageObject.text, 
                 messageObject.options)
         }catch(e){
-
+            throw e;
         }
     }
 
