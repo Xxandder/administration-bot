@@ -4,7 +4,9 @@ import { userService } from "~/packages/users/user.js";
 import { InlineCommands, RegistrationStage } from "./libs/enums/enums.js";
 import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualMessageObject } from './libs/helpers/helpers.js';
-
+import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
+import { EnterFullName } from './libs/keyboards/keyboards.js';
+ 
 dotenv.config();
 
 class TelegramBotService {
@@ -17,8 +19,9 @@ class TelegramBotService {
 
     private async messageHandler(message: TelegramBot.Message) {
         const chatId = message.chat.id.toString();
+        let user;
         try{
-            const user = await userService.findByChatId(chatId);
+            user = await userService.findByChatId(chatId);
         }catch(e){
             if(message.text &&
                  message.text === InlineCommands.START && 
@@ -26,7 +29,12 @@ class TelegramBotService {
                 await this.handleStart(chatId);
             }
             else{
-
+                if(user && user.isRegistered){
+                    await this.handleUserRegistration(message);
+                }
+                else{
+                    console.log('registered user')
+                }
             }
         }
     }
@@ -50,16 +58,29 @@ class TelegramBotService {
                                     fullName: null
                                 }
                             })
-                        }
+                    }else{
+                        await this.sendActualMessage(chatId);
+                    }
                     break;
                 case RegistrationStage.TYPING_FULL_NAME:
                     if(this.checkIsMessageHasOnlyText(message)){
-                        try{
-
-                        }catch(e){
-                            
+                        const { error, value } = fullNameSchema.validate(message.text);
+                        if(error){
+                            await this.sendMessage(chatId, 
+                                error.details[0]?.message as string, 
+                                EnterFullName);
+                        }else{
+                            await userService.moveToNextRegistrationStage(user.id);
+                            await this.sendActualMessage(chatId);
                         }
+                      
+                    }else{
+                        await this.sendActualMessage(chatId);
                     }
+                    break;
+                default:
+                    await this.sendActualMessage(chatId)
+                    break;
             }
         }catch(e){
             
