@@ -3,7 +3,7 @@ import { ValidationErrorTextMessage } from '../enums/enums.js';
 import { MIN_FULL_NAME_LENGTH, MAX_FULL_NAME_LENGTH } from '../constants/constants.js';
 
 const fullNameSchema = joi.string()
-    .regex(/^[a-zA-Z'` ]+$/)
+    .regex(/^[a-zA-Zа-яА-ЯґҐєЄіІїЇ'` ]+$/)
     .min(MIN_FULL_NAME_LENGTH)
     .max(MAX_FULL_NAME_LENGTH)
     .required()
