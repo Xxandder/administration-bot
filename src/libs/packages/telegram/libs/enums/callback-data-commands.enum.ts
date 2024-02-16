@@ -1,6 +1,6 @@
 const CallbackDataCommands = {
     GO_BACK: 'go_back',
-    CONFIRM_DETAILS: 'confirm_details'
+    CONFIRM_PERSONAL_DATA: 'confirm_personal_data'
 } as const;
 
 export { CallbackDataCommands };
