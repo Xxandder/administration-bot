@@ -4,3 +4,4 @@ export { ValidationErrorTextMessage } from './validation-error-text-message.enum
 export { CallbackDataCommands } from './callback-data-commands.enum.js';
 export { InlineCommands } from './inline-commands.enum.js';
 export { RegistrationStage } from './registration-stage.enum.js';
+export { CommonStage } from './common-stage.enum.js';
