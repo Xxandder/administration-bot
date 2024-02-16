@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
-import { InlineCommands, RegistrationStage } from "./libs/enums/enums.js";
+import { CallbackDataCommands, InlineCommands, RegistrationStage } from "./libs/enums/enums.js";
 import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualMessageObject } from './libs/helpers/helpers.js';
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
@@ -19,9 +19,12 @@ class TelegramBotService {
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
+        this.callbackHandler = this.callbackHandler.bind(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', this.messageHandler);
+        this.bot.on('callback_query', (query)=>this.callbackHandler((query.message?.chat.id as number).toString(),
+         query.data as string));
     }
 
     private async messageHandler(message: TelegramBot.Message) {
@@ -54,10 +57,26 @@ class TelegramBotService {
             if(!user){
                 return null;
             }
+            if(!user.isRegistered){
+                await this.handleRegistrationCallback(chatId, callbackData);
+            }
+        }catch(e){
+            throw(e);
         }
-    
 
     }
+
+    private async handleRegistrationCallback(chatId: string, callbackData: string){
+        const user = await userService.findByChatId(chatId);
+            if(!user){
+                return null;
+            }
+        switch(callbackData){
+            case CallbackDataCommands.GO_BACK:
+                await userService.moveToPreviousRegistrationStage(user.id);
+                await this.sendActualMessage(chatId);
+        }
+    };
 
     private async handleUserRegistration(message: TelegramBot.Message){
        
