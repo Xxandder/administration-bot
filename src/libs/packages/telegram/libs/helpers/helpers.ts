@@ -1,1 +1,1 @@
-export { getActualRegistrationMessageObject } from './get-actual-message.helper.js';
+export { getActualRegistrationMessageObject } from './get-actual-registration-message.helper.js';
