@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
 import { CallbackDataCommands, InlineCommands, RegistrationStage } from "./libs/enums/enums.js";
 import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
-import { getActualMessageObject } from './libs/helpers/helpers.js';
+import { getActualRegistrationMessageObject } from './libs/helpers/helpers.js';
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
 import { ReturnBack } from './libs/keyboards/keyboards.js';
  
@@ -75,6 +75,9 @@ class TelegramBotService {
             case CallbackDataCommands.GO_BACK:
                 await userService.moveToPreviousRegistrationStage(user.id);
                 await this.sendActualMessage(chatId);
+            case CallbackDataCommands.CONFIRM_PERSONAL_DATA:
+                await userService.moveToNextRegistrationStage(user.id);
+                await this.sendActualMessage(chatId);
         }
     };
 
@@ -144,11 +147,14 @@ class TelegramBotService {
     private async sendActualMessage(chatId: string){
         try{
             const user = await userService.findByChatId(chatId);
-            const registrationStage = await userService.getRegistrationStageByUserId(user?.id as number);
-            const messageObject = await getActualMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
-            await this.sendMessage(chatId, 
-                messageObject.text, 
-                messageObject.options)
+            if(user?.isRegistered){
+                const registrationStage = await userService.getRegistrationStageByUserId(user?.id as number);
+                const messageObject = await getActualRegistrationMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
+                await this.sendMessage(chatId, messageObject.text, messageObject.options)
+            }else{
+
+            }
+            
         }catch(e){
             throw e;
         }

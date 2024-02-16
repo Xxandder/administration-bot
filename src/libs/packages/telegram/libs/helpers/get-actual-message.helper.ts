@@ -5,7 +5,7 @@ import { type MessageData, type RegistrationStageValues } from "../types/types.j
 import { getConfirmationMessageText } from './get-confirmation-message-text.helper.js';
 import { userService } from "~/packages/users/user.js";
 
-const getActualMessageObject = async (chatId: string, stage: RegistrationStageValues): Promise<MessageData> => {
+const getActualRegistrationMessageObject = async (chatId: string, stage: RegistrationStageValues): Promise<MessageData> => {
     switch(stage){
         case RegistrationStage.SENDING_PHONE_NUMBER:
             return {
@@ -35,4 +35,4 @@ const getActualMessageObject = async (chatId: string, stage: RegistrationStageVa
     }
 }
 
-export { getActualMessageObject };
+export { getActualRegistrationMessageObject };
