@@ -1,2 +1,2 @@
 export { EnterPhoneNumber } from './common/common-keyboards.js';
-export { EnterFullName } from './inline/inline-keyboards.js';
+export { ReturnBack } from './inline/inline-keyboards.js';

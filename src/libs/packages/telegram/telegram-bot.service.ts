@@ -5,7 +5,7 @@ import { CallbackDataCommands, InlineCommands, RegistrationStage } from "./libs/
 import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualMessageObject } from './libs/helpers/helpers.js';
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
-import { EnterFullName } from './libs/keyboards/keyboards.js';
+import { ReturnBack } from './libs/keyboards/keyboards.js';
  
 dotenv.config();
 
@@ -110,7 +110,7 @@ class TelegramBotService {
                         if(error){
                             await this.sendMessage(chatId, 
                                 error.details[0]?.message as string, 
-                                EnterFullName);
+                                ReturnBack);
                         }else{
                             await userService.updateDetails({
                                 id: user.id as number,

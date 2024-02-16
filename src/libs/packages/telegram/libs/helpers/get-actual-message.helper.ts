@@ -1,6 +1,6 @@
 import { RegistrationStage, RegistrationTextMessage } from "../enums/enums.js"
 import { ValueOf } from "~/libs/types/types.js"
-import { EnterFullName, EnterPhoneNumber } from '../keyboards/keyboards.js';
+import { ReturnBack, EnterPhoneNumber } from '../keyboards/keyboards.js';
 import { type MessageData, type RegistrationStageValues } from "../types/types.js";
 import { getConfirmationMessageText } from './get-confirmation-message-text.helper.js';
 import { userService } from "~/packages/users/user.js";
@@ -15,7 +15,7 @@ const getActualMessageObject = async (chatId: string, stage: RegistrationStageVa
         case RegistrationStage.TYPING_FULL_NAME:
             return {
                 text: RegistrationTextMessage.ENTER_FULL_NAME,
-                options: EnterFullName
+                options: ReturnBack
             }
         case RegistrationStage.CONFIRMATION:
             try{
@@ -25,7 +25,7 @@ const getActualMessageObject = async (chatId: string, stage: RegistrationStageVa
                         fullName: user?.fullName as string,
                         phoneNumber: user?.phoneNumber as string
                     }),
-                    options: EnterFullName
+                    options: ReturnBack
                 }
             }catch(e){
                 throw new Error('User Not found')
