@@ -1,12 +1,12 @@
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
-import { CallbackDataCommands, InlineCommands, RegistrationStage } from "./libs/enums/enums.js";
+import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage } from "./libs/enums/enums.js";
 import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
-import { getActualRegistrationMessageObject } from './libs/helpers/helpers.js';
+import { getActualRegistrationMessageObject, getActualCommonMessageObject } from './libs/helpers/helpers.js';
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
 import { ReturnBack } from './libs/keyboards/keyboards.js';
- 
+
 dotenv.config();
 
 class TelegramBotService {
@@ -32,6 +32,7 @@ class TelegramBotService {
         let user;
         try{
             user = await userService.findByChatId(chatId);
+
             if(user && !user.isRegistered){
                 await this.handleUserRegistration(message);
             }
@@ -82,7 +83,6 @@ class TelegramBotService {
     };
 
     private async handleUserRegistration(message: TelegramBot.Message){
-       
         const chatId = message.chat.id.toString();
         try{
             const user = await userService.findByChatId(chatId);
@@ -145,14 +145,17 @@ class TelegramBotService {
     }
     
     private async sendActualMessage(chatId: string){
+        
         try{
             const user = await userService.findByChatId(chatId);
-            if(user?.isRegistered){
+            if(!user?.isRegistered){
                 const registrationStage = await userService.getRegistrationStageByUserId(user?.id as number);
                 const messageObject = await getActualRegistrationMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
+              
                 await this.sendMessage(chatId, messageObject.text, messageObject.options)
             }else{
-
+                const messageObject = await getActualCommonMessageObject(CommonStage.MAIN_MENU);
+                await this.sendMessage(chatId, messageObject.text, messageObject.options)
             }
             
         }catch(e){
