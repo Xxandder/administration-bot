@@ -5,7 +5,7 @@ import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage } 
 import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualRegistrationMessageObject, getActualCommonMessageObject } from './libs/helpers/helpers.js';
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
-import { ReturnBack } from './libs/keyboards/keyboards.js';
+import { ReturnBack, ConfirmPersonalData } from './libs/keyboards/keyboards.js';
 
 dotenv.config();
 
@@ -76,9 +76,11 @@ class TelegramBotService {
             case CallbackDataCommands.GO_BACK:
                 await userService.moveToPreviousRegistrationStage(user.id);
                 await this.sendActualMessage(chatId);
+                break;
             case CallbackDataCommands.CONFIRM_PERSONAL_DATA:
                 await userService.moveToNextRegistrationStage(user.id);
                 await this.sendActualMessage(chatId);
+                break;
         }
     };
 
@@ -151,7 +153,7 @@ class TelegramBotService {
             if(!user?.isRegistered){
                 const registrationStage = await userService.getRegistrationStageByUserId(user?.id as number);
                 const messageObject = await getActualRegistrationMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
-              
+                
                 await this.sendMessage(chatId, messageObject.text, messageObject.options)
             }else{
                 const messageObject = await getActualCommonMessageObject(CommonStage.MAIN_MENU);
