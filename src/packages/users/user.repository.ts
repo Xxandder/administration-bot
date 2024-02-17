@@ -132,9 +132,14 @@ class UserRepository implements Repository{
         const newRegistrationStage = !backwards ? await registrationStageRepository.getNext(
             user.registrationStage.orderNumber) : await registrationStageRepository.getPrevious(
                 user.registrationStage.orderNumber);
+        
+        
+        const lastOrderNumber = await registrationStageRepository.getLastOrderNumber();
+        const isRegisteredUpdated = !backwards && newRegistrationStage?.toObject().orderNumber === lastOrderNumber;
+
         await this.userModel
             .query()
-            .patch({ registrationStageId: newRegistrationStage?.toObject().orderNumber as number})
+            .patch({ registrationStageId: newRegistrationStage?.toObject().orderNumber as number, isRegistered: isRegisteredUpdated})
             .where({ id });
         
         const updatedUser = await this.userModel

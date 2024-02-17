@@ -1,6 +1,7 @@
 import { type UserRepository } from "./user.repository.js"
 import { UserEntity } from "./user.entity.js";
 import { type UpdateUserDetailsPayload } from "./libs/types/types.js";
+import { registrationStageRepository } from "./user.js";
 
 type UserServiceDependencies = {
     userRepository: UserRepository
@@ -40,11 +41,17 @@ class UserService {
     }
 
     public async moveToNextRegistrationStage(id: number){
-        const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: false});
-        if(!updatedUser){
-            throw new Error('User not found');
+        try{
+            const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: false});
+            if(!updatedUser){
+                throw new Error('User not found');
+            }
+            return updatedUser.toObject();
+        }catch(e){
+           throw(e);
         }
-        return updatedUser.toObject();
+        
+        
     }
 
     public async moveToPreviousRegistrationStage(id: number){
@@ -64,6 +71,17 @@ class UserService {
                 chatId
             }))
             return user.toObject();
+        }
+
+    }
+
+    public async getRegistrationStageByUserId(id: number){
+        try{
+            const item = await this.findById(id);
+            const registrationStage = await registrationStageRepository.findById(item?.registrationStageId ?? 1);
+            return registrationStage?.toObject();
+        }catch(e){
+            throw new Error('User not found');
         }
 
     }
