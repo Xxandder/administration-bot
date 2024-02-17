@@ -41,11 +41,17 @@ class UserService {
     }
 
     public async moveToNextRegistrationStage(id: number){
-        const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: false});
-        if(!updatedUser){
-            throw new Error('User not found');
+        try{
+            const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: false});
+            if(!updatedUser){
+                throw new Error('User not found');
+            }
+            return updatedUser.toObject();
+        }catch(e){
+           throw(e);
         }
-        return updatedUser.toObject();
+        
+        
     }
 
     public async moveToPreviousRegistrationStage(id: number){
