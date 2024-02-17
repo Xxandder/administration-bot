@@ -1,9 +1,10 @@
-import { RegistrationStage, RegistrationTextMessage } from "../enums/enums.js"
+import { RegistrationStage, RegistrationTextMessage, CommonStage } from "../enums/enums.js"
 import { ValueOf } from "~/libs/types/types.js"
-import { ReturnBack, EnterPhoneNumber } from '../keyboards/keyboards.js';
+import { ReturnBack, EnterPhoneNumber, ConfirmPersonalData } from '../keyboards/keyboards.js';
 import { type MessageData, type RegistrationStageValues } from "../types/types.js";
 import { getConfirmationMessageText } from './get-confirmation-message-text.helper.js';
 import { userService } from "~/packages/users/user.js";
+import { getActualCommonMessageObject } from './get-actual-common-message.helper.js';
 
 const getActualRegistrationMessageObject = async (chatId: string, stage: RegistrationStageValues): Promise<MessageData> => {
     switch(stage){
@@ -25,13 +26,13 @@ const getActualRegistrationMessageObject = async (chatId: string, stage: Registr
                         fullName: user?.fullName as string,
                         phoneNumber: user?.phoneNumber as string
                     }),
-                    options: ReturnBack
+                    options: ConfirmPersonalData
                 }
             }catch(e){
                 throw new Error('User Not found')
             }
         default: 
-            throw new Error('Such stage doesn\'t exist');
+            return getActualCommonMessageObject(CommonStage.MAIN_MENU);
     }
 }
 
