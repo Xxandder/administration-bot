@@ -5,9 +5,9 @@ const MainMenu: InlineKeyboard = {
     reply_markup: {
         inline_keyboard:[ 
             [{text: "Звернення", callback_data: CallbackDataCommands.CREATE_APPEAL}],
-            [{text: "Довідка", callback_data: ''}],
-            [{text: "Про проект", callback_data: ''}],
-            [{text: "Поділитися", callback_data: ''}]
+            [{text: "Довідка", callback_data: 'a'}],
+            [{text: "Про проект", callback_data: 'a'}],
+            [{text: "Поділитися", callback_data: 'a'}]
         ]
     }
 } as const;
