@@ -3,7 +3,7 @@ import { RegistrationStageModel } from "./registration-stage.model.js";
 import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER,
 MAX_ORDER_COLUMN_NAME,
 MIN_ORDER_COLUMN_NAME } from './libs/constants/constants.js';
-import { RegistrationStageEntity } from "./registration-stage.entity.js";
+import { StageEntity } from "./stage.entity.js";
 import { type RegistrationStageQueryResponse,
 type RegistrationStageWithMaxOrderNumberQueryResponse,
 type RegistrationStageWithMinOrderNumberQueryResponse } from './libs/types/types.js';
@@ -16,7 +16,7 @@ class RegistrationStageRepository implements Repository{
         this.registrationStageModel = registrationStageModel;
     }
 
-    public async findById(id: number): Promise<RegistrationStageEntity | null>{
+    public async findById(id: number): Promise<StageEntity | null>{
         const registrationStage = await this.registrationStageModel
             .query()
             .findById(id)
@@ -26,7 +26,7 @@ class RegistrationStageRepository implements Repository{
             return null;
         }
 
-        return RegistrationStageEntity.initialize({
+        return StageEntity.initialize({
             id: registrationStage.id,
             createdAt: new Date(registrationStage.createdAt),
             updatedAt:  new Date(registrationStage.updatedAt),
@@ -35,7 +35,7 @@ class RegistrationStageRepository implements Repository{
         })
     }
 
-    public async findByOrderNumber(orderNumber: number): Promise<RegistrationStageEntity | null>{
+    public async findByOrderNumber(orderNumber: number): Promise<StageEntity | null>{
         const registrationStage = await this.registrationStageModel
             .query()
             .findOne({orderNumber})
@@ -45,7 +45,7 @@ class RegistrationStageRepository implements Repository{
             return null;
         }
 
-        return RegistrationStageEntity.initialize({
+        return StageEntity.initialize({
             id: registrationStage.id,
             createdAt: new Date(registrationStage.createdAt),
             updatedAt:  new Date(registrationStage.updatedAt),
@@ -74,7 +74,7 @@ class RegistrationStageRepository implements Repository{
         return result[MIN_ORDER_COLUMN_NAME];
     }
 
-    public async getNext(id: number): Promise<RegistrationStageEntity | null>{
+    public async getNext(id: number): Promise<StageEntity | null>{
         const currentRegistrationStage = (await this.findById(id))?.toObject();
         const lastOrderNumber = await this.getLastOrderNumber();
         if(!currentRegistrationStage){
@@ -84,7 +84,7 @@ class RegistrationStageRepository implements Repository{
             currentRegistrationStage.orderNumber + 1, lastOrderNumber));
     }
 
-    public async getPrevious(id: number): Promise<RegistrationStageEntity | null>{
+    public async getPrevious(id: number): Promise<StageEntity | null>{
         const currentRegistrationStage = (await this.findById(id))?.toObject();
         const firstOrderNumber = await this.getFirstOrderNumber();
         if(!currentRegistrationStage){
@@ -94,7 +94,7 @@ class RegistrationStageRepository implements Repository{
             currentRegistrationStage.orderNumber - 1, firstOrderNumber));
     }
 
-    public async create(entity: RegistrationStageEntity): Promise<RegistrationStageEntity>{
+    public async create(entity: StageEntity): Promise<StageEntity>{
         const { name, orderNumber } = entity.toNewObject();
 
         if(orderNumber && orderNumber <= 0){
@@ -120,7 +120,7 @@ class RegistrationStageRepository implements Repository{
             .increment(RegistrationStageTableColumnName.ORDER_NUMBER, 1)
             
      
-        return RegistrationStageEntity.initialize({
+        return StageEntity.initialize({
             id: registrationStage.id,
             createdAt: new Date(registrationStage.createdAt),
             updatedAt:  new Date(registrationStage.updatedAt),
