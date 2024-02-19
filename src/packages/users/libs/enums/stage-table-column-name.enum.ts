@@ -1,4 +1,4 @@
-const RegistrationStageTableColumnName = {
+const StageTableColumnName = {
     ID: 'id',
     NAME: 'name',
     ORDER_NUMBER: 'order_number',
@@ -6,4 +6,4 @@ const RegistrationStageTableColumnName = {
     UPDATED_AT: 'updated_at',
 } as const;
 
-export { RegistrationStageTableColumnName };
+export { StageTableColumnName };
