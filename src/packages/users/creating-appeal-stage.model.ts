@@ -3,12 +3,12 @@ import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/datab
 import { StageTableColumnName, UsersTableColumnName } from './libs/enums/enums.js';
 import { UserModel } from './user.model.js';
 
-class RegistrationStageModel extends AbstractModel{
+class CreatingAppealStageModel extends AbstractModel{
     public name!: string;
     public orderNumber!: number;
 
     public static override get tableName(): string{
-        return DatabaseTableName.REGISTRATION_STAGE;
+        return DatabaseTableName.CREATING_APPEAL_STAGE;
     }
 
     public static get relationMappings(): RelationMappings {
@@ -17,15 +17,14 @@ class RegistrationStageModel extends AbstractModel{
                 relation: Model.HasManyRelation,
                 modelClass: UserModel,
                 join: {
-                    from: `${DatabaseTableName.REGISTRATION_STAGE}
+                    from: `${DatabaseTableName.CREATING_APPEAL_STAGE}
                             .${StageTableColumnName.ID}`,
                     to: `${DatabaseTableName.USERS}
-                    .${UsersTableColumnName.REGISTRATION_STAGE_ID}`
-                        
+                    .${UsersTableColumnName.CREATING_APPEAL_STAGE_ID}`
                 }
             }
         }
     }
 }
 
-export { RegistrationStageModel };
+export { CreatingAppealStageModel };
