@@ -7,7 +7,7 @@ import { StageEntity } from "./stage.entity.js";
 import { type StageQueryResponse,
 type StageWithMaxOrderNumberQueryResponse,
 type StageWithMinOrderNumberQueryResponse } from './libs/types/types.js';
-import { StageTableColumnName } from "./libs/enums/stage-table-column-name.enum.js";
+import { StageTableColumnName } from "./libs/enums/enums.js";
 import { CreatingAppealStageModel } from "./creating-appeal-stage.model.js";
 
 type StageModel = typeof RegistrationStageModel | typeof CreatingAppealStageModel
