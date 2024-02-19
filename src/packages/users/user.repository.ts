@@ -19,7 +19,7 @@ class UserRepository implements Repository{
     public async findById(id: number): Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse | undefined>();
 
@@ -43,7 +43,7 @@ class UserRepository implements Repository{
         
         const user = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
             .findOne({chatId})
             .castTo<UserQueryResponse | undefined>();
 
@@ -103,7 +103,7 @@ class UserRepository implements Repository{
 
         const updatedUser = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
             .findById(userObj.id)
             .castTo<UserQueryResponse>();
       
@@ -123,7 +123,7 @@ class UserRepository implements Repository{
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>();
         if(!user){
@@ -144,7 +144,7 @@ class UserRepository implements Repository{
         
         const updatedUser = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.RELATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>(); 
         

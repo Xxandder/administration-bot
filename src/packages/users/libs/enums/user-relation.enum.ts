@@ -1,6 +1,7 @@
 const UserRelation = {
     DETAILS: 'details',
-    RELATION_STAGE: 'registrationStage'
+    REGISTRATION_STAGE: 'registrationStage',
+    CREATING_APPEAL_STAGE: 'creatingAppealStage'
 }
 
 export { UserRelation };
