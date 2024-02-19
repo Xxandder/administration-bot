@@ -1,6 +1,6 @@
 import { type Entity } from "~/libs/types/types.js";
 
-class RegistrationStageEntity implements Entity{
+class StageEntity implements Entity{
     private id: number | null;
 
     private createdAt: Date | null;
@@ -44,7 +44,7 @@ class RegistrationStageEntity implements Entity{
         name: string;
         orderNumber: number | null;
     }){
-        return new RegistrationStageEntity({
+        return new StageEntity({
             id, 
             createdAt,
             updatedAt,
@@ -63,7 +63,7 @@ class RegistrationStageEntity implements Entity{
         name: string;
         orderNumber: number | null;
     }){
-        return new RegistrationStageEntity({
+        return new StageEntity({
             id: null, 
             createdAt: null,
             updatedAt: null,
@@ -99,4 +99,4 @@ class RegistrationStageEntity implements Entity{
     }
 }
 
-export { RegistrationStageEntity };
+export { StageEntity };

@@ -1,4 +1,4 @@
-type RegistrationStageQueryResponse = {
+type StageQueryResponse = {
     id: number;
     createdAt: string;
     updatedAt: string;
@@ -6,4 +6,4 @@ type RegistrationStageQueryResponse = {
     orderNumber: number;
 }
 
-export { type RegistrationStageQueryResponse };
+export { type StageQueryResponse };

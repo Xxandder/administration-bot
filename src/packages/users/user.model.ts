@@ -1,9 +1,10 @@
 import { RelationMappings, Model } from 'objection';
 import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/database.js';
-import { UserDetailsTableColumnName, RegistrationStageTableColumnName, UsersTableColumnName } from './libs/enums/enums.js';
+import { UserDetailsTableColumnName, UsersTableColumnName, StageTableColumnName } from './libs/enums/enums.js';
 import { UserDetailsModel } from './user-details.model.js';
 import { RegistrationStageModel } from './registration-stage.model.js';
 import { UserRelation } from './libs/enums/enums.js';
+import { CreatingAppealStageModel } from './creating-appeal-stage.model.js';
 
 class UserModel extends AbstractModel{
     public chatId!: string;
@@ -27,18 +28,30 @@ class UserModel extends AbstractModel{
                         
                 }
             },
-            [UserRelation.RELATION_STAGE]: {
+            [UserRelation.REGISTRATION_STAGE]: {
                 relation: Model.BelongsToOneRelation,
                 modelClass: RegistrationStageModel,
                 join: {
                     from: `${DatabaseTableName.USERS}
                             .${UsersTableColumnName.REGISTRATION_STAGE_ID}`,
                     to:    `${DatabaseTableName.REGISTRATION_STAGE}
-                        .${RegistrationStageTableColumnName.ID}`
+                        .${StageTableColumnName.ID}`
+                        
+                }
+            },
+            [UserRelation.CREATING_APPEAL_STAGE]: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: CreatingAppealStageModel,
+                join: {
+                    from: `${DatabaseTableName.USERS}
+                            .${UsersTableColumnName.CREATING_APPEAL_STAGE_ID}`,
+                    to:    `${DatabaseTableName.CREATING_APPEAL_STAGE}
+                        .${StageTableColumnName.ID}`
                         
                 }
             }
         }
+        
     }
 }
 
