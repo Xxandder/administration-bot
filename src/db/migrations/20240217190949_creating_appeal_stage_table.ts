@@ -3,6 +3,7 @@ import type { Knex } from "knex";
 const CREATING_APPEAL_STAGE_TABLE_NAME = 'creating_appeal_stage';
 const USERS_TABLE_NAME = 'users';
 const DEFAULT_REGISTRATION_STAGE_ID = 1;
+const DEFAULT_ORDER_NUMBER = 1;
 
 const ColumnName = {
     ID: 'id',
@@ -11,6 +12,7 @@ const ColumnName = {
     UPDATED_AT: 'updated_at',
     IS_CREATING_APPEAL: 'is_creating_appeal',
     CREATING_APPEAL_STAGE_ID: 'creating_appeal_stage_id',
+    ORDER_NUMBER: 'order_number'
 } as const;
 
 const CreatingAppealStage = [
@@ -35,6 +37,10 @@ async function up(knex: Knex): Promise<void> {
             .unique()
             .notNullable();
         table
+            .integer(ColumnName.ORDER_NUMBER)
+            .notNullable()
+            .defaultTo(DEFAULT_ORDER_NUMBER)
+        table
             .dateTime(ColumnName.CREATED_AT)
             .notNullable()
             .defaultTo(knex.fn.now());
@@ -43,9 +49,12 @@ async function up(knex: Knex): Promise<void> {
             .notNullable()
             .defaultTo(knex.fn.now());
     })
-    for(const creatingAppealStage of CreatingAppealStage){
+    for(const [index, creatingAppealStage] of CreatingAppealStage.entries()){
         await knex(CREATING_APPEAL_STAGE_TABLE_NAME).insert([
-            { [ColumnName.NAME]: creatingAppealStage},
+            { 
+                [ColumnName.NAME]: creatingAppealStage,
+                [ColumnName.ORDER_NUMBER]: index + 1
+            },
         ]);
     }
     await knex.schema.alterTable(USERS_TABLE_NAME, (table)=>{
