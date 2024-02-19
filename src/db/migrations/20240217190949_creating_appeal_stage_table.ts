@@ -65,10 +65,11 @@ async function up(knex: Knex): Promise<void> {
 
 
 async function down(knex: Knex): Promise<void> {
-    await knex.schema.dropTableIfExists(CREATING_APPEAL_STAGE_TABLE_NAME);
     await knex.schema.alterTable(USERS_TABLE_NAME, (table) => {
         table.dropColumn(ColumnName.CREATING_APPEAL_STAGE_ID);
     });
+    await knex.schema.dropTable(CREATING_APPEAL_STAGE_TABLE_NAME);
+    
 }
 
 export { up, down };
