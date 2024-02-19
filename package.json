@@ -9,7 +9,7 @@
     "start": "nodemon ./src/index.ts",
     "start:dev": "node --loader ts-node/esm ./src/index.ts",
     "start:tsx": "npx tsx src/index.ts",
-    "migrate": "knex migrate:latest",
+    "migrate": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:latest",
     "migrate:make": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:make -x ts",
     "migrate:down": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:down",
     "migrate:rollback": "node --loader ts-paths-esm-loader ./node_modules/knex/bin/cli.js migrate:rollback --all"
