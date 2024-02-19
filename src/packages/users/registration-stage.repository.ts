@@ -7,7 +7,7 @@ import { StageEntity } from "./stage.entity.js";
 import { type StageQueryResponse,
 type StageWithMaxOrderNumberQueryResponse,
 type StageWithMinOrderNumberQueryResponse } from './libs/types/types.js';
-import { RegistrationStageTableColumnName } from "./libs/enums/registration-stage-table-column-name.enum.js";
+import { StageTableColumnName } from "./libs/enums/stage-table-column-name.enum.js";
 
 class RegistrationStageRepository implements Repository{
     private registrationStageModel: typeof RegistrationStageModel;
@@ -57,7 +57,7 @@ class RegistrationStageRepository implements Repository{
     public async getLastOrderNumber(): Promise<number>{
         const result = await this.registrationStageModel
                 .query()
-                .max(`${RegistrationStageTableColumnName.ORDER_NUMBER}
+                .max(`${StageTableColumnName.ORDER_NUMBER}
                     as ${MAX_ORDER_COLUMN_NAME}`)
                 .first()
                 .castTo<StageWithMaxOrderNumberQueryResponse>();
@@ -67,7 +67,7 @@ class RegistrationStageRepository implements Repository{
     public async getFirstOrderNumber(): Promise<number>{
         const result = await this.registrationStageModel
                 .query()
-                .min(`${RegistrationStageTableColumnName.ORDER_NUMBER}
+                .min(`${StageTableColumnName.ORDER_NUMBER}
                     as ${MIN_ORDER_COLUMN_NAME}`)
                 .first()
                 .castTo<StageWithMinOrderNumberQueryResponse>();
@@ -115,9 +115,9 @@ class RegistrationStageRepository implements Repository{
             
         await this.registrationStageModel
             .query()
-            .where(RegistrationStageTableColumnName.ORDER_NUMBER,
+            .where(StageTableColumnName.ORDER_NUMBER,
                 '>=', orderNumberToCreate)
-            .increment(RegistrationStageTableColumnName.ORDER_NUMBER, 1)
+            .increment(StageTableColumnName.ORDER_NUMBER, 1)
             
      
         return StageEntity.initialize({
