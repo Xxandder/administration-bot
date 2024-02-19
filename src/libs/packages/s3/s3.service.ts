@@ -6,13 +6,12 @@ import {
     S3ServiceException,
   } from '@aws-sdk/client-s3';
   
-import dotenv from 'dotenv';
 
 import { replaceTemplateWithValue } from '~/libs/helpers/helpers.js';
 import { ContentType } from '~/libs/enums/enums.js';
 import { ValueOf } from '~/libs/types/types.js';
 
-dotenv.config();
+
 
   type S3Dependencies = {
     region: string;
