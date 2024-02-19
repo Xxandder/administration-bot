@@ -4,9 +4,9 @@ import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER,
 MAX_ORDER_COLUMN_NAME,
 MIN_ORDER_COLUMN_NAME } from './libs/constants/constants.js';
 import { StageEntity } from "./stage.entity.js";
-import { type RegistrationStageQueryResponse,
-type RegistrationStageWithMaxOrderNumberQueryResponse,
-type RegistrationStageWithMinOrderNumberQueryResponse } from './libs/types/types.js';
+import { type StageQueryResponse,
+type StageWithMaxOrderNumberQueryResponse,
+type StageWithMinOrderNumberQueryResponse } from './libs/types/types.js';
 import { RegistrationStageTableColumnName } from "./libs/enums/registration-stage-table-column-name.enum.js";
 
 class RegistrationStageRepository implements Repository{
@@ -20,7 +20,7 @@ class RegistrationStageRepository implements Repository{
         const registrationStage = await this.registrationStageModel
             .query()
             .findById(id)
-            .castTo<RegistrationStageQueryResponse | undefined>();
+            .castTo<StageQueryResponse | undefined>();
 
         if(!registrationStage){
             return null;
@@ -39,7 +39,7 @@ class RegistrationStageRepository implements Repository{
         const registrationStage = await this.registrationStageModel
             .query()
             .findOne({orderNumber})
-            .castTo<RegistrationStageQueryResponse | undefined>();
+            .castTo<StageQueryResponse | undefined>();
 
         if(!registrationStage){
             return null;
@@ -60,7 +60,7 @@ class RegistrationStageRepository implements Repository{
                 .max(`${RegistrationStageTableColumnName.ORDER_NUMBER}
                     as ${MAX_ORDER_COLUMN_NAME}`)
                 .first()
-                .castTo<RegistrationStageWithMaxOrderNumberQueryResponse>();
+                .castTo<StageWithMaxOrderNumberQueryResponse>();
         return result[MAX_ORDER_COLUMN_NAME];
     }
 
@@ -70,7 +70,7 @@ class RegistrationStageRepository implements Repository{
                 .min(`${RegistrationStageTableColumnName.ORDER_NUMBER}
                     as ${MIN_ORDER_COLUMN_NAME}`)
                 .first()
-                .castTo<RegistrationStageWithMinOrderNumberQueryResponse>();
+                .castTo<StageWithMinOrderNumberQueryResponse>();
         return result[MIN_ORDER_COLUMN_NAME];
     }
 
@@ -111,7 +111,7 @@ class RegistrationStageRepository implements Repository{
                 name,
                 orderNumber: orderNumberToCreate
             })
-            .castTo<RegistrationStageQueryResponse>();
+            .castTo<StageQueryResponse>();
             
         await this.registrationStageModel
             .query()
