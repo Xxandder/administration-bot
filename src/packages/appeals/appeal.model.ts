@@ -25,7 +25,7 @@ class AppealModel extends AbstractModel{
     public static get relationMappings(): RelationMappings{
         return {
             [AppealRelation.CATEGORY]: {
-                relation: Model.HasManyRelation,
+                relation: Model.BelongsToOneRelation,
                 modelClass: AppealCategoryModel,
                 join: {
                     from: `${DatabaseTableName.APPEALS}.${AppealTableColumnName.CATEGORY_ID}`,
