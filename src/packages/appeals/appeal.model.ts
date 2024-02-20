@@ -20,6 +20,8 @@ class AppealModel extends AbstractModel{
 
     public isFinished!: boolean;
 
+    public userId!: number;
+
     public static override get tableName(): string{
         return DatabaseTableName.APPEALS;
     }
