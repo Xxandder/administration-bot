@@ -1,0 +1,1 @@
+export { type AppealQueryResponse } from './appeal-query-response.type.js';
