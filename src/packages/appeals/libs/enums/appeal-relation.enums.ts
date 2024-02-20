@@ -1,7 +1,8 @@
 const AppealRelation = {
     CATEGORY: 'category',
     USER: 'user',
-    APPEALS: 'appeals'
+    APPEALS: 'appeals',
+    PHOTOS: 'photos'
 } as const;
 
 export { AppealRelation };
