@@ -13,7 +13,7 @@ class AppealCategoryModel extends AbstractModel{
 
     public static get relationMappings(): RelationMappings{
         return {
-            category: {
+            appeals: {
                 relation: Model.HasManyRelation,
                 modelClass: AppealModel,
                 join: {
