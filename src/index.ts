@@ -5,7 +5,7 @@ import { telegramBot } from './libs/packages/telegram/telegram.js';
 
 // Testing of loading images
 
-// import { s3 } from './libs/packages/s3/s3.js';
+// import { fileService } from './packages/files/files.js';
 // import fs from 'fs';
 // const imagePath = './src/dog.jpg';
 // const readFileToBuffer = (filePath: string): Promise<Buffer> => {
@@ -20,11 +20,12 @@ import { telegramBot } from './libs/packages/telegram/telegram.js';
 //     });
 //   };
 // const buffer = await readFileToBuffer(imagePath);
-// await s3.sendFile({
-//     fileKey: 'image.jpg', // Имя файла в S3
-//     buffer: Buffer.from(buffer), // Преобразование буфера изображения в Buffer
-//     contentType: 'image/jpeg', // Тип содержимого файла
-//   });
+// const file = await fileService.create({
+//     buffer: Buffer.from(buffer),
+//     name: 'newimage.jpg',
+//     contentType: 'image/jpeg'
+// })
+// console.log(file)
 // ===========
 
 console.log(telegramBot);
