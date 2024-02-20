@@ -4,7 +4,7 @@ const DatabaseTableName = {
     REGISTRATION_STAGE: 'registration_stage',
     CREATING_APPEAL_STAGE: 'creating_appeal_stage',
     APPEAL_CATEGORY: 'appeal_category',
-    APPEAL: 'appeal'
+    APPEALS: 'appeals'
 } as const;
 
 export { DatabaseTableName };
