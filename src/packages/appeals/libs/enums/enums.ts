@@ -1,0 +1,1 @@
+export { AppealCategoryTableColumnName } from './appeal-category-table-column-name.enum.js';
