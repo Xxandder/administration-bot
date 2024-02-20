@@ -1,8 +1,12 @@
 import { type RelationMappings, Model } from 'objection';
 import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/database.js';
-import { AppealTableColumnName, AppealCategoryTableColumnName } from './libs/enums/enums.js';
+import { 
+    AppealTableColumnName, 
+    AppealCategoryTableColumnName
+} from './libs/enums/enums.js';
 
 import { AppealCategoryModel } from './appeal-category.model.js';
+import { UserModel, UsersTableColumnName } from '~/packages/users/user.js';
 
 class AppealModel extends AbstractModel{
     public latitude!: number;
@@ -25,6 +29,14 @@ class AppealModel extends AbstractModel{
                 join: {
                     from: `${DatabaseTableName.APPEALS}.${AppealTableColumnName.CATEGORY_ID}`,
                     to: `${DatabaseTableName.APPEAL_CATEGORY}.${AppealCategoryTableColumnName.ID}`
+                }
+            },
+            user: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: UserModel,
+                join: {
+                    from: `${DatabaseTableName.APPEALS}.${AppealTableColumnName.USER_ID}`,
+                    to: `${DatabaseTableName.USERS}.${UsersTableColumnName.ID}`
                 }
             }
         }

@@ -15,3 +15,7 @@ export {
     userService,  
     userRepository
 };
+
+export { UserModel };
+
+export { UsersTableColumnName } from './libs/enums/enums.js';
