@@ -2,7 +2,10 @@ import { RelationMappings, Model } from 'objection';
 import { AbstractModel, DatabaseTableName } from '~/libs/packages/database/database.js';
 import { AppealModel } from './appeal.model.js';
 
-import { AppealCategoryTableColumnName, AppealTableColumnName } from './libs/enums/enums.js';
+import { AppealCategoryTableColumnName, 
+    AppealTableColumnName ,
+    AppealRelation
+} from './libs/enums/enums.js';
 
 class AppealCategoryModel extends AbstractModel{
     public name!: string;
@@ -13,7 +16,7 @@ class AppealCategoryModel extends AbstractModel{
 
     public static get relationMappings(): RelationMappings{
         return {
-            appeals: {
+            [AppealRelation.APPEALS]: {
                 relation: Model.HasManyRelation,
                 modelClass: AppealModel,
                 join: {
