@@ -89,15 +89,7 @@ class AppealEntity implements Entity{
     public static initializeNew({
         userId,
     }:{
-        id: number | null;
-        createdAt: Date | null;
-        updatedAt: Date | null;
         userId: number;
-        categoryId: number | null;
-        latitude: number | null;
-        longitude: number | null;
-        description: string | null;
-        isFinished: boolean;
     }){
         return new AppealEntity({
             id: null, 
