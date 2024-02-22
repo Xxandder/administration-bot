@@ -22,7 +22,6 @@ class AppealRepository implements Repository{
                 userId
             } as AppealCreateQueryPayload)
             .castTo<AppealQueryResponse>();
-        console.log(appeal)
         return AppealEntity.initialize({
             id: appeal.id,
             userId: appeal.userId,
@@ -43,7 +42,6 @@ class AppealRepository implements Repository{
           .findById(id)
           .castTo<AppealQueryResponse | undefined>()
           .execute();
-    
         if (!appeal) {
           return null;
         }
@@ -51,7 +49,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: appeal.id,
             userId: appeal.userId,
-            categoryId: appeal.category.id,
+            categoryId: appeal.category?.id ?? null,
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -76,7 +74,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: appeal.id,
             userId: appeal.userId,
-            categoryId: appeal.category.id,
+            categoryId: appeal.category?.id ?? null,
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -101,7 +99,7 @@ class AppealRepository implements Repository{
         return appeals.map(appeal => AppealEntity.initialize({
             id: appeal.id,
             userId: appeal.userId,
-            categoryId: appeal.category.id,
+            categoryId: appeal.category?.id ?? null,
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -132,7 +130,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
-            categoryId: updatedAppeal.category.id,
+            categoryId: updatedAppeal.category?.id ?? null,
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -163,7 +161,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
-            categoryId: updatedAppeal.category.id,
+            categoryId: updatedAppeal.category?.id ?? null,
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -194,7 +192,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
-            categoryId: updatedAppeal.category.id,
+            categoryId: updatedAppeal.category?.id ?? null,
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -225,7 +223,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
-            categoryId: updatedAppeal.category.id,
+            categoryId: updatedAppeal.category?.id ?? null,
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -256,7 +254,7 @@ class AppealRepository implements Repository{
         return AppealEntity.initialize({
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
-            categoryId: updatedAppeal.category.id,
+            categoryId: updatedAppeal.category?.id ?? null,
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
