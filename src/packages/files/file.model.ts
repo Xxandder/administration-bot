@@ -6,7 +6,7 @@ import {
 import { type ValueOf } from '~/libs/types/types.js';
 
 class FileModel extends AbstractModel {
-  public url!: string;
+  public filePath!: string;
 
   public contentType!: ValueOf<typeof ContentType>;
 

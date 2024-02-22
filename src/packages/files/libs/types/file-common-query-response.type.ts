@@ -5,7 +5,7 @@ type FileCommonQueryResponse = {
   id: number;
   createdAt: string;
   updatedAt: string;
-  url: string;
+  filePath: string;
   contentType: ValueOf<typeof ContentType>;
 };
 
