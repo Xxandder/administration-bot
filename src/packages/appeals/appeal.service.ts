@@ -138,6 +138,18 @@ class AppealService implements Service{
         return updatedAppeal.toObject();
     }
 
+    public findAll(): Promise<{ items: [] }> {
+        return Promise.resolve({ items: [] });
+      }
+
+    public update(): ReturnType<Service['update']> {
+        return Promise.resolve(null);
+      }
+    
+      public delete(): ReturnType<Service['delete']> {
+        return Promise.resolve(true);
+      }
+
 }
 
 export { AppealService };
