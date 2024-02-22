@@ -85,11 +85,11 @@ class AppealRepository implements Repository{
         });
     }
 
-    public async findAllByUserId(userId: number): Promise<AppealEntity[] | null> {
+    public async findAllFinishedByUserId(userId: number): Promise<AppealEntity[] | null> {
         const appeals = await this.appealModel
           .query()
           .withGraphJoined(`${AppealRelation.CATEGORY}`)
-          .findOne({userId})
+          .findOne({userId, isFinished: true})
           .castTo<AppealQueryResponse[] | undefined>()
           .execute();
     
