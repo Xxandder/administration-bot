@@ -3,6 +3,7 @@ import { type AppealRepository } from "./appeal.repository.js";
 import { AppealEntity } from "./appeal.entity.js";
 import { fileService } from "~/packages/files/files.js";
 import { ContentType } from "~/libs/enums/content-type.enum.js";
+import { getTelegramFileLink } from './libs/helpers/helpers.js';
 
 class AppealService implements Service{
     private appealRepository: AppealRepository;
@@ -149,6 +150,15 @@ class AppealService implements Service{
         return appealWithPhotos.toObject();
     }
 
+    public async getPhotosLinks(appealId: number){
+        const item = await this.findById(appealId);
+        if(!item){
+            return null;
+        }
+        return item.photos?.map(photo=>{
+            return getTelegramFileLink(photo.filePath);
+        })
+    }
 
 
     public findAll(): Promise<{ items: [] }> {
