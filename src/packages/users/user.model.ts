@@ -5,6 +5,7 @@ import { UserDetailsModel } from './user-details.model.js';
 import { RegistrationStageModel } from './registration-stage.model.js';
 import { UserRelation } from './libs/enums/enums.js';
 import { CreatingAppealStageModel } from './creating-appeal-stage.model.js';
+import { AppealModel, AppealTableColumnName } from '~/packages/appeals/appeals.js';
 
 class UserModel extends AbstractModel{
     public chatId!: string;
@@ -47,6 +48,17 @@ class UserModel extends AbstractModel{
                             .${UsersTableColumnName.CREATING_APPEAL_STAGE_ID}`,
                     to:    `${DatabaseTableName.CREATING_APPEAL_STAGE}
                         .${StageTableColumnName.ID}`
+                        
+                }
+            },
+            [UserRelation.APPEALS]: {
+                relation: Model.HasManyRelation,
+                modelClass: AppealModel,
+                join: {
+                    from: `${DatabaseTableName.USERS}
+                            .${UsersTableColumnName.ID}`,
+                    to:    `${DatabaseTableName.APPEALS}
+                        .${AppealTableColumnName.USER_ID}`
                         
                 }
             }

@@ -38,12 +38,9 @@ export async function up(knex: Knex): Promise<void> {
             .inTable(TableName.APPEAL_CATEGORY)
             .onDelete(RelationRule.SET_NULL)
             .onUpdate(RelationRule.CASCADE);
-        table.integer(ColumnName.LATITUDE)
-            .notNullable();
-        table.integer(ColumnName.LONGITUDE)
-            .notNullable();
-        table.string(ColumnName.DESCRIPTION, MAX_DESCRIPTION_LENGTH)
-            .notNullable();
+        table.integer(ColumnName.LATITUDE);
+        table.integer(ColumnName.LONGITUDE);
+        table.string(ColumnName.DESCRIPTION, MAX_DESCRIPTION_LENGTH);
         table.boolean(ColumnName.IS_FINISHED)
             .notNullable()
             .defaultTo(false);
