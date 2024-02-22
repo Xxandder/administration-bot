@@ -8,3 +8,4 @@ const appealRepository = new AppealRepository(AppealModel);
 const appealService = new AppealService(appealRepository);
 
 export { appealService };
+export { AppealModel };
