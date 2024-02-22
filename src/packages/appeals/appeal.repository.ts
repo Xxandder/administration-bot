@@ -22,11 +22,11 @@ class AppealRepository implements Repository{
                 userId
             } as AppealCreateQueryPayload)
             .castTo<AppealQueryResponse>();
-
+        console.log(appeal)
         return AppealEntity.initialize({
             id: appeal.id,
             userId: appeal.userId,
-            categoryId: appeal.category.id,
+            categoryId: appeal.category?.id ?? null,
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
