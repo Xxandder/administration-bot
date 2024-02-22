@@ -1,11 +1,13 @@
-import { type Repository } from '~/libs/types/types.js';
+import { PhotoToSave, type Repository } from '~/libs/types/types.js';
 import { type AppealModel } from './appeal.model.js';
 import { AppealEntity } from './appeal.entity.js';
 
 import { type AppealQueryResponse, 
-    type AppealCreateQueryPayload } from './libs/types/types.js';
+    type AppealCreateQueryPayload,
+    type FileModelType } from './libs/types/types.js';
 import { AppealRelation, AppealTableColumnName } from './libs/enums/enums.js';
 import { String } from 'aws-sdk/clients/batch.js';
+import { fileService } from '../files/files.js';
 
 class AppealRepository implements Repository{
     private appealModel: typeof AppealModel;
@@ -22,10 +24,19 @@ class AppealRepository implements Repository{
                 userId
             } as AppealCreateQueryPayload)
             .castTo<AppealQueryResponse>();
+            
+        const createdAppeal = await this.appealModel
+            .query()
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .findById(appeal.id)
+            .castTo<AppealQueryResponse>();
+
         return AppealEntity.initialize({
             id: appeal.id,
             userId: appeal.userId,
             categoryId: appeal.category?.id ?? null,
+            categoryName: appeal.category?.name ?? null,
+            photos: [...(appeal.photos)].map(photo=>({...photo})),
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -38,7 +49,7 @@ class AppealRepository implements Repository{
     public async findById(id: number): Promise<AppealEntity | null> {
         const appeal = await this.appealModel
           .query()
-          .withGraphJoined(`${AppealRelation.CATEGORY}`)
+          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
           .findById(id)
           .castTo<AppealQueryResponse | undefined>()
           .execute();
@@ -50,6 +61,8 @@ class AppealRepository implements Repository{
             id: appeal.id,
             userId: appeal.userId,
             categoryId: appeal.category?.id ?? null,
+            categoryName: appeal.category?.name ?? null,
+            photos: [...(appeal.photos)].map(photo=>({...photo})),
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -62,7 +75,7 @@ class AppealRepository implements Repository{
     public async findNotFinishedByUserId(userId: number): Promise<AppealEntity | null> {
         const appeal = await this.appealModel
           .query()
-          .withGraphJoined(`${AppealRelation.CATEGORY}`)
+          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
           .findOne({userId, isFinished: false})
           .castTo<AppealQueryResponse | undefined>()
           .execute();
@@ -75,6 +88,8 @@ class AppealRepository implements Repository{
             id: appeal.id,
             userId: appeal.userId,
             categoryId: appeal.category?.id ?? null,
+            categoryName: appeal.category?.name ?? null,
+            photos: [...(appeal.photos)].map(photo=>({...photo})),
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -87,7 +102,7 @@ class AppealRepository implements Repository{
     public async findAllFinishedByUserId(userId: number): Promise<AppealEntity[] | null> {
         const appeals = await this.appealModel
           .query()
-          .withGraphJoined(`${AppealRelation.CATEGORY}`)
+          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
           .where({userId, isFinished: true})
           .castTo<AppealQueryResponse[] | undefined>()
           .execute();
@@ -100,6 +115,8 @@ class AppealRepository implements Repository{
             id: appeal.id,
             userId: appeal.userId,
             categoryId: appeal.category?.id ?? null,
+            categoryName: appeal.category?.name ?? null,
+            photos: [...(appeal.photos)].map(photo=>({...photo})),
             latitude: appeal.latitude,
             longitude: appeal.longitude,
             description: appeal.description,
@@ -123,7 +140,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`${AppealRelation.CATEGORY}`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -131,6 +148,8 @@ class AppealRepository implements Repository{
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
             categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -154,7 +173,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`${AppealRelation.CATEGORY}`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -162,6 +181,8 @@ class AppealRepository implements Repository{
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
             categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -185,7 +206,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`${AppealRelation.CATEGORY}`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -193,6 +214,8 @@ class AppealRepository implements Repository{
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
             categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -216,7 +239,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`${AppealRelation.CATEGORY}`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -224,6 +247,8 @@ class AppealRepository implements Repository{
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
             categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
@@ -247,7 +272,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`${AppealRelation.CATEGORY}`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -255,6 +280,44 @@ class AppealRepository implements Repository{
             id: updatedAppeal.id,
             userId: updatedAppeal.userId,
             categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
+            latitude: updatedAppeal.latitude,
+            longitude: updatedAppeal.longitude,
+            description: updatedAppeal.description,
+            isFinished: updatedAppeal.isFinished,
+            createdAt: new Date(updatedAppeal.createdAt),
+            updatedAt: new Date(updatedAppeal.updatedAt),
+        });
+    }
+
+    public async addPhotos(appealId: number, photos: PhotoToSave[]){
+        const appeal = await this.appealModel
+            .query()
+            .findById(appealId);
+        if(!appeal){
+            return null;
+        }
+        for(const photo of photos){
+            const file = await fileService.create({filePath: photo.path, 
+                contentType: photo.contentType});
+            await appeal
+                .$relatedQuery('photos')
+                .relate(file?.id as number);
+            
+        }
+        const updatedAppeal = await this.appealModel
+            .query()
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .findById(appealId)
+            .castTo<AppealQueryResponse>();
+
+        return AppealEntity.initialize({
+            id: updatedAppeal.id,
+            userId: updatedAppeal.userId,
+            categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
             latitude: updatedAppeal.latitude,
             longitude: updatedAppeal.longitude,
             description: updatedAppeal.description,
