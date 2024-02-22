@@ -27,7 +27,7 @@ class FileRepository implements Repository {
 
     return FileEntity.initialize({
       id: file.id,
-      url: file.url,
+      filePath: file.filePath,
       contentType: file.contentType,
       createdAt: new Date(file.createdAt),
       updatedAt: new Date(file.updatedAt),
@@ -39,11 +39,11 @@ class FileRepository implements Repository {
   }
 
   public async create(entity: FileEntity): Promise<FileEntity> {
-    const { url, contentType } = entity.toNewObject();
+    const { filePath, contentType } = entity.toNewObject();
     const file = await this.fileModel
       .query()
       .insertGraph({
-        url,
+        filePath,
         contentType,
       } as FileCreateQueryPayload)
       .castTo<FileCommonQueryResponse>()
@@ -51,7 +51,7 @@ class FileRepository implements Repository {
 
     return FileEntity.initialize({
       id: file.id,
-      url: file.url,
+      filePath: file.filePath,
       contentType: file.contentType,
       createdAt: new Date(file.createdAt),
       updatedAt: new Date(file.updatedAt),

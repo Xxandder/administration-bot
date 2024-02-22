@@ -45,7 +45,7 @@ class FileService implements Service {
   ): Promise<ReturnType<FileEntity['toObject']> | null> {
     const file = await this.fileRepository.create(
       FileEntity.initializeNew({
-        url: payload.url,
+        filePath: payload.filePath,
         contentType: payload.contentType,
       }),
     );

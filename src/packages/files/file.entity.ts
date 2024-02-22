@@ -8,25 +8,25 @@ class FileEntity implements Entity {
 
   private updatedAt: Date | null;
 
-  private url: string;
+  private filePath: string;
 
   private contentType: ValueOf<typeof ContentType>;
 
   private constructor({
     id,
-    url,
+    filePath,
     contentType,
     createdAt,
     updatedAt,
   }: {
     id: number | null;
-    url: string;
+    filePath: string;
     contentType: ValueOf<typeof ContentType>;
     createdAt: Date | null;
     updatedAt: Date | null;
   }) {
     this.id = id;
-    this.url = url;
+    this.filePath = filePath;
     this.contentType = contentType;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
@@ -34,20 +34,20 @@ class FileEntity implements Entity {
 
   public static initialize({
     id,
-    url,
+    filePath,
     contentType,
     createdAt,
     updatedAt,
   }: {
     id: number;
-    url: string;
+    filePath: string;
     contentType: ValueOf<typeof ContentType>;
     createdAt: Date;
     updatedAt: Date;
   }): FileEntity {
     return new FileEntity({
       id,
-      url,
+      filePath,
       contentType,
       createdAt,
       updatedAt,
@@ -55,15 +55,15 @@ class FileEntity implements Entity {
   }
 
   public static initializeNew({
-    url,
+    filePath,
     contentType,
   }: {
-    url: string;
+    filePath: string;
     contentType: ValueOf<typeof ContentType>;
   }): FileEntity {
     return new FileEntity({
       id: null,
-      url,
+      filePath,
       contentType,
       createdAt: null,
       updatedAt: null,
@@ -72,14 +72,14 @@ class FileEntity implements Entity {
 
   public toObject(): {
     id: number;
-    url: string;
+    filePath: string;
     contentType: ValueOf<typeof ContentType>;
     createdAt: Date;
     updatedAt: Date;
   } {
     return {
       id: this.id as number,
-      url: this.url,
+      filePath: this.filePath,
       contentType: this.contentType,
       createdAt: this.createdAt as Date,
       updatedAt: this.updatedAt as Date,
@@ -87,11 +87,11 @@ class FileEntity implements Entity {
   }
 
   public toNewObject(): {
-    url: string;
+    filePath: string;
     contentType: ValueOf<typeof ContentType>;
   } {
     return {
-      url: this.url,
+      filePath: this.filePath,
       contentType: this.contentType,
     };
   }
