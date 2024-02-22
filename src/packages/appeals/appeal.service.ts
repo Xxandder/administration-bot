@@ -7,6 +7,15 @@ class AppealService implements Service{
 
     constructor(appealRepository: AppealRepository){
         this.appealRepository = appealRepository;
+
+        this.findById = this.findById.bind(this);
+        this.create = this.create.bind(this);
+        this.findAllFinishedByUserId = this.findAllFinishedByUserId.bind(this);
+        this.findNotFinishedByUserId = this.findNotFinishedByUserId.bind(this);
+        this.updateCategoryId = this.updateCategoryId.bind(this);
+        this.updateCoordinates = this.updateCoordinates.bind(this);
+        this.updateDescription = this.updateDescription.bind(this);
+        this.updateIsFinished = this.updateIsFinished.bind(this);
     }
 
     public async create(userId: number): 
@@ -123,6 +132,8 @@ class AppealService implements Service{
 
         return updatedAppeal.toObject();
     }
+
+
 
     public findAll(): Promise<{ items: [] }> {
         return Promise.resolve({ items: [] });
