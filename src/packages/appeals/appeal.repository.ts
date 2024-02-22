@@ -88,7 +88,7 @@ class AppealRepository implements Repository{
         const appeals = await this.appealModel
           .query()
           .withGraphJoined(`${AppealRelation.CATEGORY}`)
-          .findOne({userId, isFinished: true})
+          .where({userId, isFinished: true})
           .castTo<AppealQueryResponse[] | undefined>()
           .execute();
     
