@@ -22,6 +22,8 @@ class AppealModel extends AbstractModel{
 
     public userId!: number;
 
+    public categoryId!: number;
+
     public static override get tableName(): string{
         return DatabaseTableName.APPEALS;
     }
