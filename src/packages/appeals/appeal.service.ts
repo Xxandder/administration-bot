@@ -106,29 +106,15 @@ class AppealService implements Service{
         return updatedAppeal.toObject();
     }
 
-    public async updateLatitude(appealId: number, latitude: number):
+    public async updateCoordinates(appealId: number, {longitude, latitude}: 
+        {longitude: number, latitude: number}):
         Promise<ReturnType<AppealEntity['toObject']> | null>{
         const item = await this.findById(appealId);
         if(!item){
             return null;
         }
 
-        const updatedAppeal = await this.appealRepository.updateLatitude(appealId, latitude);
-
-        if(!updatedAppeal){
-            return null;
-        }
-
-        return updatedAppeal.toObject();
-    }
-
-    public async updateLongitude(appealId: number, longitude: number):
-        Promise<ReturnType<AppealEntity['toObject']> | null>{
-        const item = await this.findById(appealId);
-        if(!item){
-            return null;
-        }
-
+        await this.appealRepository.updateLatitude(appealId, latitude);
         const updatedAppeal = await this.appealRepository.updateLongitude(appealId, longitude);
 
         if(!updatedAppeal){
