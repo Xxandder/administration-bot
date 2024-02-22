@@ -1,5 +1,13 @@
 import { type Entity } from "~/libs/types/types.js";
 
+type FileModelType = {
+    id: number;
+    createdAt: Date;
+    updatedAt: Date,
+    filePath: string,
+    contentType: string
+}
+
 class AppealEntity implements Entity{
     private id: number | null;
 
@@ -10,6 +18,10 @@ class AppealEntity implements Entity{
     private userId: number;
 
     private categoryId: number | null;
+
+    private categoryName: string | null;
+
+    private photos: FileModelType[] | null;
 
     private latitude: number | null;
 
@@ -25,6 +37,8 @@ class AppealEntity implements Entity{
         updatedAt,
         userId,
         categoryId,
+        categoryName,
+        photos,
         latitude,
         longitude,
         description,
@@ -35,6 +49,8 @@ class AppealEntity implements Entity{
         updatedAt: Date | null;
         userId: number;
         categoryId: number | null;
+        categoryName: string | null;
+        photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
         description: string | null;
@@ -45,6 +61,8 @@ class AppealEntity implements Entity{
         this.updatedAt = updatedAt;
         this.userId = userId;
         this.categoryId = categoryId;
+        this.categoryName = categoryName;
+        this.photos = photos;
         this.latitude = latitude;
         this.longitude = longitude;
         this.description = description;
@@ -57,6 +75,8 @@ class AppealEntity implements Entity{
         updatedAt,
         userId,
         categoryId = null,
+        categoryName = null,
+        photos = null,
         latitude = null,
         longitude = null,
         description = null,
@@ -67,6 +87,8 @@ class AppealEntity implements Entity{
         updatedAt: Date | null;
         userId: number;
         categoryId: number | null;
+        categoryName: string | null;
+        photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
         description: string | null;
@@ -78,6 +100,8 @@ class AppealEntity implements Entity{
             updatedAt,
             userId,
             categoryId,
+            categoryName,
+            photos,
             latitude,
             longitude,
             description,
@@ -97,6 +121,8 @@ class AppealEntity implements Entity{
             updatedAt: null,
             userId,
             categoryId: null,
+            categoryName: null,
+            photos: null,
             latitude: null,
             longitude: null,
             description: null,
@@ -111,6 +137,8 @@ class AppealEntity implements Entity{
         updatedAt: Date | null;
         userId: number;
         categoryId: number | null;
+        categoryName: string | null;
+        photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
         description: string | null;
@@ -122,6 +150,8 @@ class AppealEntity implements Entity{
             updatedAt: this.updatedAt,
             userId: this.userId,
             categoryId: this.categoryId,
+            categoryName: this.categoryName,
+            photos: this.photos,
             latitude: this.latitude,
             longitude: this.longitude,
             description: this.description,
@@ -132,6 +162,8 @@ class AppealEntity implements Entity{
     public toNewObject(): {
         userId: number;
         categoryId: number | null;
+        categoryName: string | null;
+        photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
         description: string | null;
@@ -140,6 +172,8 @@ class AppealEntity implements Entity{
         return {
             userId: this.userId,
             categoryId: this.categoryId,
+            categoryName: this.categoryName,
+            photos: this.photos,
             latitude: this.latitude,
             longitude: this.longitude,
             description: this.description,
