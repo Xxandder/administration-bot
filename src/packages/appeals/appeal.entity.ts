@@ -88,11 +88,6 @@ class AppealEntity implements Entity{
 
     public static initializeNew({
         userId,
-        categoryId = null,
-        latitude = null,
-        longitude = null,
-        description = null,
-        isFinished = false
     }:{
         id: number | null;
         createdAt: Date | null;
@@ -109,11 +104,11 @@ class AppealEntity implements Entity{
             createdAt: null,
             updatedAt: null,
             userId,
-            categoryId,
-            latitude,
-            longitude,
-            description,
-            isFinished
+            categoryId: null,
+            latitude: null,
+            longitude: null,
+            description: null,
+            isFinished: false
         })
       
     }
