@@ -43,24 +43,9 @@ class FileService implements Service {
   public async create(
     payload: FileUploadPayload,
   ): Promise<ReturnType<FileEntity['toObject']> | null> {
-    const fileExtensionIndex = 1;
-
-    const customName = `${crypto.randomUUID()}.${
-      payload.contentType.split('/')[fileExtensionIndex]
-    }`;
-
-    const fileKey = payload.name ?? customName;
-
-    await this.s3.sendFile({
-      fileKey,
-      buffer: payload.buffer,
-      contentType: payload.contentType,
-    });
-
-    const url = this.s3.getUrl(fileKey);
     const file = await this.fileRepository.create(
       FileEntity.initializeNew({
-        url,
+        url: payload.url,
         contentType: payload.contentType,
       }),
     );
