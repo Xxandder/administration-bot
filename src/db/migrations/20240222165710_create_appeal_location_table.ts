@@ -11,21 +11,31 @@ const ColumnName = {
     UPDATED_AT: 'updated_at',
     LONGITUDE: 'longitude',
     LATITUDE: 'latitude',
-    ADDRESS: 'address'
+    ADDRESS: 'address',
+    LOCATION_ID: 'location_id'
 } as const;
 
+const RelationRule = {
+    CASCADE: 'CASCADE',
+    SET_NULL: 'SET NULL'
+  } as const;
+
 export async function up(knex: Knex): Promise<void> {
-    await knex.schema.alterTable(TableName.APPEALS, table=>{
-        table.dropColumn(ColumnName.LATITUDE);
-        table.dropColumn(ColumnName.LONGITUDE);
-    })
-    return knex.schema.createTable(TableName.APPEAL_LOCATIONS, function(table) {
+    await knex.schema.createTable(TableName.APPEAL_LOCATIONS, function(table) {
         table.increments(ColumnName.ID).primary();
         table.integer(ColumnName.LONGITUDE)
         table.integer(ColumnName.LATITUDE)
         table.string(ColumnName.ADDRESS)
       });
-    
+    await knex.schema.alterTable(TableName.APPEALS, table=>{
+        table.dropColumn(ColumnName.LATITUDE);
+        table.dropColumn(ColumnName.LONGITUDE);
+        table.integer(ColumnName.LOCATION_ID)
+            .references(ColumnName.ID)
+            .inTable(TableName.APPEAL_LOCATIONS)
+            .onUpdate(RelationRule.CASCADE)
+            .onDelete(RelationRule.SET_NULL);
+    })
 }
 
 
