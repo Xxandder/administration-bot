@@ -9,8 +9,12 @@ import { AppealModel, AppealTableColumnName } from '~/packages/appeals/appeals.j
 
 class UserModel extends AbstractModel{
     public chatId!: string;
+
     public isRegistered!: boolean;
     public registrationStageId!: number;
+    
+    public isCreatingAppeal!: boolean;
+    public creatingAppealStageId!: number;
 
     public static override get tableName(): string{
         return DatabaseTableName.USERS;
