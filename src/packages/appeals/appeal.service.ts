@@ -5,6 +5,7 @@ import { fileService } from "~/packages/files/files.js";
 import { ContentType } from "~/libs/enums/content-type.enum.js";
 import { getTelegramFileLink } from './libs/helpers/helpers.js';
 import { type AppealLocation } from './libs/types/types.js';
+import { DEFAULT_ADDRESS_VALUE } from './libs/constants/constants.js';
 
 class AppealService implements Service{
     private appealRepository: AppealRepository;
@@ -124,6 +125,10 @@ class AppealService implements Service{
         const item = await this.findById(appealId);
         if(!item){
             return null;
+        }
+
+        if(!location.address){
+            location.address = DEFAULT_ADDRESS_VALUE;
         }
 
         const updatedAppeal = await this.appealRepository.updateLocation(appealId, location);

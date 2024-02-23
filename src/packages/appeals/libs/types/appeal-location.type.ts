@@ -1,7 +1,7 @@
 type AppealLocation = {
     latitude: number;
     longitude: number;
-    address: string;
+    address?: string
 }
 
 export { type AppealLocation };
