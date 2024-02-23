@@ -1,7 +1,7 @@
 import { type UserRepository } from "./user.repository.js"
 import { UserEntity } from "./user.entity.js";
 import { type UpdateUserDetailsPayload } from "./libs/types/types.js";
-import { registrationStageRepository } from "./user.js";
+import { creatingAppealStageRepository, registrationStageRepository } from "./user.js";
 
 type UserServiceDependencies = {
     userRepository: UserRepository
@@ -111,7 +111,16 @@ class UserService {
         }catch(e){
             throw new Error('User not found');
         }
+    }
 
+    public async getCreatingAppealStageByUserId(id: number){
+        try{
+            const item = await this.findById(id);
+            const creatingAppealStage = await creatingAppealStageRepository.findById(item?.creatingAppealStageId ?? 1);
+            return creatingAppealStage?.toObject();
+        }catch(e){
+            throw new Error('User not found');
+        }
     }
 }
 
