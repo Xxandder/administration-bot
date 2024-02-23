@@ -9,10 +9,14 @@ type AppealQueryResponse = {
     category: {
         id: number;
         name: string;
+    },
+    location: {
+        id: number;
+        latitude: number;
+        longitude: number;
+        address: string
     }
     photos: FileModelType[]
-    latitude: number;
-    longitude: number;
     description: string;
     isFinished: boolean;
 }
