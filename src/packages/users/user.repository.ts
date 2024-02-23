@@ -134,6 +134,40 @@ class UserRepository implements Repository{
         })
     }
 
+    public async updateIsCreatingAppeal(
+        {id, isCreatingAppeal}: 
+        {id: number, isCreatingAppeal: boolean}):
+         Promise<UserEntity | null>{
+        const user = (await this.findById(id));
+        if(!user){
+            return null;
+        }
+
+        await this.userModel
+            .query()
+            .patch({isCreatingAppeal: isCreatingAppeal})
+            .where({id})
+
+        const updatedUser = await this.userModel
+            .query()
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+            .findById(id)
+            .castTo<UserQueryResponse>();
+      
+        return UserEntity.initialize({
+            id: updatedUser.id,
+            createdAt: new Date(updatedUser.createdAt),
+            updatedAt:  new Date(updatedUser.updatedAt),
+            chatId: updatedUser.chatId,
+            isRegistered: updatedUser.isRegistered,
+            registrationStageId: updatedUser.registrationStage.id,
+            isCreatingAppeal: updatedUser.isCreatingAppeal,
+            creatingAppealStageId: updatedUser.creatingAppealStage.id,
+            fullName: updatedUser.details.fullName ?? null,
+            phoneNumber: updatedUser.details.phoneNumber ?? null
+        })
+    }
+
     public async updateRegistrationStage({id, backwards = false}: UpdateStagePayload): 
             Promise<UserEntity | null>{
         const user = await this.userModel
