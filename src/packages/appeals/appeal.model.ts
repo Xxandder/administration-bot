@@ -4,12 +4,14 @@ import {
     AppealTableColumnName, 
     AppealCategoryTableColumnName,
     AppealRelation,
-    AppealsPhotosTableColumnName
+    AppealsPhotosTableColumnName,
+    AppealLocationTableColumnName
 } from './libs/enums/enums.js';
 
 import { AppealCategoryModel } from './appeal-category.model.js';
 import { UserModel, UsersTableColumnName } from '~/packages/users/user.js';
 import { FileModel } from '~/packages/files/files.js';
+import { AppealLocationModel } from './appeal-location.model.js';
 
 class AppealModel extends AbstractModel{
     public latitude!: number;
@@ -57,7 +59,15 @@ class AppealModel extends AbstractModel{
                       },
                     to: `${DatabaseTableName.FILES}.${UsersTableColumnName.ID}`
                 }
-            }
+            },
+            [AppealRelation.LOCATION]: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: AppealLocationModel,
+                join: {
+                    from: `${DatabaseTableName.APPEALS}.${AppealTableColumnName.LOCATION_ID}`,
+                    to: `${DatabaseTableName.APPEAL_LOCATIONS}.${AppealLocationTableColumnName.ID}`
+                }
+            },
         }
     }
 }
