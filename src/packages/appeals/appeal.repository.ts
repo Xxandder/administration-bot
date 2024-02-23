@@ -4,7 +4,8 @@ import { AppealEntity } from './appeal.entity.js';
 
 import { type AppealQueryResponse, 
     type AppealCreateQueryPayload,
-    type FileModelType } from './libs/types/types.js';
+    type FileModelType,
+    type AppealLocation } from './libs/types/types.js';
 import { AppealRelation, AppealTableColumnName } from './libs/enums/enums.js';
 import { String } from 'aws-sdk/clients/batch.js';
 import { fileService } from '../files/files.js';
@@ -164,7 +165,7 @@ class AppealRepository implements Repository{
         });
     }
 
-    public async updateLongitude(appealId: number, longitude: number):
+    public async updateLocation(appealId: number, location: AppealLocation):
     Promise<AppealEntity | null>{
         const appeal = (await this.findById(appealId));
         if(!appeal){
@@ -172,43 +173,9 @@ class AppealRepository implements Repository{
         }
 
         await this.appealModel
-            .query()
-            .patch({longitude})
-            .where({id: appealId})
-
-        const updatedAppeal = await this.appealModel
-            .query()
-            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
-            .findById(appealId)
-            .castTo<AppealQueryResponse>();
-      
-        return AppealEntity.initialize({
-            id: updatedAppeal.id,
-            userId: updatedAppeal.userId,
-            categoryId: updatedAppeal.category?.id ?? null,
-            categoryName: updatedAppeal.category?.name ?? null,
-            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
-            latitude: updatedAppeal.location?.latitude ?? null,
-            longitude: updatedAppeal.location?.longitude ?? null,
-            address: updatedAppeal.location?.address ?? null,
-            description: updatedAppeal.description,
-            isFinished: updatedAppeal.isFinished,
-            createdAt: new Date(updatedAppeal.createdAt),
-            updatedAt: new Date(updatedAppeal.updatedAt),
-        });
-    }
-
-    public async updateLatitude(appealId: number, latitude: number):
-    Promise<AppealEntity | null>{
-        const appeal = (await this.findById(appealId));
-        if(!appeal){
-            return null;
-        }
-
-        await this.appealModel
-            .query()
-            .patch({latitude})
-            .where({id: appealId})
+            .relatedQuery(AppealRelation.LOCATION)
+            .for(appealId)
+            .patch({...location})
 
         const updatedAppeal = await this.appealModel
             .query()
