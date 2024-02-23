@@ -6,8 +6,9 @@ import { type UserQueryResponse,
 type UserCreateQueryPayload,
 type UpdateUserDetailsPayload,
 type UpdateRegistrationStagePayload } from './libs/types/types.js';
-import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER } from './libs/constants/constants.js';
-import { registrationStageRepository } from './user.js';
+import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER,
+DEFAULT_CREATING_APPEAL_STAGE_ORDER_NUMBER } from './libs/constants/constants.js';
+import { registrationStageRepository, creatingAppealStageRepository } from './user.js';
 
 class UserRepository implements Repository{
     private userModel: typeof UserModel;
@@ -19,7 +20,7 @@ class UserRepository implements Repository{
     public async findById(id: number): Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse | undefined>();
 
@@ -34,6 +35,8 @@ class UserRepository implements Repository{
             chatId: user.chatId,
             isRegistered: user.isRegistered,
             registrationStageId: user.registrationStage.id,
+            isCreatingAppeal: user.isCreatingAppeal,
+            creatingAppealStageId: user.creatingAppealStage.id,
             fullName: user.details.fullName ?? null,
             phoneNumber: user.details.phoneNumber ?? null
         })
@@ -43,7 +46,7 @@ class UserRepository implements Repository{
         
         const user = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
             .findOne({chatId})
             .castTo<UserQueryResponse | undefined>();
 
@@ -58,6 +61,8 @@ class UserRepository implements Repository{
             chatId: user.chatId,
             isRegistered: user.isRegistered,
             registrationStageId: user.registrationStage.id,
+            isCreatingAppeal: user.isCreatingAppeal,
+            creatingAppealStageId: user.creatingAppealStage.id,
             fullName: user.details.fullName ?? null,
             phoneNumber: user.details.phoneNumber ?? null
         })
@@ -67,9 +72,15 @@ class UserRepository implements Repository{
        
         const { chatId } = entity.toNewObject();
 
-        const registrationStage = await registrationStageRepository.findByOrderNumber(DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER);
+        const registrationStage = await registrationStageRepository.findByOrderNumber(
+            DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER);
         
         const registrationStageId = registrationStage?.toObject().id;
+
+        const creatingAppealStage = await creatingAppealStageRepository.findByOrderNumber(
+            DEFAULT_CREATING_APPEAL_STAGE_ORDER_NUMBER);
+
+            const creatingAppealStageId = creatingAppealStage?.toObject().id;
 
         const user = await this.userModel
             .query()
@@ -77,6 +88,8 @@ class UserRepository implements Repository{
                 chatId,
                 isRegistered: false,
                 registrationStageId: registrationStageId,
+                isCreatingAppeal: false,
+                creatingAppealStageId: creatingAppealStageId,
                 details: {
                     phoneNumber: null,
                     fullName: null
@@ -103,7 +116,7 @@ class UserRepository implements Repository{
 
         const updatedUser = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
             .findById(userObj.id)
             .castTo<UserQueryResponse>();
       
@@ -114,6 +127,8 @@ class UserRepository implements Repository{
             chatId: updatedUser.chatId,
             isRegistered: updatedUser.isRegistered,
             registrationStageId: updatedUser.registrationStage.id,
+            isCreatingAppeal: updatedUser.isCreatingAppeal,
+            creatingAppealStageId: updatedUser.creatingAppealStage.id,
             fullName: updatedUser.details.fullName ?? null,
             phoneNumber: updatedUser.details.phoneNumber ?? null
         })
@@ -123,7 +138,7 @@ class UserRepository implements Repository{
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>();
         if(!user){
@@ -144,7 +159,7 @@ class UserRepository implements Repository{
         
         const updatedUser = await this.userModel
             .query()
-            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}]`)
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
             .findById(id)
             .castTo<UserQueryResponse>(); 
         
@@ -155,6 +170,8 @@ class UserRepository implements Repository{
                 chatId: updatedUser.chatId,
                 isRegistered: updatedUser.isRegistered,
                 registrationStageId: updatedUser.registrationStage.id,
+                isCreatingAppeal: updatedUser.isCreatingAppeal,
+                creatingAppealStageId: updatedUser.creatingAppealStage.id,
                 fullName: updatedUser.details.fullName ?? null,
                 phoneNumber: updatedUser.details.phoneNumber ?? null
             })
