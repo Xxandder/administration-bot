@@ -3,8 +3,7 @@ const AppealTableColumnName = {
     USER_ID: 'userId',
     CATEGORY_ID: 'categoryId',
     DESCRIPTION: 'description',
-    LONGITUDE: 'longitude',
-    LATITUDE: 'latitude',
+    LOCATION_ID: 'location_id',
     IS_FINISHED: 'is_finished',
     CREATED_AT: 'createdAt',
     UPDATED_AT: 'updatedAt'
