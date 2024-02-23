@@ -27,6 +27,8 @@ class AppealEntity implements Entity{
 
     private longitude: number | null;
 
+    private address: string | null;
+
     private description: string | null;
 
     private isFinished: boolean;
@@ -41,6 +43,7 @@ class AppealEntity implements Entity{
         photos,
         latitude,
         longitude,
+        address,
         description,
         isFinished
     }:{
@@ -53,6 +56,7 @@ class AppealEntity implements Entity{
         photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
+        address: string | null;
         description: string | null;
         isFinished: boolean;
     }){
@@ -65,6 +69,7 @@ class AppealEntity implements Entity{
         this.photos = photos;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.address = address;
         this.description = description;
         this.isFinished = isFinished;
     }
@@ -79,6 +84,7 @@ class AppealEntity implements Entity{
         photos = null,
         latitude = null,
         longitude = null,
+        address = null,
         description = null,
         isFinished = false
     }:{
@@ -91,6 +97,7 @@ class AppealEntity implements Entity{
         photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
+        address: string | null;
         description: string | null;
         isFinished: boolean;
     }){
@@ -104,6 +111,7 @@ class AppealEntity implements Entity{
             photos,
             latitude,
             longitude,
+            address,
             description,
             isFinished
         })
@@ -125,6 +133,7 @@ class AppealEntity implements Entity{
             photos: null,
             latitude: null,
             longitude: null,
+            address: null,
             description: null,
             isFinished: false
         })
@@ -141,6 +150,7 @@ class AppealEntity implements Entity{
         photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
+        address: string | null;
         description: string | null;
         isFinished: boolean;
     } {
@@ -154,6 +164,7 @@ class AppealEntity implements Entity{
             photos: this.photos,
             latitude: this.latitude,
             longitude: this.longitude,
+            address: this.address,
             description: this.description,
             isFinished: this.isFinished
         }
@@ -166,6 +177,7 @@ class AppealEntity implements Entity{
         photos: FileModelType[] | null;
         latitude: number | null;
         longitude: number | null;
+        address: string | null;
         description: string | null;
         isFinished: boolean;
     } {
@@ -176,6 +188,7 @@ class AppealEntity implements Entity{
             photos: this.photos,
             latitude: this.latitude,
             longitude: this.longitude,
+            address: this.address,
             description: this.description,
             isFinished: this.isFinished
         }
