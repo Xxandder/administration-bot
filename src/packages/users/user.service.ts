@@ -62,6 +62,26 @@ class UserService {
         return updatedUser.toObject();
     }
 
+    public async moveToNextCreatingAppealStage(id: number){
+        try{
+            const updatedUser = await this.userRepository.updateCreatingAppealStage({id, backwards: false});
+            if(!updatedUser){
+                throw new Error('User not found');
+            }
+            return updatedUser.toObject();
+        }catch(e){
+           throw(e);
+        }
+    }
+
+    public async moveToPreviousCreatingAppealStage(id: number){
+        const updatedUser = await this.userRepository.updateCreatingAppealStage({id, backwards: true});
+        if(!updatedUser){
+            throw new Error('User not found');
+        }
+        return updatedUser.toObject();
+    }
+
     public async create(chatId: string){
         try{
             const item = await this.findByChatId(chatId);
