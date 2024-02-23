@@ -172,10 +172,18 @@ class AppealRepository implements Repository{
             return null;
         }
 
-        await this.appealModel
+        const existingLocation = await this.appealModel
             .relatedQuery(AppealRelation.LOCATION)
             .for(appealId)
-            .patch({...location})
+            .first();
+
+        if (existingLocation) { 
+            await existingLocation.$query().patch({...location});
+        } else {
+            await this.appealModel
+                .relatedQuery(AppealRelation.LOCATION)
+                .insert({...location});
+        }
 
         const updatedAppeal = await this.appealModel
             .query()
