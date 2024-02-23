@@ -6,7 +6,8 @@ const DatabaseTableName = {
     FILES: 'files',
     APPEAL_CATEGORY: 'appeal_category',
     APPEALS: 'appeals',
-    APPEALS_PHOTOS: 'appeals_photos'
+    APPEALS_PHOTOS: 'appeals_photos',
+    APPEAL_LOCATIONS: 'appeal_locations'
 } as const;
 
 export { DatabaseTableName };

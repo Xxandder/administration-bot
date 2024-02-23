@@ -1,4 +1,4 @@
-import { type FileModelType } from './file-model.type.js'
+import { type FileModelType } from './file-model.type.js';
 
 type AppealQueryResponse = {
     id: number;
@@ -9,10 +9,14 @@ type AppealQueryResponse = {
     category: {
         id: number;
         name: string;
+    },
+    location: {
+        id: number;
+        latitude: number;
+        longitude: number;
+        address: string
     }
     photos: FileModelType[]
-    latitude: number;
-    longitude: number;
     description: string;
     isFinished: boolean;
 }

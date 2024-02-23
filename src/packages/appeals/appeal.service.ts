@@ -4,6 +4,7 @@ import { AppealEntity } from "./appeal.entity.js";
 import { fileService } from "~/packages/files/files.js";
 import { ContentType } from "~/libs/enums/content-type.enum.js";
 import { getTelegramFileLink } from './libs/helpers/helpers.js';
+import { type AppealLocation } from './libs/types/types.js';
 
 class AppealService implements Service{
     private appealRepository: AppealRepository;
@@ -16,7 +17,7 @@ class AppealService implements Service{
         this.findAllFinishedByUserId = this.findAllFinishedByUserId.bind(this);
         this.findNotFinishedByUserId = this.findNotFinishedByUserId.bind(this);
         this.updateCategoryId = this.updateCategoryId.bind(this);
-        this.updateCoordinates = this.updateCoordinates.bind(this);
+        this.updateLocation = this.updateLocation.bind(this);
         this.updateDescription = this.updateDescription.bind(this);
         this.updateIsFinished = this.updateIsFinished.bind(this);
     }
@@ -118,16 +119,14 @@ class AppealService implements Service{
         return updatedAppeal.toObject();
     }
 
-    public async updateCoordinates(appealId: number, {longitude, latitude}: 
-        {longitude: number, latitude: number}):
+    public async updateLocation(appealId: number, location: AppealLocation):
         Promise<ReturnType<AppealEntity['toObject']> | null>{
         const item = await this.findById(appealId);
         if(!item){
             return null;
         }
 
-        await this.appealRepository.updateLatitude(appealId, latitude);
-        const updatedAppeal = await this.appealRepository.updateLongitude(appealId, longitude);
+        const updatedAppeal = await this.appealRepository.updateLocation(appealId, location);
 
         if(!updatedAppeal){
             return null;
