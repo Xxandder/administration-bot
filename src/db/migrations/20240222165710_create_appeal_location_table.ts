@@ -43,6 +43,7 @@ export async function down(knex: Knex): Promise<void> {
     await knex.schema.alterTable(TableName.APPEALS, table=>{
         table.integer(ColumnName.LONGITUDE)
         table.integer(ColumnName.LATITUDE)
+        table.dropColumn(ColumnName.LOCATION_ID)
     })
     return knex.schema.dropTableIfExists(TableName.APPEAL_LOCATIONS);
 }
