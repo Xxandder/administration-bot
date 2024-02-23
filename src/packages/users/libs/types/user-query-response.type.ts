@@ -9,6 +9,12 @@ type UserQueryResponse = {
         name: string;
         orderNumber: number;
     };
+    isCreatingAppeal: boolean;
+    creatingAppealStage: {
+        id: number;
+        name: string;
+        orderNumber: number;
+    }
     details: {
         id: number;
         fullName: string | null;
