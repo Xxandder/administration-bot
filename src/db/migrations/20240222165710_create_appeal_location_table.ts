@@ -26,6 +26,14 @@ export async function up(knex: Knex): Promise<void> {
         table.integer(ColumnName.LONGITUDE)
         table.integer(ColumnName.LATITUDE)
         table.string(ColumnName.ADDRESS)
+        table
+            .dateTime(ColumnName.CREATED_AT)
+            .notNullable()
+            .defaultTo(knex.fn.now());
+        table
+            .dateTime(ColumnName.UPDATED_AT)
+            .notNullable()
+            .defaultTo(knex.fn.now());
       });
     await knex.schema.alterTable(TableName.APPEALS, table=>{
         table.dropColumn(ColumnName.LATITUDE);
