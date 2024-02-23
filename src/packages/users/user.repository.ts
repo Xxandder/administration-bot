@@ -5,7 +5,7 @@ import { UserRelation } from "./libs/enums/enums.js";
 import { type UserQueryResponse,
 type UserCreateQueryPayload,
 type UpdateUserDetailsPayload,
-type UpdateRegistrationStagePayload } from './libs/types/types.js';
+type UpdateStagePayload } from './libs/types/types.js';
 import { DEFAULT_REGISTRATION_STAGE_ORDER_NUMBER,
 DEFAULT_CREATING_APPEAL_STAGE_ORDER_NUMBER } from './libs/constants/constants.js';
 import { registrationStageRepository, creatingAppealStageRepository } from './user.js';
@@ -134,7 +134,7 @@ class UserRepository implements Repository{
         })
     }
 
-    public async updateRegistrationStage({id, backwards = false}: UpdateRegistrationStagePayload): 
+    public async updateRegistrationStage({id, backwards = false}: UpdateStagePayload): 
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
@@ -176,6 +176,49 @@ class UserRepository implements Repository{
                 phoneNumber: updatedUser.details.phoneNumber ?? null
             })
     }
+
+    // public async updateCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
+    //         Promise<UserEntity | null>{
+    //     const user = await this.userModel
+    //         .query()
+    //         .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+    //         .findById(id)
+    //         .castTo<UserQueryResponse>();
+    //     if(!user){
+    //         return null;
+    //     }
+    //     const newRegistrationStage = !backwards ? await registrationStageRepository.getNext(
+    //         user.registrationStage.orderNumber) : await registrationStageRepository.getPrevious(
+    //             user.registrationStage.orderNumber);
+        
+        
+    //     const lastOrderNumber = await registrationStageRepository.getLastOrderNumber();
+    //     const isRegisteredUpdated = !backwards && newRegistrationStage?.toObject().orderNumber === lastOrderNumber;
+
+    //     await this.userModel
+    //         .query()
+    //         .patch({ registrationStageId: newRegistrationStage?.toObject().orderNumber as number, isRegistered: isRegisteredUpdated})
+    //         .where({ id });
+        
+    //     const updatedUser = await this.userModel
+    //         .query()
+    //         .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+    //         .findById(id)
+    //         .castTo<UserQueryResponse>(); 
+        
+    //     return UserEntity.initialize({
+    //             id: updatedUser.id,
+    //             createdAt: new Date(updatedUser.createdAt),
+    //             updatedAt:  new Date(updatedUser.updatedAt),
+    //             chatId: updatedUser.chatId,
+    //             isRegistered: updatedUser.isRegistered,
+    //             registrationStageId: updatedUser.registrationStage.id,
+    //             isCreatingAppeal: updatedUser.isCreatingAppeal,
+    //             creatingAppealStageId: updatedUser.creatingAppealStage.id,
+    //             fullName: updatedUser.details.fullName ?? null,
+    //             phoneNumber: updatedUser.details.phoneNumber ?? null
+    //         })
+    // }
 
     public update(): ReturnType<Repository['update']> {
         return Promise.resolve(null);
