@@ -51,7 +51,7 @@ class AppealRepository implements Repository{
     public async findById(id: number): Promise<AppealEntity | null> {
         const appeal = await this.appealModel
           .query()
-          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
           .findById(id)
           .castTo<AppealQueryResponse | undefined>()
           .execute();
@@ -78,7 +78,7 @@ class AppealRepository implements Repository{
     public async findNotFinishedByUserId(userId: number): Promise<AppealEntity | null> {
         const appeal = await this.appealModel
           .query()
-          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
           .findOne({userId, isFinished: false})
           .castTo<AppealQueryResponse | undefined>()
           .execute();
@@ -106,7 +106,7 @@ class AppealRepository implements Repository{
     public async findAllFinishedByUserId(userId: number): Promise<AppealEntity[] | null> {
         const appeals = await this.appealModel
           .query()
-          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+          .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
           .where({userId, isFinished: true})
           .castTo<AppealQueryResponse[] | undefined>()
           .execute();
@@ -145,7 +145,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -179,7 +179,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -213,7 +213,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -247,7 +247,7 @@ class AppealRepository implements Repository{
 
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
       
@@ -284,7 +284,7 @@ class AppealRepository implements Repository{
         }
         const updatedAppeal = await this.appealModel
             .query()
-            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}]`)
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
             .findById(appealId)
             .castTo<AppealQueryResponse>();
 
