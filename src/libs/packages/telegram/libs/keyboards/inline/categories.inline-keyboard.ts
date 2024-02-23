@@ -5,7 +5,7 @@ const CategoriesKeyboard: InlineKeyboard = {
     reply_markup: {
         inline_keyboard:
             Categories.map((value, index)=>{
-                return [{text: value, callback_data: `${value}/${index}`}]
+                return [{text: value, callback_data: `${value}/${index+1}`}]
             })
     }
 } as const;
