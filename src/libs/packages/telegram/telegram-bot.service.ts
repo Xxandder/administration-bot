@@ -20,6 +20,7 @@ class TelegramBotService {
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.callbackHandler = this.callbackHandler.bind(this);
+        this.handleCommonCallback = this.handleCommonCallback.bind(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', this.messageHandler);
@@ -35,6 +36,9 @@ class TelegramBotService {
 
             if(user && !user.isRegistered){
                 await this.handleUserRegistration(message);
+            }
+            else if(user && user.isCreatingAppeal){
+                //await this.handleCreatingAppeal
             }
             else{
                 console.log('registered user')
@@ -52,19 +56,40 @@ class TelegramBotService {
         }
     }
 
+
     private async callbackHandler(chatId: string, callbackData: string){
         try{
             const user = await userService.findByChatId(chatId);
             if(!user){
                 return null;
             }
-            if(!user.isRegistered){
+            else if(!user.isRegistered){
                 await this.handleRegistrationCallback(chatId, callbackData);
+            }
+            else if(user.isCreatingAppeal){
+                // await this.handleCreatingAppealCallback()
+            }
+            else{
+                await this.handleCommonCallback(chatId, callbackData);
             }
         }catch(e){
             throw(e);
         }
 
+    }
+
+    private async handleCommonCallback(chatId: string, callbackData: string){
+        const user = await userService.findByChatId(chatId);
+            if(!user){
+                return null;
+            }
+        switch(callbackData){
+            case CallbackDataCommands.CREATE_APPEAL:
+                await userService.updateIsCreatingAppeal(
+                    {id: user.id, isCreatingAppeal: true});
+                await this.sendActualMessage(chatId);
+                break;
+        }
     }
 
     private async handleRegistrationCallback(chatId: string, callbackData: string){
@@ -83,6 +108,19 @@ class TelegramBotService {
                 break;
         }
     };
+
+    private async handleCreatingAppeal(message: TelegramBot.Message){
+        const chatId = message.chat.id.toString();
+
+        try{
+            const user = await userService.findByChatId(chatId);
+            if(!user){
+                return null;
+            }
+        }catch(e){
+
+        }
+    }   
 
     private async handleUserRegistration(message: TelegramBot.Message){
         const chatId = message.chat.id.toString();
