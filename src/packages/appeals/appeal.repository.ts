@@ -5,7 +5,8 @@ import { AppealEntity } from './appeal.entity.js';
 import { type AppealQueryResponse, 
     type AppealCreateQueryPayload,
     type FileModelType,
-    type AppealLocation } from './libs/types/types.js';
+    type AppealLocation,
+    type AppealLocationQueryResponse } from './libs/types/types.js';
 import { AppealRelation, AppealTableColumnName } from './libs/enums/enums.js';
 import { String } from 'aws-sdk/clients/batch.js';
 import { fileService } from '../files/files.js';
@@ -180,9 +181,14 @@ class AppealRepository implements Repository{
         if (existingLocation) { 
             await existingLocation.$query().patch({...location});
         } else {
-            await this.appealModel
+            const newLocation = await this.appealModel
                 .relatedQuery(AppealRelation.LOCATION)
-                .insert({...location});
+                .insertAndFetch({...location})
+                .castTo<AppealLocationQueryResponse>()
+            await this.appealModel
+                .query()
+                .findById(appealId)
+                .patch({ locationId: newLocation.id });
         }
 
         const updatedAppeal = await this.appealModel
