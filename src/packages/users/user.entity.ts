@@ -13,6 +13,10 @@ class UserEntity implements Entity{
 
     private registrationStageId: number | null;
 
+    private isCreatingAppeal: boolean | null;
+
+    private creatingAppealStageId: number | null;
+
     private phoneNumber: string | null;
 
     private fullName: string | null;
@@ -24,6 +28,8 @@ class UserEntity implements Entity{
         chatId,
         isRegistered,
         registrationStageId,
+        isCreatingAppeal,
+        creatingAppealStageId,
         phoneNumber,
         fullName
     }: {
@@ -33,6 +39,8 @@ class UserEntity implements Entity{
         chatId: string;
         isRegistered: boolean| null;
         registrationStageId: number | null;
+        isCreatingAppeal: boolean | null;
+        creatingAppealStageId: number | null;
         phoneNumber: string | null;
         fullName: string | null;
     }){
@@ -42,6 +50,8 @@ class UserEntity implements Entity{
         this.chatId = chatId;
         this.isRegistered = isRegistered;
         this.registrationStageId = registrationStageId;
+        this.isCreatingAppeal = isCreatingAppeal;
+        this.creatingAppealStageId = creatingAppealStageId;
         this.phoneNumber = phoneNumber;
         this.fullName = fullName;
     }
@@ -53,6 +63,8 @@ class UserEntity implements Entity{
         chatId,
         isRegistered,
         registrationStageId,
+        isCreatingAppeal,
+        creatingAppealStageId,
         phoneNumber,
         fullName
     }: {
@@ -62,6 +74,8 @@ class UserEntity implements Entity{
         chatId: string;
         isRegistered: boolean | null;
         registrationStageId: number | null;
+        isCreatingAppeal: boolean | null;
+        creatingAppealStageId: number | null;
         phoneNumber: string | null;
         fullName: string | null;
     }){
@@ -72,6 +86,8 @@ class UserEntity implements Entity{
             chatId,
             isRegistered,
             registrationStageId,
+            isCreatingAppeal,
+            creatingAppealStageId,
             phoneNumber,
             fullName
         })
@@ -89,6 +105,8 @@ class UserEntity implements Entity{
             chatId,
             isRegistered: null,
             registrationStageId: null,
+            isCreatingAppeal: null,
+            creatingAppealStageId: null,
             phoneNumber: null,
             fullName: null
         })
@@ -98,6 +116,8 @@ class UserEntity implements Entity{
         chatId: string;
         isRegistered: boolean;
         registrationStageId: number;
+        isCreatingAppeal: boolean;
+        creatingAppealStageId: number;
         phoneNumber: string | null;
         fullName: string | null;
     } {
@@ -105,6 +125,8 @@ class UserEntity implements Entity{
             chatId: this.chatId,
             isRegistered: this.isRegistered as boolean,
             registrationStageId: this.registrationStageId as number,
+            isCreatingAppeal: this.isCreatingAppeal as boolean,
+            creatingAppealStageId: this.creatingAppealStageId as number,
             phoneNumber: this.phoneNumber,
             fullName: this.fullName
         }
@@ -117,6 +139,8 @@ class UserEntity implements Entity{
         chatId: string;
         isRegistered: boolean;
         registrationStageId: number;
+        isCreatingAppeal: boolean;
+        creatingAppealStageId: number;
         phoneNumber: string | null;
         fullName: string | null;
     } {
@@ -127,6 +151,8 @@ class UserEntity implements Entity{
             chatId: this.chatId,
             isRegistered: this.isRegistered as boolean,
             registrationStageId: this.registrationStageId as number,
+            isCreatingAppeal: this.isCreatingAppeal as boolean,
+            creatingAppealStageId: this.creatingAppealStageId as number,
             phoneNumber: this.phoneNumber,
             fullName: this.fullName
         }
