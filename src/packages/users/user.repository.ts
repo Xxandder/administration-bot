@@ -177,48 +177,53 @@ class UserRepository implements Repository{
             })
     }
 
-    // public async updateCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
-    //         Promise<UserEntity | null>{
-    //     const user = await this.userModel
-    //         .query()
-    //         .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
-    //         .findById(id)
-    //         .castTo<UserQueryResponse>();
-    //     if(!user){
-    //         return null;
-    //     }
-    //     const newRegistrationStage = !backwards ? await registrationStageRepository.getNext(
-    //         user.registrationStage.orderNumber) : await registrationStageRepository.getPrevious(
-    //             user.registrationStage.orderNumber);
-        
-        
-    //     const lastOrderNumber = await registrationStageRepository.getLastOrderNumber();
-    //     const isRegisteredUpdated = !backwards && newRegistrationStage?.toObject().orderNumber === lastOrderNumber;
+    public async updateCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
+            Promise<UserEntity | null>{
+        const user = await this.userModel
+            .query()
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+            .findById(id)
+            .castTo<UserQueryResponse>();
+        if(!user){
+            return null;
+        }
+        const newCreatingAppealStage = !backwards ? await creatingAppealStageRepository.getNext(
+            user.creatingAppealStage.orderNumber) : await creatingAppealStageRepository.getPrevious(
+                user.creatingAppealStage.orderNumber);
+    
+        const firstOrderNumberId = await creatingAppealStageRepository.findByOrderNumber(await creatingAppealStageRepository.getFirstOrderNumber())
 
-    //     await this.userModel
-    //         .query()
-    //         .patch({ registrationStageId: newRegistrationStage?.toObject().orderNumber as number, isRegistered: isRegisteredUpdated})
-    //         .where({ id });
+        if(newCreatingAppealStage?.toObject().id === user.creatingAppealStage.id){
+            await this.userModel
+            .query()
+            .patch({ creatingAppealStageId: firstOrderNumberId?.toObject().id as number, isCreatingAppeal: false })
+            .where({ id });
+        }else{
+            await this.userModel
+            .query()
+            .patch({ creatingAppealStageId: newCreatingAppealStage?.toObject().id as number, isCreatingAppeal: true })
+            .where({ id });
+        }
         
-    //     const updatedUser = await this.userModel
-    //         .query()
-    //         .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
-    //         .findById(id)
-    //         .castTo<UserQueryResponse>(); 
+        const updatedUser = await this.userModel
+            .query()
+            .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+            .findById(id)
+            .castTo<UserQueryResponse>(); 
         
-    //     return UserEntity.initialize({
-    //             id: updatedUser.id,
-    //             createdAt: new Date(updatedUser.createdAt),
-    //             updatedAt:  new Date(updatedUser.updatedAt),
-    //             chatId: updatedUser.chatId,
-    //             isRegistered: updatedUser.isRegistered,
-    //             registrationStageId: updatedUser.registrationStage.id,
-    //             isCreatingAppeal: updatedUser.isCreatingAppeal,
-    //             creatingAppealStageId: updatedUser.creatingAppealStage.id,
-    //             fullName: updatedUser.details.fullName ?? null,
-    //             phoneNumber: updatedUser.details.phoneNumber ?? null
-    //         })
-    // }
+        return UserEntity.initialize({
+                id: updatedUser.id,
+                createdAt: new Date(updatedUser.createdAt),
+                updatedAt:  new Date(updatedUser.updatedAt),
+                chatId: updatedUser.chatId,
+                isRegistered: updatedUser.isRegistered,
+                registrationStageId: updatedUser.registrationStage.id,
+                isCreatingAppeal: updatedUser.isCreatingAppeal,
+                creatingAppealStageId: updatedUser.creatingAppealStage.id,
+                fullName: updatedUser.details.fullName ?? null,
+                phoneNumber: updatedUser.details.phoneNumber ?? null
+            })
+    }
 
     public update(): ReturnType<Repository['update']> {
         return Promise.resolve(null);
