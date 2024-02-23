@@ -2,10 +2,11 @@ import TelegramBot from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
 import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage } from "./libs/enums/enums.js";
-import { type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
+import { CreatingAppealStageValues, type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualRegistrationMessageObject, getActualCommonMessageObject } from './libs/helpers/helpers.js';
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
 import { ReturnBack, ConfirmPersonalData } from './libs/keyboards/keyboards.js';
+import { getActualCreatingAppealMessageObject } from "./libs/helpers/get-actual-creating-appeal-message.helper.js";
 
 dotenv.config();
 
@@ -193,7 +194,14 @@ class TelegramBotService {
                 const messageObject = await getActualRegistrationMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
                 
                 await this.sendMessage(chatId, messageObject.text, messageObject.options)
-            }else{
+            }
+            else if(user.isCreatingAppeal){
+                const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user?.id as number);
+                const messageObject = await getActualCreatingAppealMessageObject(chatId, creatingAppealStage?.name as CreatingAppealStageValues);
+
+                await this.sendMessage(chatId, messageObject.text, messageObject.options)
+            }
+            else{
                 const messageObject = await getActualCommonMessageObject(CommonStage.MAIN_MENU);
                 await this.sendMessage(chatId, messageObject.text, messageObject.options)
             }
