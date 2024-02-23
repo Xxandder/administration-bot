@@ -1,4 +1,4 @@
-import { type FileModelType } from './file-model.type.js'
+import { type FileModelType } from './file-model.type.js';
 
 type AppealQueryResponse = {
     id: number;
