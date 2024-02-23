@@ -14,9 +14,7 @@ import { FileModel } from '~/packages/files/files.js';
 import { AppealLocationModel } from './appeal-location.model.js';
 
 class AppealModel extends AbstractModel{
-    public latitude!: number;
-
-    public longitude!: number;
+   public locationId!: number;
 
     public description!: string;
 
