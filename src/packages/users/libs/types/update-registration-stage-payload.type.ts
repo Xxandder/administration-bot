@@ -1,6 +1,6 @@
-type UpdateRegistrationStagePayload = {
+type UpdateStagePayload = {
     id: number;
     backwards: boolean;
 }
 
-export { UpdateRegistrationStagePayload };
+export { UpdateStagePayload };
