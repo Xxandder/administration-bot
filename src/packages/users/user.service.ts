@@ -40,6 +40,14 @@ class UserService {
         return updatedUser.toObject();
     }
 
+    public async updateIsCreatingAppeal({id, isCreatingAppeal}: {id: number, isCreatingAppeal: boolean}){
+        const updatedUser = await this.userRepository.updateIsCreatingAppeal({id, isCreatingAppeal});
+        if(!updatedUser){
+            throw new Error('User not found');
+        }
+        return updatedUser.toObject();
+    }
+
     public async moveToNextRegistrationStage(id: number){
         try{
             const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: false});
