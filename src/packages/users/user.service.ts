@@ -40,6 +40,14 @@ class UserService {
         return updatedUser.toObject();
     }
 
+    public async updateIsCreatingAppeal({id, isCreatingAppeal}: {id: number, isCreatingAppeal: boolean}){
+        const updatedUser = await this.userRepository.updateIsCreatingAppeal({id, isCreatingAppeal});
+        if(!updatedUser){
+            throw new Error('User not found');
+        }
+        return updatedUser.toObject();
+    }
+
     public async moveToNextRegistrationStage(id: number){
         try{
             const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: false});
@@ -56,6 +64,26 @@ class UserService {
 
     public async moveToPreviousRegistrationStage(id: number){
         const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: true});
+        if(!updatedUser){
+            throw new Error('User not found');
+        }
+        return updatedUser.toObject();
+    }
+
+    public async moveToNextCreatingAppealStage(id: number){
+        try{
+            const updatedUser = await this.userRepository.updateCreatingAppealStage({id, backwards: false});
+            if(!updatedUser){
+                throw new Error('User not found');
+            }
+            return updatedUser.toObject();
+        }catch(e){
+           throw(e);
+        }
+    }
+
+    public async moveToPreviousCreatingAppealStage(id: number){
+        const updatedUser = await this.userRepository.updateCreatingAppealStage({id, backwards: true});
         if(!updatedUser){
             throw new Error('User not found');
         }
