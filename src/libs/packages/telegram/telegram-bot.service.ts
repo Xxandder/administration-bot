@@ -112,6 +112,11 @@ class TelegramBotService {
             await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
             await userService.moveToNextCreatingAppealStage(user.id);
         }
+        switch(callbackData){
+            case CallbackDataCommands.GO_BACK:
+                await userService.moveToPreviousCreatingAppealStage(user.id);
+                break;
+        }
         await this.sendActualMessage(chatId);
     }
 
