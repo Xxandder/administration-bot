@@ -160,7 +160,7 @@ class TelegramBotService {
                         }else{
                             await appealService.updateDescription(currentAppeal?.id as number, value)
                             await userService.moveToNextCreatingAppealStage(user.id);
-                            await this.sendActualMessage(chatId);  
+                            
                         }
                     }else{
                           
@@ -192,7 +192,9 @@ class TelegramBotService {
                                     ConfirmPhotos);
                             }
                         }
-                          
+                    default:
+                        await this.sendActualMessage(chatId)
+                        break;         
             }
         
         }
