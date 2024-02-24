@@ -174,6 +174,7 @@ class TelegramBotService {
                 return null;
             }
             const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
+            console.log(creatingAppealStage);
             switch(creatingAppealStage?.name){
                 case CreatingAppealStage.ENTER_DESCRIPTION:
                     if(this.checkIsMessageHasOnlyText(message)){
@@ -209,16 +210,22 @@ class TelegramBotService {
                             }
                         break;
                     case CreatingAppealStage.SEND_GEO:
-                        console.log('geo')
                         if(message.venue){
                             const longitude = message.venue?.location.longitude;
                             const latitude = message.venue?.location.latitude;
                             const address = message.venue?.address;
-                            await appealService.updateLocation(currentAppeal?.id as number,
-                               {longitude, latitude, address} );
+                          
+                            const location = await appealService.updateLocation(currentAppeal?.id as number,
+                                    {longitude, latitude, address:"Точка на мапі"} );
+                           
                             await userService.moveToNextCreatingAppealStage(user.id);
                             await this.sendActualMessage(chatId);
+                            
                         }
+                        break;
+                    case CreatingAppealStage.CONFIRMATION:
+                        await this.sendAppeal(chatId, currentAppeal?.id as number);
+                        break;
                     default:
                         await this.sendActualMessage(chatId)
                         break;         
@@ -227,6 +234,7 @@ class TelegramBotService {
         }
             
         catch(e){
+            console.log(e)
             await this.sendActualMessage(chatId);
         }
         
@@ -294,6 +302,17 @@ class TelegramBotService {
         await this.sendActualMessage(chatId);
     }
     
+    private async sendAppeal(chatId: string, appealId: number){
+        await this.sendActualMessage(chatId);
+        const photoIds = await appealService.getPhotosFilePaths(appealId);
+        if(photoIds){
+            for(const photoId of photoIds){
+                this.bot.sendPhoto(chatId, photoId)
+            }
+        }
+
+    }
+
     private async sendActualMessage(chatId: string){
         
         try{
@@ -305,6 +324,7 @@ class TelegramBotService {
                 await this.sendMessage(chatId, messageObject.text, messageObject.options)
             }
             else if(user.isCreatingAppeal){
+
                 const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user?.id as number);
                 const messageObject = await getActualCreatingAppealMessageObject(chatId, creatingAppealStage?.name as CreatingAppealStageValues);
 
