@@ -7,6 +7,7 @@ import { getActualRegistrationMessageObject, getActualCommonMessageObject } from
 import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
 import { ReturnBack, ConfirmPersonalData } from './libs/keyboards/keyboards.js';
 import { getActualCreatingAppealMessageObject } from "./libs/helpers/get-actual-creating-appeal-message.helper.js";
+import { appealService } from "~/packages/appeals/appeals.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ class TelegramBotService {
         this.sendMessage = this.sendMessage.bind(this);
         this.callbackHandler = this.callbackHandler.bind(this);
         this.handleCommonCallback = this.handleCommonCallback.bind(this);
+        this.handleCreatingAppealCallback = this.handleCreatingAppealCallback.bind(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', this.messageHandler);
@@ -88,10 +90,35 @@ class TelegramBotService {
             case CallbackDataCommands.CREATE_APPEAL:
                 await userService.updateIsCreatingAppeal(
                     {id: user.id, isCreatingAppeal: true});
+                await appealService.create(user.id);
                 await this.sendActualMessage(chatId);
                 break;
         }
     }
+
+    private async handleCreatingAppealCallback(chatId: string, callbackData: string){
+        const user = await userService.findByChatId(chatId);
+            if(!user){
+                return null;
+            }
+        const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
+        
+        const categoriesCallbackPattern = /^[a-zA-Z_]+\/\d+$/;
+
+        if(categoriesCallbackPattern.test(callbackData)){
+            const categoryId = parseInt(callbackData.split('/')[1] as string);
+            await appealService.updateCategoryId(currentAppeal?.id as number, categoryId)
+        }
+        await this.sendActualMessage(chatId);
+        // switch(callbackData){
+        //     case CallbackDataCommands.CREATE_APPEAL:
+        //         await userService.updateIsCreatingAppeal(
+        //             {id: user.id, isCreatingAppeal: true});
+        //         await this.sendActualMessage(chatId);
+        //         break;
+        // }
+    }
+
 
     private async handleRegistrationCallback(chatId: string, callbackData: string){
         const user = await userService.findByChatId(chatId);
