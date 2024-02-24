@@ -58,7 +58,6 @@ class TelegramBotService {
                 await this.handleUserRegistration(message);
             }
             else if(user && user.isCreatingAppeal){
-                console.log('message with photo')
                 await this.handleCreatingAppeal(message)
             }
             else{
@@ -192,15 +191,7 @@ class TelegramBotService {
                           
                     }
                 case CreatingAppealStage.SEND_PHOTOS:
-                    
-                    // console.log('current number of photos: ', currentNumberOfPhotos);
-                    // console.log('message photos length: ', message?.photo?.length)
                     if(message.photo){
-                        // if(currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS){
-                        //     await userService.moveToNextCreatingAppealStage(user.id);
-                        //     await this.sendActualMessage(chatId);
-                        //     isUserSendingPhotos[chatId] = false;
-                        // }else{
                             isUserSendingPhotos[chatId] = true;
                             for(let index = 3; index < message.photo.length; index += 4){
                                 await appealService.addPhotos(currentAppeal?.id as number, [{
@@ -216,13 +207,18 @@ class TelegramBotService {
                                 await userService.moveToNextCreatingAppealStage(user.id);
                                 await this.sendActualMessage(chatId);
                             }
-                            // else if(!isUserSendingPhotos[chatId]){
-                            //     await this.sendMessage(chatId, 
-                            //         'Ви можете надіслати ще фото, або продовжити', 
-                            //         ConfirmPhotos);
-                            // }
-                        
                         break;
+                    case CreatingAppealStage.SEND_GEO:
+                        console.log('geo')
+                        if(message.venue){
+                            const longitude = message.venue?.location.longitude;
+                            const latitude = message.venue?.location.latitude;
+                            const address = message.venue?.address;
+                            await appealService.updateLocation(currentAppeal?.id as number,
+                               {longitude, latitude, address} );
+                            await userService.moveToNextCreatingAppealStage(user.id);
+                            await this.sendActualMessage(chatId);
+                        }
                     default:
                         await this.sendActualMessage(chatId)
                         break;         
