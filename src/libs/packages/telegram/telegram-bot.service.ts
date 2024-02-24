@@ -1,13 +1,15 @@
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
-import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage } from "./libs/enums/enums.js";
+import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage } from "./libs/enums/enums.js";
 import { CreatingAppealStageValues, type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualRegistrationMessageObject, getActualCommonMessageObject } from './libs/helpers/helpers.js';
 import { descriptionSchema, fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
-import { ReturnBack, ConfirmPersonalData } from './libs/keyboards/keyboards.js';
+import { ReturnBack, ConfirmPersonalData, ConfirmPhotos } from './libs/keyboards/keyboards.js';
 import { getActualCreatingAppealMessageObject } from "./libs/helpers/get-actual-creating-appeal-message.helper.js";
 import { appealService } from "~/packages/appeals/appeals.js";
+import { MAX_NUMBER_OF_PHOTOS } from "./libs/constants/constants.js";
+import { ContentType } from "~/libs/enums/content-type.enum.js";
 
 dotenv.config();
 
@@ -113,6 +115,9 @@ class TelegramBotService {
             case CallbackDataCommands.GO_BACK:
                 await userService.moveToPreviousCreatingAppealStage(user.id);
                 break;
+            case CallbackDataCommands.CONFIRM_PHOTOS:
+                await userService.moveToNextRegistrationStage(user.id);
+                break;
         }
         await this.sendActualMessage(chatId);
     }
@@ -137,9 +142,6 @@ class TelegramBotService {
 
     private async handleCreatingAppeal(message: TelegramBot.Message){
         const chatId = message.chat.id.toString();
-        if(message.photo){
-            console.log(message.photo)
-        }
         try{
             const user = await userService.findByChatId(chatId);
             const currentAppeal = await appealService.findNotFinishedByUserId(user?.id as number);
@@ -164,10 +166,38 @@ class TelegramBotService {
                           
                     }
                 case CreatingAppealStage.SEND_PHOTOS:
-
+                    const currentPhotos = await appealService.getPhotosLinks(currentAppeal?.id as number);
+                    const currentNumberOfPhotos = currentPhotos ? currentPhotos.length : 0;
+                    if(message.photo){
+                        if(message.photo.length > MAX_NUMBER_OF_PHOTOS*3 + currentNumberOfPhotos){
+                            await this.sendMessage(chatId, 
+                                CreatingAppealStageMessage.MAX_NUMBER_OF_PHOTOS, 
+                                ReturnBack);
+                        }else{
+                            for(let index = 2; index < message.photo.length; index += 3){
+                                await appealService.addPhotos(currentAppeal?.id as number, [{
+                                    path: message.photo[index]?.file_id as string,
+                                    contentType: ContentType.JPEG
+                                }]
+                                )}
+                            }
+                            
+                            if(message.photo.length === MAX_NUMBER_OF_PHOTOS*3 + currentNumberOfPhotos){
+                                await userService.moveToNextCreatingAppealStage(user.id);
+                                await this.sendActualMessage(chatId);  
+                            }
+                            else{
+                                await this.sendMessage(chatId, 
+                                    'Ви можете надіслати ще фото, або продовжити', 
+                                    ConfirmPhotos);
+                            }
+                        }
+                          
             }
+        
+        }
             
-        }catch(e){
+        catch(e){
             await this.sendActualMessage(chatId);
         }
         
