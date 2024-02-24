@@ -16,7 +16,16 @@ const getActualCreatingAppealMessageObject = async (chatId: string, stage: Creat
                 text: CreatingAppealStageMessage.ENTER_DESCRIPTION,
                 options: ReturnBack
             }
-        
+        case CreatingAppealStage.SEND_GEO:
+            return {
+                text: CreatingAppealStageMessage.SEND_GEO,
+                options: ReturnBack
+            }
+        case CreatingAppealStage.SEND_PHOTOS:
+            return {
+                text: CreatingAppealStageMessage.SEND_PHOTOS,
+                options: ReturnBack
+            }
         default: 
             return getActualCommonMessageObject(CommonStage.MAIN_MENU);
     }

@@ -1,10 +1,10 @@
 import TelegramBot from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
-import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage } from "./libs/enums/enums.js";
+import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage } from "./libs/enums/enums.js";
 import { CreatingAppealStageValues, type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualRegistrationMessageObject, getActualCommonMessageObject } from './libs/helpers/helpers.js';
-import { fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
+import { descriptionSchema, fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
 import { ReturnBack, ConfirmPersonalData } from './libs/keyboards/keyboards.js';
 import { getActualCreatingAppealMessageObject } from "./libs/helpers/get-actual-creating-appeal-message.helper.js";
 import { appealService } from "~/packages/appeals/appeals.js";
@@ -41,7 +41,7 @@ class TelegramBotService {
                 await this.handleUserRegistration(message);
             }
             else if(user && user.isCreatingAppeal){
-                //await this.handleCreatingAppeal
+                await this.handleCreatingAppeal(message)
             }
             else{
                 console.log('registered user')
@@ -137,15 +137,40 @@ class TelegramBotService {
 
     private async handleCreatingAppeal(message: TelegramBot.Message){
         const chatId = message.chat.id.toString();
-
+        if(message.photo){
+            console.log(message.photo)
+        }
         try{
             const user = await userService.findByChatId(chatId);
+            const currentAppeal = await appealService.findNotFinishedByUserId(user?.id as number);
             if(!user){
                 return null;
             }
-        }catch(e){
+            const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
+            switch(creatingAppealStage?.name){
+                case CreatingAppealStage.ENTER_DESCRIPTION:
+                    if(this.checkIsMessageHasOnlyText(message)){
+                        const { error, value } = descriptionSchema.validate(message.text);
+                        if(error){
+                            await this.sendMessage(chatId, 
+                                error.details[0]?.message as string, 
+                                ReturnBack);
+                        }else{
+                            await appealService.updateDescription(currentAppeal?.id as number, value)
+                            await userService.moveToNextCreatingAppealStage(user.id);
+                            await this.sendActualMessage(chatId);  
+                        }
+                    }else{
+                          
+                    }
+                case CreatingAppealStage.SEND_PHOTOS:
 
+            }
+            
+        }catch(e){
+            await this.sendActualMessage(chatId);
         }
+        
     }   
 
     private async handleUserRegistration(message: TelegramBot.Message){
