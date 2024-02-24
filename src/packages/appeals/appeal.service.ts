@@ -164,6 +164,16 @@ class AppealService implements Service{
         })
     }
 
+    public async getPhotosFilePaths(appealId: number){
+        const item = await this.findById(appealId);
+        if(!item){
+            return null;
+        }
+        return item.photos?.map(photo=>{
+            return photo.filePath
+        })
+    }
+
 
     public findAll(): Promise<{ items: [] }> {
         return Promise.resolve({ items: [] });
