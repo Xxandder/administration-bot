@@ -104,10 +104,7 @@ class TelegramBotService {
         const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
         
         const categoriesCallbackPattern = /^category\/\d+$/;
-        console.log(callbackData);
-        if(categoriesCallbackPattern.test(callbackData)){
-            
-            console.log('here')
+        if(categoriesCallbackPattern.test(callbackData) && user.creatingAppealStageId === 1){
             const categoryId = parseInt(callbackData.split('/')[1] as string);
             await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
             await userService.moveToNextCreatingAppealStage(user.id);
