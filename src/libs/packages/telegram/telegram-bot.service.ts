@@ -13,6 +13,9 @@ import { ContentType } from "~/libs/enums/content-type.enum.js";
 
 dotenv.config();
 
+const isUserSendingPhotos: Record<string, boolean> = {};
+const queue: Record<string, TelegramBot.Message[]> = {}; 
+
 class TelegramBotService {
     private bot: TelegramBot;
 
@@ -28,13 +31,25 @@ class TelegramBotService {
         this.handleCreatingAppealCallback = this.handleCreatingAppealCallback.bind(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
-        this.bot.on('message', this.messageHandler);
+        this.bot.on('message', async (message)=>{
+            const chatId = message.chat.id.toString();
+            if (!queue[chatId]) {
+                queue[chatId] = [];
+            }else{
+                queue[chatId]?.push(message);
+            }
+    
+            if (queue[chatId]?.length === 1) {
+                await this.messageHandler(message);
+            }
+        });
         this.bot.on('callback_query', (query)=>this.callbackHandler((query.message?.chat.id as number).toString(),
          query.data as string));
     }
 
     private async messageHandler(message: TelegramBot.Message) {
         const chatId = message.chat.id.toString();
+
         let user;
         try{
             user = await userService.findByChatId(chatId);
@@ -60,6 +75,15 @@ class TelegramBotService {
                 
             }
         }
+
+        if(chatId in queue){
+            const messages = queue[chatId as string];
+            queue[chatId as string]?.shift();
+            if (messages && messages.length > 0) {
+                await this.messageHandler(messages[0] as TelegramBot.Message);
+            }
+        }
+        
     }
 
 
@@ -168,15 +192,16 @@ class TelegramBotService {
                           
                     }
                 case CreatingAppealStage.SEND_PHOTOS:
-                    const currentPhotos = await appealService.getPhotosLinks(currentAppeal?.id as number);
-                    const currentNumberOfPhotos = currentPhotos ? currentPhotos.length : 0;
+                    
                     // console.log('current number of photos: ', currentNumberOfPhotos);
                     // console.log('message photos length: ', message?.photo?.length)
                     if(message.photo){
-                        if(message.photo.length/4 + currentNumberOfPhotos > MAX_NUMBER_OF_PHOTOS){
-                            await userService.moveToNextCreatingAppealStage(user.id);
-                            await this.sendActualMessage(chatId);  
-                        }else{
+                        // if(currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS){
+                        //     await userService.moveToNextCreatingAppealStage(user.id);
+                        //     await this.sendActualMessage(chatId);
+                        //     isUserSendingPhotos[chatId] = false;
+                        // }else{
+                            isUserSendingPhotos[chatId] = true;
                             for(let index = 3; index < message.photo.length; index += 4){
                                 await appealService.addPhotos(currentAppeal?.id as number, [{
                                     path: message.photo[index]?.file_id as string,
@@ -184,17 +209,19 @@ class TelegramBotService {
                                 }]
                                 )}
                             }
-                            
-                            if(message.photo.length/4 + currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS*3){
+                            const currentPhotos = await appealService.getPhotosLinks(currentAppeal?.id as number);
+                            const currentNumberOfPhotos = currentPhotos ? currentPhotos.length : 0;
+                            if(currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS){
+                                isUserSendingPhotos[chatId] = false;
                                 await userService.moveToNextCreatingAppealStage(user.id);
-                                await this.sendActualMessage(chatId);  
+                                await this.sendActualMessage(chatId);
                             }
-                            else{
-                                await this.sendMessage(chatId, 
-                                    'Ви можете надіслати ще фото, або продовжити', 
-                                    ConfirmPhotos);
-                            }
-                        }
+                            // else if(!isUserSendingPhotos[chatId]){
+                            //     await this.sendMessage(chatId, 
+                            //         'Ви можете надіслати ще фото, або продовжити', 
+                            //         ConfirmPhotos);
+                            // }
+                        
                         break;
                     default:
                         await this.sendActualMessage(chatId)
