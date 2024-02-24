@@ -70,7 +70,7 @@ class TelegramBotService {
                 await this.handleRegistrationCallback(chatId, callbackData);
             }
             else if(user.isCreatingAppeal){
-                // await this.handleCreatingAppealCallback()
+                await this.handleCreatingAppealCallback(chatId, callbackData)
             }
             else{
                 await this.handleCommonCallback(chatId, callbackData);
@@ -103,20 +103,16 @@ class TelegramBotService {
             }
         const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
         
-        const categoriesCallbackPattern = /^[a-zA-Z_]+\/\d+$/;
-
+        const categoriesCallbackPattern = /^category\/\d+$/;
+        console.log(callbackData);
         if(categoriesCallbackPattern.test(callbackData)){
+            
+            console.log('here')
             const categoryId = parseInt(callbackData.split('/')[1] as string);
-            await appealService.updateCategoryId(currentAppeal?.id as number, categoryId)
+            await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
+            await userService.moveToNextCreatingAppealStage(user.id);
         }
         await this.sendActualMessage(chatId);
-        // switch(callbackData){
-        //     case CallbackDataCommands.CREATE_APPEAL:
-        //         await userService.updateIsCreatingAppeal(
-        //             {id: user.id, isCreatingAppeal: true});
-        //         await this.sendActualMessage(chatId);
-        //         break;
-        // }
     }
 
 
