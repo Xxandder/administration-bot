@@ -43,6 +43,7 @@ class TelegramBotService {
                 await this.handleUserRegistration(message);
             }
             else if(user && user.isCreatingAppeal){
+                console.log('message with photo')
                 await this.handleCreatingAppeal(message)
             }
             else{
@@ -141,6 +142,7 @@ class TelegramBotService {
     };
 
     private async handleCreatingAppeal(message: TelegramBot.Message){
+    
         const chatId = message.chat.id.toString();
         try{
             const user = await userService.findByChatId(chatId);
@@ -160,7 +162,7 @@ class TelegramBotService {
                         }else{
                             await appealService.updateDescription(currentAppeal?.id as number, value)
                             await userService.moveToNextCreatingAppealStage(user.id);
-                            
+                            await this.sendActualMessage(chatId); 
                         }
                     }else{
                           
@@ -168,13 +170,14 @@ class TelegramBotService {
                 case CreatingAppealStage.SEND_PHOTOS:
                     const currentPhotos = await appealService.getPhotosLinks(currentAppeal?.id as number);
                     const currentNumberOfPhotos = currentPhotos ? currentPhotos.length : 0;
+                    // console.log('current number of photos: ', currentNumberOfPhotos);
+                    // console.log('message photos length: ', message?.photo?.length)
                     if(message.photo){
-                        if(message.photo.length > MAX_NUMBER_OF_PHOTOS*3 + currentNumberOfPhotos){
-                            await this.sendMessage(chatId, 
-                                CreatingAppealStageMessage.MAX_NUMBER_OF_PHOTOS, 
-                                ReturnBack);
+                        if(message.photo.length/4 + currentNumberOfPhotos > MAX_NUMBER_OF_PHOTOS){
+                            await userService.moveToNextCreatingAppealStage(user.id);
+                            await this.sendActualMessage(chatId);  
                         }else{
-                            for(let index = 2; index < message.photo.length; index += 3){
+                            for(let index = 3; index < message.photo.length; index += 4){
                                 await appealService.addPhotos(currentAppeal?.id as number, [{
                                     path: message.photo[index]?.file_id as string,
                                     contentType: ContentType.JPEG
@@ -182,7 +185,7 @@ class TelegramBotService {
                                 )}
                             }
                             
-                            if(message.photo.length === MAX_NUMBER_OF_PHOTOS*3 + currentNumberOfPhotos){
+                            if(message.photo.length/4 + currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS*3){
                                 await userService.moveToNextCreatingAppealStage(user.id);
                                 await this.sendActualMessage(chatId);  
                             }
@@ -192,6 +195,7 @@ class TelegramBotService {
                                     ConfirmPhotos);
                             }
                         }
+                        break;
                     default:
                         await this.sendActualMessage(chatId)
                         break;         
