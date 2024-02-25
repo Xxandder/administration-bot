@@ -1,7 +1,7 @@
 import TelegramBot, { InputMediaPhoto } from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
-import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage } from "./libs/enums/enums.js";
+import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage, RegistrationTextMessage } from "./libs/enums/enums.js";
 import { CreatingAppealStageValues, type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualRegistrationMessageObject, getActualCommonMessageObject, getAppealConfirmationMessage } from './libs/helpers/helpers.js';
 import { descriptionSchema, fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
@@ -309,6 +309,7 @@ class TelegramBotService {
 
     private async handleStart(chatId: string){
         const user = await userService.create(chatId);
+        await this.sendMessage(chatId, RegistrationTextMessage.GREETING_TEXT);
         await this.sendActualMessage(chatId);
     }
     
