@@ -1,4 +1,4 @@
-import TelegramBot from "node-telegram-bot-api";
+import TelegramBot, { InputMediaPhoto } from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
 import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage } from "./libs/enums/enums.js";
@@ -174,7 +174,6 @@ class TelegramBotService {
                 return null;
             }
             const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-            console.log(creatingAppealStage);
             switch(creatingAppealStage?.name){
                 case CreatingAppealStage.ENTER_DESCRIPTION:
                     if(this.checkIsMessageHasOnlyText(message)){
@@ -219,12 +218,12 @@ class TelegramBotService {
                                     {longitude, latitude, address:"Точка на мапі"} );
                            
                             await userService.moveToNextCreatingAppealStage(user.id);
-                            await this.sendActualMessage(chatId);
+                           await this.sendAppeal(chatId, currentAppeal?.id as number);
                             
                         }
                         break;
                     case CreatingAppealStage.CONFIRMATION:
-                        await this.sendAppeal(chatId, currentAppeal?.id as number);
+                        
                         break;
                     default:
                         await this.sendActualMessage(chatId)
@@ -303,12 +302,14 @@ class TelegramBotService {
     }
     
     private async sendAppeal(chatId: string, appealId: number){
-        await this.sendActualMessage(chatId);
         const photoIds = await appealService.getPhotosFilePaths(appealId);
+        await this.sendActualMessage(chatId);
+        
         if(photoIds){
-            for(const photoId of photoIds){
-                this.bot.sendPhoto(chatId, photoId)
-            }
+            const options: InputMediaPhoto[] = photoIds.map(photoId=>{
+                return { type: 'photo', media: photoId }
+            })
+            await this.bot.sendMediaGroup(chatId, options)
         }
 
     }

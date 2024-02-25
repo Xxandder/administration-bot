@@ -26,6 +26,11 @@ const getActualCreatingAppealMessageObject = async (chatId: string, stage: Creat
                 text: CreatingAppealStageMessage.SEND_PHOTOS,
                 options: ReturnBack
             }
+        case CreatingAppealStage.CONFIRMATION:
+            return {
+                text: CreatingAppealStageMessage.CONFIRMATION,
+                options: ReturnBack
+            }
         default: 
             return getActualCommonMessageObject(CommonStage.MAIN_MENU);
     }
