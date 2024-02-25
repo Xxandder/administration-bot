@@ -318,6 +318,46 @@ class AppealRepository implements Repository{
         });
     }
 
+    public async deletePhotos(appealId: number){
+        const appeal = await this.appealModel
+        .query()
+        .findById(appealId);
+    
+        if (!appeal) {
+            return;
+        }
+
+        const photos = await appeal.$relatedQuery('photos');
+
+        for (const photo of photos) {
+            await appeal.$relatedQuery('photos').unrelate().where('id', photo.$id());
+            await fileService.delete(photo.$id()); 
+        }
+
+        const updatedAppeal = await this.appealModel
+            .query()
+            .withGraphJoined(`[${AppealRelation.PHOTOS}, ${AppealRelation.CATEGORY}, ${AppealRelation.LOCATION}]`)
+            .findById(appealId)
+            .castTo<AppealQueryResponse>();
+
+        return AppealEntity.initialize({
+            id: updatedAppeal.id,
+            userId: updatedAppeal.userId,
+            categoryId: updatedAppeal.category?.id ?? null,
+            categoryName: updatedAppeal.category?.name ?? null,
+            photos: [...(updatedAppeal.photos)].map(photo=>({...photo})),
+            latitude: updatedAppeal.location?.latitude ?? null,
+            longitude: updatedAppeal.location?.longitude ?? null,
+            address: updatedAppeal.location?.address ?? null,
+            description: updatedAppeal.description,
+            isFinished: updatedAppeal.isFinished,
+            createdAt: new Date(updatedAppeal.createdAt),
+            updatedAt: new Date(updatedAppeal.updatedAt),
+        });
+    }
+
+
+
     public delete(id: number): ReturnType<Repository['delete']> {
         return this.appealModel.query().deleteById(id).execute();
     }

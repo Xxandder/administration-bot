@@ -154,6 +154,20 @@ class AppealService implements Service{
         return appealWithPhotos.toObject();
     }
 
+    public async deletePhotos(appealId: number){
+        const item = await this.findById(appealId);
+        if(!item){
+            return null;
+        }
+
+        const appealWithoutPhotos = await this.appealRepository.deletePhotos(appealId);
+        if(!appealWithoutPhotos){
+                    return null;
+                }
+
+        return appealWithoutPhotos.toObject();
+    }
+
     public async getPhotosLinks(appealId: number){
         const item = await this.findById(appealId);
         if(!item){
