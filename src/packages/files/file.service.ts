@@ -57,8 +57,13 @@ class FileService implements Service {
     return Promise.resolve(null);
   }
 
-  public delete(): ReturnType<Service['delete']> {
-    return Promise.resolve(true);
+  public async delete(fileId: number): ReturnType<Service['delete']> {
+    const file = this.findById(fileId);
+    if(!file){
+      return false;
+    }
+    await this.fileRepository.delete(fileId);
+    return true;
   }
 }
 
