@@ -102,7 +102,7 @@ class TelegramBotService {
                 await this.handleCommonCallback(chatId, callbackData);
             }
         }catch(e){
-            throw(e);
+            console.log(e)
         }
 
     }
@@ -143,7 +143,6 @@ class TelegramBotService {
                 if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
                     await userService.moveToNextCreatingAppealStage(user.id);
                 }
-                
                 break;
             case CallbackDataCommands.CONFIRM_APPEAL:
                 if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
