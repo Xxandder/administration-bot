@@ -1,7 +1,7 @@
 import { CreatingAppealStageValues, MessageData } from "../types/types.js";
 import { CommonStage, CreatingAppealStage, CreatingAppealStageMessage } from "../enums/enums.js";
 import { getActualCommonMessageObject } from "./helpers.js";
-import { CategoriesKeyboard, ReturnBack } from "../keyboards/keyboards.js";
+import { CategoriesKeyboard, ConfirmAppeal, ReturnBack } from "../keyboards/keyboards.js";
 
 const getActualCreatingAppealMessageObject = async (chatId: string, stage: CreatingAppealStageValues):
  Promise<MessageData> => {
@@ -29,7 +29,7 @@ const getActualCreatingAppealMessageObject = async (chatId: string, stage: Creat
         case CreatingAppealStage.CONFIRMATION:
             return {
                 text: CreatingAppealStageMessage.CONFIRMATION,
-                options: ReturnBack
+                options: ConfirmAppeal
             }
         default: 
             return getActualCommonMessageObject(CommonStage.MAIN_MENU);

@@ -3,12 +3,12 @@ import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
 import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage } from "./libs/enums/enums.js";
 import { CreatingAppealStageValues, type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
-import { getActualRegistrationMessageObject, getActualCommonMessageObject } from './libs/helpers/helpers.js';
+import { getActualRegistrationMessageObject, getActualCommonMessageObject, getAppealConfirmationMessage } from './libs/helpers/helpers.js';
 import { descriptionSchema, fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
 import { ReturnBack, ConfirmPersonalData, ConfirmPhotos } from './libs/keyboards/keyboards.js';
 import { getActualCreatingAppealMessageObject } from "./libs/helpers/get-actual-creating-appeal-message.helper.js";
 import { appealService } from "~/packages/appeals/appeals.js";
-import { MAX_NUMBER_OF_PHOTOS } from "./libs/constants/constants.js";
+import { Categories, MAX_NUMBER_OF_PHOTOS } from "./libs/constants/constants.js";
 import { ContentType } from "~/libs/enums/content-type.enum.js";
 
 dotenv.config();
@@ -128,7 +128,7 @@ class TelegramBotService {
                 return null;
             }
         const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
-        
+        const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
         const categoriesCallbackPattern = /^category\/\d+$/;
         if(categoriesCallbackPattern.test(callbackData) && user.creatingAppealStageId === 1){
             const categoryId = parseInt(callbackData.split('/')[1] as string);
@@ -140,7 +140,19 @@ class TelegramBotService {
                 await userService.moveToPreviousCreatingAppealStage(user.id);
                 break;
             case CallbackDataCommands.CONFIRM_PHOTOS:
-                await userService.moveToNextRegistrationStage(user.id);
+                if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
+                    await userService.moveToNextCreatingAppealStage(user.id);
+                }
+                
+                break;
+            case CallbackDataCommands.CONFIRM_APPEAL:
+                if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
+                    await userService.moveToNextCreatingAppealStage(user.id);
+                    await userService.updateIsCreatingAppeal(
+                    {id: user.id, isCreatingAppeal:false});
+                    await appealService.updateIsFinished(currentAppeal?.id as number, true);    
+                }
+                
                 break;
         }
         await this.sendActualMessage(chatId);
@@ -208,26 +220,26 @@ class TelegramBotService {
                                 await this.sendActualMessage(chatId);
                             }
                         break;
-                    case CreatingAppealStage.SEND_GEO:
-                        if(message.venue){
-                            const longitude = message.venue?.location.longitude;
-                            const latitude = message.venue?.location.latitude;
-                            const address = message.venue?.address;
-                          
-                            const location = await appealService.updateLocation(currentAppeal?.id as number,
-                                    {longitude, latitude, address:"Точка на мапі"} );
-                           
-                            await userService.moveToNextCreatingAppealStage(user.id);
-                           await this.sendAppeal(chatId, currentAppeal?.id as number);
+                        case CreatingAppealStage.SEND_GEO:
+                            if(message.venue){
+                                const longitude = message.venue?.location.longitude;
+                                const latitude = message.venue?.location.latitude;
+                                const address = message.venue?.address;
+                              
+                                const location = await appealService.updateLocation(currentAppeal?.id as number,
+                                        {longitude, latitude, address:"Точка на мапі"} );
+                               
+                                await userService.moveToNextCreatingAppealStage(user.id);
+                               await this.sendAppeal(chatId, currentAppeal?.id as number);
+                                
+                            }
+                            break;
+                        case CreatingAppealStage.CONFIRMATION:
                             
-                        }
-                        break;
-                    case CreatingAppealStage.CONFIRMATION:
-                        
-                        break;
-                    default:
-                        await this.sendActualMessage(chatId)
-                        break;         
+                            break;
+                        default:
+                            await this.sendActualMessage(chatId)
+                            break;         
             }
         
         }
@@ -303,7 +315,12 @@ class TelegramBotService {
     
     private async sendAppeal(chatId: string, appealId: number){
         const photoIds = await appealService.getPhotosFilePaths(appealId);
-        await this.sendActualMessage(chatId);
+
+        const appeal = await appealService.findById(appealId);
+        const confirmationText = getAppealConfirmationMessage({
+            category: appeal?.categoryName as (typeof Categories[number]),
+             description: appeal?.description as string})
+        await this.sendMessage(chatId, confirmationText);
         
         if(photoIds){
             const options: InputMediaPhoto[] = photoIds.map(photoId=>{
@@ -311,7 +328,7 @@ class TelegramBotService {
             })
             await this.bot.sendMediaGroup(chatId, options)
         }
-
+        await this.sendActualMessage(chatId);
     }
 
     private async sendActualMessage(chatId: string){
