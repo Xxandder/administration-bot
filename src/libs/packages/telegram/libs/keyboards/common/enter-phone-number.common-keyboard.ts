@@ -4,7 +4,7 @@ import { type CommonKeyboard } from "../../types/types.js";
 const EnterPhoneNumber: ReplyKeyboardMarkup  = 
 {
     keyboard: [
-        [{ text: 'Відправити мій номер телефону', request_contact: true }]
+        [{ text: 'Відправити номер', request_contact: true }],
     ],
     resize_keyboard: true,
     one_time_keyboard: true
