@@ -32,6 +32,7 @@ class TelegramBotService {
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', async (message)=>{
+            console.log('message')
             const chatId = message.chat.id.toString();
             if (!queue[chatId]) {
                 queue[chatId] = [];
@@ -134,18 +135,24 @@ class TelegramBotService {
             const categoryId = parseInt(callbackData.split('/')[1] as string);
             await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
             await userService.moveToNextCreatingAppealStage(user.id);
+            await this.sendActualMessage(chatId);
         }
         switch(callbackData){
             case CallbackDataCommands.GO_BACK:
                 if(creatingAppealStage?.name === CreatingAppealStage.SEND_GEO){
                     await appealService.deletePhotos(currentAppeal?.id as number);
                 }
+                if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY){
+                    await appealService.delete(currentAppeal?.id as number);
+                }
                 await userService.moveToPreviousCreatingAppealStage(user.id);
+                await this.sendActualMessage(chatId);
                 break;
             case CallbackDataCommands.CONFIRM_PHOTOS:
                 if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
                     await userService.moveToNextCreatingAppealStage(user.id);
                 }
+                await this.sendActualMessage(chatId);
                 break;
             case CallbackDataCommands.CONFIRM_APPEAL:
                 if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
@@ -153,11 +160,12 @@ class TelegramBotService {
                     await userService.updateIsCreatingAppeal(
                     {id: user.id, isCreatingAppeal:false});
                     await appealService.updateIsFinished(currentAppeal?.id as number, true);    
+                    await this.sendActualMessage(chatId);
                 }
                 
                 break;
         }
-        await this.sendActualMessage(chatId);
+       
     }
 
 
@@ -229,11 +237,34 @@ class TelegramBotService {
                                 const address = message.venue?.address;
                               
                                 const location = await appealService.updateLocation(currentAppeal?.id as number,
-                                        {longitude, latitude, address:"Точка на мапі"} );
+                                        {longitude, latitude, address} );
                                
-                                await userService.moveToNextCreatingAppealStage(user.id);
-                               await this.sendAppeal(chatId, currentAppeal?.id as number);
+                                        await userService.moveToNextCreatingAppealStage(user.id);
+                                        await this.sendAppeal(chatId, currentAppeal?.id as number);
                                 
+                            }
+                            if(message.location){
+                                const longitude = message.location.longitude
+                                const latitude = message.location.latitude;
+                                const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=ua&key=${process.env['GOOLGE_COORDINATES_API_KEY']}`;
+                                fetch(url)
+                                .then(async response => {
+                                    if (!response.ok) {
+                                        await appealService.updateLocation(currentAppeal?.id as number,
+                                            {longitude, latitude, address: 'Точка на мапі'} );
+                                    }
+                                    return response.json();
+                                    })
+                                    .then(async data => {
+                                        await appealService.updateLocation(currentAppeal?.id as number,
+                                            {longitude, latitude, address: data.results[0].formatted_address} );
+                                    })
+                                    .catch(async error => {
+                                        await appealService.updateLocation(currentAppeal?.id as number,
+                                            {longitude, latitude, address: 'Точка на мапі'} );
+                                    });
+                                    await userService.moveToNextCreatingAppealStage(user.id);
+                               await this.sendAppeal(chatId, currentAppeal?.id as number);
                             }
                             break;
                         case CreatingAppealStage.CONFIRMATION:
