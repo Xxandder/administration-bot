@@ -326,11 +326,12 @@ class AppealRepository implements Repository{
         if (!appeal) {
             return;
         }
-
+        await appeal.$relatedQuery('photos').unrelate();
+        
         const photos = await appeal.$relatedQuery('photos');
 
         for (const photo of photos) {
-            await appeal.$relatedQuery('photos').unrelate().where('id', photo.$id());
+            
             await fileService.delete(photo.$id()); 
         }
 

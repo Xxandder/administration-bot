@@ -137,6 +137,9 @@ class TelegramBotService {
         }
         switch(callbackData){
             case CallbackDataCommands.GO_BACK:
+                if(creatingAppealStage?.name === CreatingAppealStage.SEND_GEO){
+                    await appealService.deletePhotos(currentAppeal?.id as number);
+                }
                 await userService.moveToPreviousCreatingAppealStage(user.id);
                 break;
             case CallbackDataCommands.CONFIRM_PHOTOS:
