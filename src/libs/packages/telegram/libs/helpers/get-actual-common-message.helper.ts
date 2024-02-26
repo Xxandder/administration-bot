@@ -7,7 +7,7 @@ const getActualCommonMessageObject = async (stage: CommonStageValues): Promise<M
         case CommonStage.MAIN_MENU:
             return {
                 text: CommonTextMessages.MAIN_MENU,
-                options: MainMenu
+                options:  {reply_markup:MainMenu}
             }
         default: 
             throw new Error('Such stage doesn\'t exist');
