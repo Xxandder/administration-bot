@@ -197,9 +197,9 @@ class AppealService implements Service{
         return Promise.resolve(null);
       }
     
-      public delete(): ReturnType<Service['delete']> {
-        return Promise.resolve(true);
-      }
+    public async delete(id: number): ReturnType<Service['delete']> {
+        return await this.appealRepository.delete(id) === 0 ? true : false;
+    }
 
 }
 
