@@ -247,7 +247,7 @@ class TelegramBotService {
                                 const longitude = message.location.longitude
                                 const latitude = message.location.latitude;
                                 const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=ua&key=${process.env['GOOLGE_COORDINATES_API_KEY']}`;
-                                fetch(url)
+                                await fetch(url)
                                 .then(async response => {
                                     if (!response.ok) {
                                         await appealService.updateLocation(currentAppeal?.id as number,
@@ -263,7 +263,7 @@ class TelegramBotService {
                                         await appealService.updateLocation(currentAppeal?.id as number,
                                             {longitude, latitude, address: 'Точка на мапі'} );
                                     });
-                                    await userService.moveToNextCreatingAppealStage(user.id);
+                                await userService.moveToNextCreatingAppealStage(user.id);
                                await this.sendAppeal(chatId, currentAppeal?.id as number);
                             }
                             break;
@@ -362,6 +362,7 @@ class TelegramBotService {
             })
             await this.bot.sendMediaGroup(chatId, options)
         }
+        await this.sendMessage(chatId, appeal?.address ?? 'Точка на мапі');
         await this.sendActualMessage(chatId);
     }
 
