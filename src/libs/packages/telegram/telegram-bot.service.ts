@@ -1,4 +1,4 @@
-import TelegramBot, { InputMediaPhoto } from "node-telegram-bot-api";
+import TelegramBot, { InlineKeyboardMarkup, InputMediaPhoto, ReplyKeyboardMarkup } from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
 import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage, RegistrationTextMessage } from "./libs/enums/enums.js";
@@ -149,7 +149,7 @@ class TelegramBotService {
                 await this.sendActualMessage(chatId);
                 break;
             case CallbackDataCommands.CONFIRM_PHOTOS:
-                if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
+                if(creatingAppealStage?.name === CreatingAppealStage.SEND_PHOTOS){
                     await userService.moveToNextCreatingAppealStage(user.id);
                 }
                 await this.sendActualMessage(chatId);
@@ -304,6 +304,7 @@ class TelegramBotService {
                                 }
                             })
                             await userService.moveToNextRegistrationStage(user.id);
+                            
                             await this.sendActualMessage(chatId);
                     }else{
                         await this.sendActualMessage(chatId);
@@ -374,18 +375,18 @@ class TelegramBotService {
                 const registrationStage = await userService.getRegistrationStageByUserId(user?.id as number);
                 const messageObject = await getActualRegistrationMessageObject(chatId, registrationStage?.name as RegistrationStageValues);
                 
-                await this.sendMessage(chatId, messageObject.text, messageObject.options)
+                return await this.sendMessage(chatId, messageObject.text, messageObject.options?.reply_markup)
             }
             else if(user.isCreatingAppeal){
-
+                
                 const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user?.id as number);
                 const messageObject = await getActualCreatingAppealMessageObject(chatId, creatingAppealStage?.name as CreatingAppealStageValues);
 
-                await this.sendMessage(chatId, messageObject.text, messageObject.options)
+                return await this.sendMessage(chatId, messageObject.text, messageObject.options?.reply_markup)
             }
             else{
                 const messageObject = await getActualCommonMessageObject(CommonStage.MAIN_MENU);
-                await this.sendMessage(chatId, messageObject.text, messageObject.options)
+                return await this.sendMessage(chatId, messageObject.text, messageObject.options?.reply_markup)
             }
             
         }catch(e){
@@ -393,9 +394,11 @@ class TelegramBotService {
         }
     }
 
-    private async sendMessage(chatId: string, text: string, keyboard?: InlineKeyboard | CommonKeyboard) {
-        
-        this.bot.sendMessage(parseInt(chatId), text, keyboard);
+    private async sendMessage(chatId: string, text: string, keyboard?: ReplyKeyboardMarkup  | InlineKeyboardMarkup  ) {
+        const messageOptions: TelegramBot.SendMessageOptions = {
+            reply_markup: keyboard 
+        };
+        return await this.bot.sendMessage(parseInt(chatId), text, messageOptions);
     }
 
     private checkIsMessageHasOnlyText(message: TelegramBot.Message){
