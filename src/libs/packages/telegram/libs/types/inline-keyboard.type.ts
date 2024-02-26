@@ -1,3 +1,5 @@
+import { ReplyKeyboardMarkup } from "node-telegram-bot-api";
+
 type KeyboardButton = {
     text: string;
     callback_data: string
@@ -6,7 +8,7 @@ type KeyboardButton = {
 type InlineKeyboard = {
     reply_markup: {
         inline_keyboard : 
-                KeyboardButton[][]
+                KeyboardButton[][] | ReplyKeyboardMarkup 
     }
 }
 

@@ -62,9 +62,8 @@ class FileRepository implements Repository {
     return Promise.resolve(null);
   }
 
-  public delete(): ReturnType<Repository['delete']> {
-    const deletedCount = 0;
-    return Promise.resolve(deletedCount);
+  public delete(fileId: number): ReturnType<Repository['delete']> {
+    return this.fileModel.query().deleteById(fileId).execute();
   }
 }
 

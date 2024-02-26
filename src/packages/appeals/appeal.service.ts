@@ -154,6 +154,20 @@ class AppealService implements Service{
         return appealWithPhotos.toObject();
     }
 
+    public async deletePhotos(appealId: number){
+        const item = await this.findById(appealId);
+        if(!item){
+            return null;
+        }
+
+        const appealWithoutPhotos = await this.appealRepository.deletePhotos(appealId);
+        if(!appealWithoutPhotos){
+                    return null;
+                }
+
+        return appealWithoutPhotos.toObject();
+    }
+
     public async getPhotosLinks(appealId: number){
         const item = await this.findById(appealId);
         if(!item){
@@ -161,6 +175,16 @@ class AppealService implements Service{
         }
         return item.photos?.map(photo=>{
             return getTelegramFileLink(photo.filePath);
+        })
+    }
+
+    public async getPhotosFilePaths(appealId: number){
+        const item = await this.findById(appealId);
+        if(!item){
+            return null;
+        }
+        return item.photos?.map(photo=>{
+            return photo.filePath
         })
     }
 
@@ -173,9 +197,9 @@ class AppealService implements Service{
         return Promise.resolve(null);
       }
     
-      public delete(): ReturnType<Service['delete']> {
-        return Promise.resolve(true);
-      }
+    public async delete(id: number): ReturnType<Service['delete']> {
+        return await this.appealRepository.delete(id) === 0 ? true : false;
+    }
 
 }
 

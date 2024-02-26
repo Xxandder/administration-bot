@@ -226,7 +226,7 @@ class UserRepository implements Repository{
                 user.creatingAppealStage.orderNumber);
     
         const firstOrderNumberId = await creatingAppealStageRepository.findByOrderNumber(await creatingAppealStageRepository.getFirstOrderNumber())
-
+        
         if(newCreatingAppealStage?.toObject().id === user.creatingAppealStage.id){
             await this.userModel
             .query()

@@ -5,7 +5,7 @@ type KeyboardButton = {
 
 type CommonKeyboard = {
     reply_markup: {
-        keyboard : KeyboardButton[][],
+        keyboard : KeyboardButton[][] ,
         one_time_keyboard? : boolean
     }
 }

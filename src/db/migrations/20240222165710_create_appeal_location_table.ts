@@ -23,8 +23,8 @@ const RelationRule = {
 export async function up(knex: Knex): Promise<void> {
     await knex.schema.createTable(TableName.APPEAL_LOCATIONS, function(table) {
         table.increments(ColumnName.ID).primary();
-        table.integer(ColumnName.LONGITUDE)
-        table.integer(ColumnName.LATITUDE)
+        table.float(ColumnName.LONGITUDE)
+        table.float(ColumnName.LATITUDE)
         table.string(ColumnName.ADDRESS)
         table
             .dateTime(ColumnName.CREATED_AT)
