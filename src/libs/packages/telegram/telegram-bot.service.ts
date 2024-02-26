@@ -44,8 +44,14 @@ class TelegramBotService {
                 await this.messageHandler(message);
             }
         });
-        this.bot.on('callback_query', (query)=>this.callbackHandler((query.message?.chat.id as number).toString(),
-         query.data as string));
+        this.bot.on('callback_query', async (query)=>{
+            await this.bot.editMessageReplyMarkup({ inline_keyboard: [] }, {
+                chat_id: query.message?.chat.id as number,
+                message_id: query.message?.message_id as number
+            });
+            await this.callbackHandler((query.message?.chat.id as number).toString(), query.data as string);
+    
+        })
     }
 
     private async messageHandler(message: TelegramBot.Message) {
@@ -62,7 +68,7 @@ class TelegramBotService {
                 await this.handleCreatingAppeal(message)
             }
             else{
-                console.log('registered user')
+                await this.sendActualMessage(chatId);
             }
         }catch(e){
             if(message.text &&
@@ -88,6 +94,7 @@ class TelegramBotService {
 
 
     private async callbackHandler(chatId: string, callbackData: string){
+        
         try{
             const user = await userService.findByChatId(chatId);
             if(!user){
