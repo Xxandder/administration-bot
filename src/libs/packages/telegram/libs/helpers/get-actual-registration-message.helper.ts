@@ -11,12 +11,13 @@ const getActualRegistrationMessageObject = async (chatId: string, stage: Registr
         case RegistrationStage.SENDING_PHONE_NUMBER:
             return {
                 text: RegistrationTextMessage.ENTER_PHONE_NUMBER,
-                options: EnterPhoneNumber
+                options: {reply_markup: EnterPhoneNumber }
+                
             }
         case RegistrationStage.TYPING_FULL_NAME:
             return {
                 text: RegistrationTextMessage.ENTER_FULL_NAME,
-                options: ReturnBack
+                options: {reply_markup:ReturnBack}
             }
         case RegistrationStage.CONFIRMATION:
             try{
@@ -26,7 +27,7 @@ const getActualRegistrationMessageObject = async (chatId: string, stage: Registr
                         fullName: user?.fullName as string,
                         phoneNumber: user?.phoneNumber as string
                     }),
-                    options: ConfirmPersonalData
+                    options: {reply_markup:ConfirmPersonalData}
                 }
             }catch(e){
                 throw new Error('User Not found')

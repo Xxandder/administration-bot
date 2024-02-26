@@ -4,7 +4,7 @@ import { InlineKeyboardMarkup, ReplyKeyboardMarkup } from 'node-telegram-bot-api
 
 type MessageData = {
     text: string;
-    options? : ReplyKeyboardMarkup | InlineKeyboardMarkup 
+    options? : {reply_markup: ReplyKeyboardMarkup | InlineKeyboardMarkup }
 }
 
 export { type MessageData };
