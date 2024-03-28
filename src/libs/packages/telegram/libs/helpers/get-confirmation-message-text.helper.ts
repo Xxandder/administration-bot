@@ -4,8 +4,7 @@ type Parameters = {
 }
 
 const getConfirmationMessageText = ({fullName, phoneNumber}: Parameters) : string =>{
-    const messageText = `Ваші дані: \n Ім\'я - ${fullName} 
-    \n Номер телефону - ${phoneNumber}`;
+    const messageText = `*Ваші дані:* \nІм\'я: ${fullName}\nНомер телефону: ${phoneNumber}`;
     return messageText;
 }
 
