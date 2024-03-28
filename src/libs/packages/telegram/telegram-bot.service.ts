@@ -129,6 +129,7 @@ class TelegramBotService {
                 break;
             case CallbackDataCommands.INFO:
                 await this.sendMessage(chatId, CommonTextMessages.INFO);
+                await this.sendActualMessage(chatId);
                 break;
         }
     }
