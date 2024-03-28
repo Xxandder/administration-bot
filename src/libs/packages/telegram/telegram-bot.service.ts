@@ -32,7 +32,6 @@ class TelegramBotService {
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', async (message)=>{
-            console.log('message')
             const chatId = message.chat.id.toString();
             if (!queue[chatId]) {
                 queue[chatId] = [];
@@ -406,7 +405,8 @@ class TelegramBotService {
 
     private async sendMessage(chatId: string, text: string, keyboard?: ReplyKeyboardMarkup  | InlineKeyboardMarkup  ) {
         const messageOptions: TelegramBot.SendMessageOptions = {
-            reply_markup: keyboard 
+            reply_markup: keyboard,
+            parse_mode: 'Markdown'
         };
         return await this.bot.sendMessage(parseInt(chatId), text, messageOptions);
     }
