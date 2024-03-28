@@ -257,7 +257,8 @@ class TelegramBotService {
                             if(message.location){
                                 const longitude = message.location.longitude
                                 const latitude = message.location.latitude;
-                                const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=ua&key=${process.env['GOOLGE_COORDINATES_API_KEY']}`;
+                             
+                                const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=ru&key=${process.env['GOOLGE_COORDINATES_API_KEY']}`;
                                 await fetch(url)
                                 .then(async response => {
                                     if (!response.ok) {
@@ -367,7 +368,6 @@ class TelegramBotService {
             category: appeal?.categoryName as (typeof Categories[number]),
              description: appeal?.description as string})
         await this.sendMessage(chatId, confirmationText);
-        
         if(photoIds){
             const options: InputMediaPhoto[] = photoIds.map(photoId=>{
                 return { type: 'photo', media: photoId }
