@@ -7,7 +7,7 @@ type Parameters = {
 }
 
 const getAppealConfirmationMessage = ({category, description}: Parameters) : string =>{
-    const messageText = `*Категорія:* ${category}` +
+    const messageText = `*Категорія:* ${category}\n` +
                         `*Опис*: ${description}`;
     return messageText;
 }
