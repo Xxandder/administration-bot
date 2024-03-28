@@ -32,7 +32,6 @@ class TelegramBotService {
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', async (message)=>{
-            console.log('message')
             const chatId = message.chat.id.toString();
             if (!queue[chatId]) {
                 queue[chatId] = [];
