@@ -4,7 +4,7 @@ MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH
 
 const ValidationErrorTextMessage = {
     EMPTY_NAME: 'Поле ім\'я не моуж бути пустим',
-    WRONG_NAME_FORMAT: "Неверный формат строки",
+    WRONG_NAME_FORMAT: "Будь ласка, введіть повне ПІБ у форматі: \"Прізвище Ім'я По-батькові\"",
     NAME_TOO_LONG: `Довжина ім\'я не має перевищувати ${MAX_FULL_NAME_LENGTH} символи завдовшки`,
     NAME_TOO_SHORT: `Довжина ім\'я має бути більше ${MIN_FULL_NAME_LENGTH} символів завдовшки`,
     DESCRIPTION_TOO_SHORT: `Опис має містити що найменше ${MIN_DESCRIPTION_LENGTH} символів`,
