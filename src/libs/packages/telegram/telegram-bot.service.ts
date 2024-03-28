@@ -1,7 +1,7 @@
 import TelegramBot, { InlineKeyboardMarkup, InputMediaPhoto, ReplyKeyboardMarkup } from "node-telegram-bot-api";
 import dotenv from 'dotenv';
 import { userService } from "~/packages/users/user.js";
-import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage, RegistrationTextMessage } from "./libs/enums/enums.js";
+import { CallbackDataCommands, InlineCommands, RegistrationStage, CommonStage, CreatingAppealStage, CreatingAppealStageMessage, RegistrationTextMessage, CommonTextMessages } from "./libs/enums/enums.js";
 import { CreatingAppealStageValues, type CommonKeyboard, type InlineKeyboard, type RegistrationStageValues } from "./libs/types/types.js";
 import { getActualRegistrationMessageObject, getActualCommonMessageObject, getAppealConfirmationMessage } from './libs/helpers/helpers.js';
 import { descriptionSchema, fullNameSchema } from './libs/validation-schemas/validation-schemas.js';
@@ -32,6 +32,7 @@ class TelegramBotService {
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', async (message)=>{
+            console.log('message')
             const chatId = message.chat.id.toString();
             if (!queue[chatId]) {
                 queue[chatId] = [];
@@ -124,6 +125,10 @@ class TelegramBotService {
                 await userService.updateIsCreatingAppeal(
                     {id: user.id, isCreatingAppeal: true});
                 await appealService.create(user.id);
+                await this.sendActualMessage(chatId);
+                break;
+            case CallbackDataCommands.INFO:
+                await this.sendMessage(chatId, CommonTextMessages.INFO);
                 await this.sendActualMessage(chatId);
                 break;
         }
