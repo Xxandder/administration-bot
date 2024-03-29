@@ -192,6 +192,7 @@ class TelegramBotService {
                 break;
             case CallbackDataCommands.CONFIRM_PERSONAL_DATA:
                 await userService.moveToNextRegistrationStage(user.id);
+                await this.sendMessage(chatId, CommonTextMessages.FINAL_REGISTRATION)
                 await this.sendActualMessage(chatId);
                 break;
         }
