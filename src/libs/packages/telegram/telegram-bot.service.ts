@@ -173,6 +173,10 @@ class TelegramBotService {
                     {id: user.id, isCreatingAppeal:false});
                     await appealService.updateIsFinished(currentAppeal?.id as number, true);    
                     await this.sendActualMessage(chatId);
+
+                    await this.sendMessage(process.env?.['APPEALS_CHAT_ID'] ?? '', '🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦')
+                    await this.sendAppeal(process.env?.['APPEALS_CHAT_ID'] ?? '', currentAppeal?.id as number);
+                    await this.sendMessage(process.env?.['APPEALS_CHAT_ID'] ?? '', '🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦')
                 }
                 
                 break;
@@ -279,6 +283,7 @@ class TelegramBotService {
                                     });
                                 await userService.moveToNextCreatingAppealStage(user.id);
                                await this.sendAppeal(chatId, currentAppeal?.id as number);
+                               await this.sendActualMessage(chatId);
                             }
                             break;
                         case CreatingAppealStage.CONFIRMATION:
@@ -377,7 +382,7 @@ class TelegramBotService {
             await this.bot.sendMediaGroup(chatId, options)
         }
         await this.sendMessage(chatId, appeal?.address ?? 'Точка на мапі');
-        await this.sendActualMessage(chatId);
+        
     }
 
     private async sendActualMessage(chatId: string){
