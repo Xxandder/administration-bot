@@ -279,6 +279,7 @@ class TelegramBotService {
                                     });
                                 await userService.moveToNextCreatingAppealStage(user.id);
                                await this.sendAppeal(chatId, currentAppeal?.id as number);
+                               await this.sendActualMessage(chatId);
                             }
                             break;
                         case CreatingAppealStage.CONFIRMATION:
@@ -377,7 +378,7 @@ class TelegramBotService {
             await this.bot.sendMediaGroup(chatId, options)
         }
         await this.sendMessage(chatId, appeal?.address ?? 'Точка на мапі');
-        await this.sendActualMessage(chatId);
+        
     }
 
     private async sendActualMessage(chatId: string){
