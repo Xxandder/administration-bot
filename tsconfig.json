@@ -1,8 +1,10 @@
 {
-  "include": ["src", "knexfile.ts"],
+  "include": ["src", "src/db/knexfile.ts"],
   "files": ["src/index.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
     "target": "ESNext",
     "module": "NodeNext",
     "esModuleInterop": true,
@@ -16,6 +18,6 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "noPropertyAccessFromIndexSignature": true
+    "noPropertyAccessFromIndexSignature": true,
   }
 }
