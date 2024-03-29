@@ -36,9 +36,10 @@ class TelegramBotService {
             const chatId = message.chat.id.toString();
             if (!queue[chatId]) {
                 queue[chatId] = [];
-            }else{
-                queue[chatId]?.push(message);
+            
+                
             }
+            queue[chatId]?.push(message);
     
             if (queue[chatId]?.length === 1) {
                 await this.messageHandler(message);
