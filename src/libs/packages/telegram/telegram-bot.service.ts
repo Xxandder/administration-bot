@@ -370,7 +370,7 @@ class TelegramBotService {
             category: appeal?.categoryName as (typeof Categories[number]),
              description: appeal?.description as string})
         await this.sendMessage(chatId, confirmationText);
-        if(photoIds){
+        if(photoIds && photoIds.length >= 1){
             const options: InputMediaPhoto[] = photoIds.map(photoId=>{
                 return { type: 'photo', media: photoId }
             })
