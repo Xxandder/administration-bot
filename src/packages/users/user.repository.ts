@@ -105,9 +105,18 @@ class UserRepository implements Repository{
             return null;
         }
         const userObj = user.toObject();
-        const detailsToUpdate = Object.fromEntries(
-            Object.entries(details).filter(([key, value]) => value !== undefined && value !== null)
-          );
+
+
+        type detailsToUpdateType = {
+            phoneNumber?: string;
+            fullName? : string
+        }
+
+        const detailsToUpdate: detailsToUpdateType = {};
+        const { phoneNumber, fullName } = details;
+        phoneNumber && (detailsToUpdate.phoneNumber = 
+            phoneNumber[0] === '+' ? phoneNumber : `+${phoneNumber}`);
+        fullName && (detailsToUpdate.fullName = fullName);
 
         await this.userModel
           .relatedQuery(UserRelation.DETAILS)
@@ -119,7 +128,7 @@ class UserRepository implements Repository{
             .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
             .findById(userObj.id)
             .castTo<UserQueryResponse>();
-      
+            
         return UserEntity.initialize({
             id: updatedUser.id,
             createdAt: new Date(updatedUser.createdAt),
