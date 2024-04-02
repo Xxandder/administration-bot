@@ -2,7 +2,8 @@ import { TelegramBotService } from "./telegram-bot.service.js"
 import TelegramBot from "node-telegram-bot-api"
 import { UserEntity } from "~/packages/users/user.entity.js"
 import { userService } from "~/packages/users/user.js"
-import { CallbackDataCommands, CommonTextMessages } from "./libs/enums/enums.js"
+import { CallbackDataCommands, CommonTextMessages, CreatingAppealStage } from "./libs/enums/enums.js"
+import { appealService } from "~/packages/appeals/appeals.js"
 
 class CallbackHandler{
     private telegramBotService: TelegramBotService
@@ -99,11 +100,27 @@ class CallbackHandler{
     }
 
     async handleAppealConfirmation(user: ReturnType<UserEntity['toObject']>) {
-       
+        const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
+
+        await userService.moveToNextCreatingAppealStage(user.id);
+        await userService.updateIsCreatingAppeal(
+            {id: user.id, isCreatingAppeal:false});
+        await appealService.updateIsFinished(currentAppeal?.id as number, true);    
     }
 
     async handleGoBackCommand(user: ReturnType<UserEntity['toObject']>) {
-       
+        const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
+        const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
+
+        switch(creatingAppealStage?.name){
+            case CreatingAppealStage.SEND_GEO:
+                await appealService.deletePhotos(currentAppeal?.id as number);
+                break;
+            case CreatingAppealStage.CHOOSE_CATEGORY:
+                await appealService.delete(currentAppeal?.id as number);
+                break;
+        }
+        await userService.moveToPreviousCreatingAppealStage(user.id);
     }
 
     async handleCommonCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
