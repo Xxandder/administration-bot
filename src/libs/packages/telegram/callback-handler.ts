@@ -4,6 +4,7 @@ import { UserEntity } from "~/packages/users/user.entity.js"
 import { userService } from "~/packages/users/user.js"
 import { CallbackDataCommands, CommonTextMessages, CreatingAppealStage } from "./libs/enums/enums.js"
 import { appealService } from "~/packages/appeals/appeals.js"
+import { AppealEntity } from "~/packages/appeals/appeal.entity.js"
 
 class CallbackHandler{
     private telegramBotService: TelegramBotService
@@ -71,16 +72,28 @@ class CallbackHandler{
     }
 
     async handleCreatingAppealCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
+
         try {
+            const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
+            if(!currentAppeal){
+                console.error('Appeal not found');
+                return;
+            }
+
+            const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
+            if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY){
+                await this.handleCategoryChoosing(currentAppeal, callbackData, user);
+            }
+
             switch (callbackData) {
                 case CallbackDataCommands.GO_BACK:
-                    await this.handleGoBackCommand(user);
+                    await this.handleGoBackCommand(currentAppeal, user);
                     break;
                 case CallbackDataCommands.CONFIRM_PHOTOS:
                     await this.handlePhotoConfirmation(user);
                     break;
                 case CallbackDataCommands.CONFIRM_APPEAL:
-                    await this.handleAppealConfirmation(user);
+                    await this.handleAppealConfirmation(currentAppeal, user);
                     break;
                 default:
                     console.error('Invalid creating appeal callback.');
@@ -95,21 +108,34 @@ class CallbackHandler{
     }
 
     
+    async handleCategoryChoosing(currentAppeal: ReturnType<AppealEntity['toObject']>, 
+        callbackData: string,
+        user: ReturnType<UserEntity['toObject']>){
+           
+
+            const categoriesCallbackPattern = /^category\/\d+$/;
+            if(categoriesCallbackPattern.test(callbackData) &&
+                ){
+                    const categoryId = parseInt(callbackData.split('/')[1] as string);
+                    await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
+                    await userService.moveToNextCreatingAppealStage(user.id);
+            }
+    }
+
     async handlePhotoConfirmation(user: ReturnType<UserEntity['toObject']>) {
         await userService.moveToNextCreatingAppealStage(user.id);
     }
 
-    async handleAppealConfirmation(user: ReturnType<UserEntity['toObject']>) {
-        const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
-
+    async handleAppealConfirmation(currentAppeal: ReturnType<AppealEntity['toObject']>,
+     user: ReturnType<UserEntity['toObject']>) {
         await userService.moveToNextCreatingAppealStage(user.id);
         await userService.updateIsCreatingAppeal(
             {id: user.id, isCreatingAppeal:false});
         await appealService.updateIsFinished(currentAppeal?.id as number, true);    
     }
 
-    async handleGoBackCommand(user: ReturnType<UserEntity['toObject']>) {
-        const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
+    async handleGoBackCommand(currentAppeal: ReturnType<AppealEntity['toObject']>, 
+     user: ReturnType<UserEntity['toObject']>) {
         const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
 
         switch(creatingAppealStage?.name){
@@ -123,7 +149,8 @@ class CallbackHandler{
         await userService.moveToPreviousCreatingAppealStage(user.id);
     }
 
-    async handleCommonCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
+    async handleCommonCallback(callbackData: string, 
+     user: ReturnType<UserEntity['toObject']>){
         switch(callbackData){
             case CallbackDataCommands.CREATE_APPEAL:
                 await userService.updateIsCreatingAppeal(
