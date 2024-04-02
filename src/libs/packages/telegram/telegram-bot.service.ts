@@ -251,7 +251,7 @@ class TelegramBotService {
         }
     }
 
-    private async handleStart(chatId: string){
+    public async handleStart(chatId: string){
         const user = await userService.create(chatId);
         await this.sendMessage(chatId, RegistrationTextMessage.GREETING_TEXT);
         await this.sendActualMessage(chatId);
