@@ -95,7 +95,7 @@ class CallbackHandler{
 
     
     async handlePhotoConfirmation(user: ReturnType<UserEntity['toObject']>) {
-        
+        await userService.moveToNextCreatingAppealStage(user.id);
     }
 
     async handleAppealConfirmation(user: ReturnType<UserEntity['toObject']>) {
