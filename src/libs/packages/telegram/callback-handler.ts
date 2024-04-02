@@ -70,7 +70,40 @@ class CallbackHandler{
     }
 
     async handleCreatingAppealCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
+        try {
+            switch (callbackData) {
+                case CallbackDataCommands.GO_BACK:
+                    await this.handleGoBackCommand(user);
+                    break;
+                case CallbackDataCommands.CONFIRM_PHOTOS:
+                    await this.handlePhotoConfirmation(user);
+                    break;
+                case CallbackDataCommands.CONFIRM_APPEAL:
+                    await this.handleAppealConfirmation(user);
+                    break;
+                default:
+                    console.error('Invalid creating appeal callback.');
+                    break;
+            }
+
+            await this.telegramBotService.sendActualMessage(user.chatId);
+        } catch (error) {
+            console.error('Error handling creating appeal callback:', error);
+            throw error;
+        }
+    }
+
+    
+    async handlePhotoConfirmation(user: ReturnType<UserEntity['toObject']>) {
         
+    }
+
+    async handleAppealConfirmation(user: ReturnType<UserEntity['toObject']>) {
+       
+    }
+
+    async handleGoBackCommand(user: ReturnType<UserEntity['toObject']>) {
+       
     }
 
     async handleCommonCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
