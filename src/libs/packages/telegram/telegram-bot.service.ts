@@ -15,13 +15,14 @@ import { MessageHandler } from './message-handler.js';
 
 dotenv.config();
 
-const isUserSendingPhotos: Record<string, boolean> = {};
-const queue: Record<string, TelegramBot.Message[]> = {}; 
+
 
 class TelegramBotService {
     private bot: TelegramBot;
     private callbackHandler: CallbackHandler;
     private messageHandler: MessageHandler;
+    public isUserSendingPhotos: Record<string, boolean> = {};
+    private queue: Record<string, TelegramBot.Message[]> = {}; 
 
     public constructor(){
         this.checkIsMessageHasOnlyText = this.checkIsMessageHasOnlyText.bind(this);
@@ -39,14 +40,14 @@ class TelegramBotService {
         this.bot.on('message', async (message)=>{
             console.log('message')
             const chatId = message.chat.id.toString();
-            if (!queue[chatId]) {
-                queue[chatId] = [];
+            if (!this.queue[chatId]) {
+                this.queue[chatId] = [];
             
                 
             }
-            queue[chatId]?.push(message);
+            this.queue[chatId]?.push(message);
     
-            if (queue[chatId]?.length === 1) {
+            if (this.queue[chatId]?.length === 1) {
                 await this.processMessage(message);
             }
         });
@@ -88,9 +89,9 @@ class TelegramBotService {
         // }
         this.messageHandler.handleMessage(message);
 
-        if(chatId in queue){
-            const messages = queue[chatId as string];
-            queue[chatId as string]?.shift();
+        if(chatId in this.queue){
+            const messages = this.queue[chatId as string];
+            this.queue[chatId as string]?.shift();
             if (messages && messages.length > 0) {
                 await this.processMessage(messages[0] as TelegramBot.Message);
             }
@@ -126,7 +127,7 @@ class TelegramBotService {
                     }
                 case CreatingAppealStage.SEND_PHOTOS:
                     if(message.photo){
-                            isUserSendingPhotos[chatId] = true;
+                            this.isUserSendingPhotos[chatId] = true;
                             for(let index = 3; index < message.photo.length; index += 4){
                                 await appealService.addPhotos(currentAppeal?.id as number, [{
                                     path: message.photo[index]?.file_id as string,
@@ -137,7 +138,7 @@ class TelegramBotService {
                             const currentPhotos = await appealService.getPhotosLinks(currentAppeal?.id as number);
                             const currentNumberOfPhotos = currentPhotos ? currentPhotos.length : 0;
                             if(currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS){
-                                isUserSendingPhotos[chatId] = false;
+                                this.isUserSendingPhotos[chatId] = false;
                                 await userService.moveToNextCreatingAppealStage(user.id);
                                 await this.sendActualMessage(chatId);
                             }
