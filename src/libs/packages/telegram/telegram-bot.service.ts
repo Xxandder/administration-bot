@@ -28,7 +28,7 @@ class TelegramBotService {
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-        
+
         this.callbackHandler = new CallbackHandler(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
@@ -310,7 +310,7 @@ class TelegramBotService {
         return await this.bot.sendMessage(parseInt(chatId), text, messageOptions);
     }
 
-    private checkIsMessageHasOnlyText(message: TelegramBot.Message){
+    public checkIsMessageHasOnlyText(message: TelegramBot.Message){
         const text = message.text;
         return text && !message.photo &&
             !message.audio && 
