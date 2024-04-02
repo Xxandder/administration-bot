@@ -27,7 +27,6 @@ class TelegramBotService {
     public constructor(){
         this.checkIsMessageHasOnlyText = this.checkIsMessageHasOnlyText.bind(this);
         this.processMessage = this.processMessage.bind(this);
-        this.handleUserRegistration = this.handleUserRegistration.bind(this);
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
@@ -64,29 +63,6 @@ class TelegramBotService {
     private async processMessage(message: TelegramBot.Message) {
         const chatId = message.chat.id.toString();
 
-        // try{
-        //     user = await userService.findByChatId(chatId);
-
-        //     if(user && !user.isRegistered){
-        //         await this.handleUserRegistration(message);
-        //     }
-        //     else if(user && user.isCreatingAppeal){
-        //         await this.handleCreatingAppeal(message)
-        //     }
-        //     else{
-        //         await this.sendActualMessage(chatId);
-        //     }
-        // }catch(e){
-        //     if(message.text &&
-        //          message.text === InlineCommands.START && 
-        //          this.checkIsMessageHasOnlyText(message)){
-        //         await this.handleStart(chatId);
-        //     }
-        //     else{
-               
-                
-        //     }
-        // }
         this.messageHandler.handleMessage(message);
 
         if(chatId in this.queue){
@@ -99,163 +75,7 @@ class TelegramBotService {
         
     }
 
-    private async handleCreatingAppeal(message: TelegramBot.Message){
     
-        const chatId = message.chat.id.toString();
-        try{
-            const user = await userService.findByChatId(chatId);
-            const currentAppeal = await appealService.findNotFinishedByUserId(user?.id as number);
-            if(!user){
-                return null;
-            }
-            const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-            switch(creatingAppealStage?.name){
-                case CreatingAppealStage.ENTER_DESCRIPTION:
-                    if(this.checkIsMessageHasOnlyText(message)){
-                        const { error, value } = descriptionSchema.validate(message.text);
-                        if(error){
-                            await this.sendMessage(chatId, 
-                                error.details[0]?.message as string, 
-                                ReturnBack);
-                        }else{
-                            await appealService.updateDescription(currentAppeal?.id as number, value)
-                            await userService.moveToNextCreatingAppealStage(user.id);
-                            await this.sendActualMessage(chatId); 
-                        }
-                    }else{
-                          
-                    }
-                case CreatingAppealStage.SEND_PHOTOS:
-                    if(message.photo){
-                            this.isUserSendingPhotos[chatId] = true;
-                            for(let index = 3; index < message.photo.length; index += 4){
-                                await appealService.addPhotos(currentAppeal?.id as number, [{
-                                    path: message.photo[index]?.file_id as string,
-                                    contentType: ContentType.JPEG
-                                }]
-                                )}
-                            }
-                            const currentPhotos = await appealService.getPhotosLinks(currentAppeal?.id as number);
-                            const currentNumberOfPhotos = currentPhotos ? currentPhotos.length : 0;
-                            if(currentNumberOfPhotos >= MAX_NUMBER_OF_PHOTOS){
-                                this.isUserSendingPhotos[chatId] = false;
-                                await userService.moveToNextCreatingAppealStage(user.id);
-                                await this.sendActualMessage(chatId);
-                            }
-                        break;
-                        case CreatingAppealStage.SEND_GEO:
-                            if(message.venue){
-                                const longitude = message.venue?.location.longitude;
-                                const latitude = message.venue?.location.latitude;
-                                const address = message.venue?.address;
-                              
-                                const location = await appealService.updateLocation(currentAppeal?.id as number,
-                                        {longitude, latitude, address} );
-                               
-                                        await userService.moveToNextCreatingAppealStage(user.id);
-                                        await this.sendAppeal(chatId, currentAppeal?.id as number);
-                                
-                            }
-                            if(message.location){
-                                const longitude = message.location.longitude
-                                const latitude = message.location.latitude;
-                             
-                                const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=ru&key=${process.env['GOOLGE_COORDINATES_API_KEY']}`;
-                                await fetch(url)
-                                .then(async response => {
-                                    if (!response.ok) {
-                                        await appealService.updateLocation(currentAppeal?.id as number,
-                                            {longitude, latitude, address: 'Точка на мапі'} );
-                                    }
-                                    return response.json();
-                                    })
-                                    .then(async data => {
-                                        await appealService.updateLocation(currentAppeal?.id as number,
-                                            {longitude, latitude, address: data.results[0].formatted_address} );
-                                    })
-                                    .catch(async error => {
-                                        await appealService.updateLocation(currentAppeal?.id as number,
-                                            {longitude, latitude, address: 'Точка на мапі'} );
-                                    });
-                                await userService.moveToNextCreatingAppealStage(user.id);
-                               await this.sendAppeal(chatId, currentAppeal?.id as number);
-                            }
-                            break;
-                        case CreatingAppealStage.CONFIRMATION:
-                            
-                            break;
-                        default:
-                            await this.sendActualMessage(chatId)
-                            break;         
-            }
-        
-        }
-            
-        catch(e){
-            console.log(e)
-            await this.sendActualMessage(chatId);
-        }
-        
-    }   
-
-    private async handleUserRegistration(message: TelegramBot.Message){
-        const chatId = message.chat.id.toString();
-        try{
-            const user = await userService.findByChatId(chatId);
-            if(!user){
-                return null;
-            }
-            const registrationStage = await userService.getRegistrationStageByUserId(user.id as number);
-            switch (registrationStage?.name){
-                case RegistrationStage.SENDING_PHONE_NUMBER:
-                    if(message.contact &&
-                        message.contact.user_id === parseInt(chatId)){
-                            await userService.updateDetails({
-                                id: user.id as number,
-                                details: {
-                                    phoneNumber: message.contact.phone_number,
-                                    fullName: null
-                                }
-                            })
-                            await userService.moveToNextRegistrationStage(user.id);
-                            
-                            await this.sendActualMessage(chatId);
-                    }else{
-                        await this.sendActualMessage(chatId);
-                    }
-                    break;
-                case RegistrationStage.TYPING_FULL_NAME:
-                    if(this.checkIsMessageHasOnlyText(message)){
-                        const { error, value } = fullNameSchema.validate(message.text);
-                        if(error){
-                            await this.sendMessage(chatId, 
-                                error.details[0]?.message as string, 
-                                ReturnBack);
-                        }else{
-                            await userService.updateDetails({
-                                id: user.id as number,
-                                details: {
-                                    phoneNumber: null,
-                                    fullName: message.text as string
-                                }
-                            })
-                            await userService.moveToNextRegistrationStage(user.id);
-                            await this.sendActualMessage(chatId);
-                        }
-                      
-                    }else{
-                        await this.sendActualMessage(chatId);
-                    }
-                    break;
-                default:
-                    await this.sendActualMessage(chatId)
-                    break;
-            }
-        }catch(e){
-            throw e;
-        }
-    }
-
     public async handleStart(chatId: string){
         const user = await userService.create(chatId);
         await this.sendMessage(chatId, RegistrationTextMessage.GREETING_TEXT);
