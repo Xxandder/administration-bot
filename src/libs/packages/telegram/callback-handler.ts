@@ -114,8 +114,7 @@ class CallbackHandler{
            
 
             const categoriesCallbackPattern = /^category\/\d+$/;
-            if(categoriesCallbackPattern.test(callbackData) &&
-                ){
+            if(categoriesCallbackPattern.test(callbackData)){
                     const categoryId = parseInt(callbackData.split('/')[1] as string);
                     await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
                     await userService.moveToNextCreatingAppealStage(user.id);
