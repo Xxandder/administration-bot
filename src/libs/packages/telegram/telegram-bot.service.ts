@@ -28,10 +28,7 @@ class TelegramBotService {
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-        // this.callbackHandler = this.callbackHandler.bind(this);
-        this.handleCommonCallback = this.handleCommonCallback.bind(this);
-        this.handleCreatingAppealCallback = this.handleCreatingAppealCallback.bind(this);
-
+        
         this.callbackHandler = new CallbackHandler(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
@@ -96,112 +93,6 @@ class TelegramBotService {
         }
         
     }
-
-
-    // private async callbackHandler(chatId: string, callbackData: string){
-        
-    //     try{
-    //         const user = await userService.findByChatId(chatId);
-    //         if(!user){
-    //             return null;
-    //         }
-    //         else if(!user.isRegistered){
-    //             await this.handleRegistrationCallback(chatId, callbackData);
-    //         }
-    //         else if(user.isCreatingAppeal){
-    //             await this.handleCreatingAppealCallback(chatId, callbackData)
-    //         }
-    //         else{
-    //             await this.handleCommonCallback(chatId, callbackData);
-    //         }
-    //     }catch(e){
-    //         console.log(e)
-    //     }
-
-    // }
-
-    private async handleCommonCallback(chatId: string, callbackData: string){
-        const user = await userService.findByChatId(chatId);
-            if(!user){
-                return null;
-            }
-        switch(callbackData){
-            case CallbackDataCommands.CREATE_APPEAL:
-                await userService.updateIsCreatingAppeal(
-                    {id: user.id, isCreatingAppeal: true});
-                await appealService.create(user.id);
-                await this.sendActualMessage(chatId);
-                break;
-            case CallbackDataCommands.INFO:
-                await this.sendMessage(chatId, CommonTextMessages.INFO);
-                await this.sendActualMessage(chatId);
-                break;
-        }
-    }
-
-    private async handleCreatingAppealCallback(chatId: string, callbackData: string){
-        const user = await userService.findByChatId(chatId);
-            if(!user){
-                return null;
-            }
-        const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
-        const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-        const categoriesCallbackPattern = /^category\/\d+$/;
-        if(categoriesCallbackPattern.test(callbackData) && user.creatingAppealStageId === 1){
-            const categoryId = parseInt(callbackData.split('/')[1] as string);
-            await appealService.updateCategoryId(currentAppeal?.id as number, categoryId);
-            await userService.moveToNextCreatingAppealStage(user.id);
-            await this.sendActualMessage(chatId);
-        }
-        switch(callbackData){
-            case CallbackDataCommands.GO_BACK:
-                if(creatingAppealStage?.name === CreatingAppealStage.SEND_GEO){
-                    await appealService.deletePhotos(currentAppeal?.id as number);
-                }
-                if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY){
-                    await appealService.delete(currentAppeal?.id as number);
-                }
-                await userService.moveToPreviousCreatingAppealStage(user.id);
-                await this.sendActualMessage(chatId);
-                break;
-            case CallbackDataCommands.CONFIRM_PHOTOS:
-                if(creatingAppealStage?.name === CreatingAppealStage.SEND_PHOTOS){
-                    await userService.moveToNextCreatingAppealStage(user.id);
-                }
-                await this.sendActualMessage(chatId);
-                break;
-            case CallbackDataCommands.CONFIRM_APPEAL:
-                if(creatingAppealStage?.name === CreatingAppealStage.CONFIRMATION){
-                    await userService.moveToNextCreatingAppealStage(user.id);
-                    await userService.updateIsCreatingAppeal(
-                    {id: user.id, isCreatingAppeal:false});
-                    await appealService.updateIsFinished(currentAppeal?.id as number, true);    
-                    await this.sendActualMessage(chatId);
-                }
-                
-                break;
-        }
-       
-    }
-
-
-    private async handleRegistrationCallback(chatId: string, callbackData: string){
-        const user = await userService.findByChatId(chatId);
-            if(!user){
-                return null;
-            }
-        switch(callbackData){
-            case CallbackDataCommands.GO_BACK:
-                await userService.moveToPreviousRegistrationStage(user.id);
-                await this.sendActualMessage(chatId);
-                break;
-            case CallbackDataCommands.CONFIRM_PERSONAL_DATA:
-                await userService.moveToNextRegistrationStage(user.id);
-                await this.sendMessage(chatId, CommonTextMessages.FINAL_REGISTRATION)
-                await this.sendActualMessage(chatId);
-                break;
-        }
-    };
 
     private async handleCreatingAppeal(message: TelegramBot.Message){
     
