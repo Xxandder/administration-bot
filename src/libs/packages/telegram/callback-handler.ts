@@ -2,6 +2,7 @@ import { TelegramBotService } from "./telegram-bot.service.js"
 import TelegramBot from "node-telegram-bot-api"
 import { UserEntity } from "~/packages/users/user.entity.js"
 import { userService } from "~/packages/users/user.js"
+import { CallbackDataCommands, CommonTextMessages } from "./libs/enums/enums.js"
 
 class CallbackHandler{
     private telegramBotService: TelegramBotService
@@ -47,7 +48,25 @@ class CallbackHandler{
     }
 
     async handleRegistrationCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
+        try {
+            switch (callbackData) {
+                case CallbackDataCommands.GO_BACK:
+                    await userService.moveToPreviousRegistrationStage(user.id);
+                    break;
+                case CallbackDataCommands.CONFIRM_PERSONAL_DATA:
+                    await userService.moveToNextRegistrationStage(user.id);
+                    await this.telegramBotService.sendMessage(user.chatId, CommonTextMessages.FINAL_REGISTRATION)
+                    break;
+                default:
+                    console.error('Invalid registration callback.');
+                    break;
+            }
 
+            await this.telegramBotService.sendActualMessage(user.chatId);
+        } catch (error) {
+            console.error('Error handling registration callback:', error);
+            throw error;
+        }
     }
 
     async handleCreatingAppealCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
