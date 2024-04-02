@@ -124,7 +124,17 @@ class CallbackHandler{
     }
 
     async handleCommonCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
-        
+        switch(callbackData){
+            case CallbackDataCommands.CREATE_APPEAL:
+                await userService.updateIsCreatingAppeal(
+                    {id: user.id, isCreatingAppeal: true});
+                await appealService.create(user.id);
+                break;
+            case CallbackDataCommands.INFO:
+                await this.telegramBotService.sendMessage(user.chatId, CommonTextMessages.INFO);
+                break;
+        }
+        await this.telegramBotService.sendActualMessage(user.chatId);
     }
 
 
