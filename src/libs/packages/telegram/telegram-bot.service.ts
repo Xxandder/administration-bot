@@ -11,6 +11,7 @@ import { appealService } from "~/packages/appeals/appeals.js";
 import { Categories, MAX_NUMBER_OF_PHOTOS } from "./libs/constants/constants.js";
 import { ContentType } from "~/libs/enums/content-type.enum.js";
 import { CallbackHandler } from "./callback-handler.js";
+import { MessageHandler } from './message-handler.js';
 
 dotenv.config();
 
@@ -20,18 +21,21 @@ const queue: Record<string, TelegramBot.Message[]> = {};
 class TelegramBotService {
     private bot: TelegramBot;
     private callbackHandler: CallbackHandler;
+    private messageHandler: MessageHandler;
 
     public constructor(){
         this.checkIsMessageHasOnlyText = this.checkIsMessageHasOnlyText.bind(this);
-        this.messageHandler = this.messageHandler.bind(this);
+        this.processMessage = this.processMessage.bind(this);
         this.handleUserRegistration = this.handleUserRegistration.bind(this);
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
 
         this.callbackHandler = new CallbackHandler(this);
+        this.messageHandler = new MessageHandler(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
+
         this.bot.on('message', async (message)=>{
             console.log('message')
             const chatId = message.chat.id.toString();
@@ -43,7 +47,7 @@ class TelegramBotService {
             queue[chatId]?.push(message);
     
             if (queue[chatId]?.length === 1) {
-                await this.messageHandler(message);
+                await this.processMessage(message);
             }
         });
         this.bot.on('callback_query', async (query)=>{
@@ -56,39 +60,39 @@ class TelegramBotService {
         })
     }
 
-    private async messageHandler(message: TelegramBot.Message) {
+    private async processMessage(message: TelegramBot.Message) {
         const chatId = message.chat.id.toString();
 
-        let user;
-        try{
-            user = await userService.findByChatId(chatId);
+        // try{
+        //     user = await userService.findByChatId(chatId);
 
-            if(user && !user.isRegistered){
-                await this.handleUserRegistration(message);
-            }
-            else if(user && user.isCreatingAppeal){
-                await this.handleCreatingAppeal(message)
-            }
-            else{
-                await this.sendActualMessage(chatId);
-            }
-        }catch(e){
-            if(message.text &&
-                 message.text === InlineCommands.START && 
-                 this.checkIsMessageHasOnlyText(message)){
-                await this.handleStart(chatId);
-            }
-            else{
+        //     if(user && !user.isRegistered){
+        //         await this.handleUserRegistration(message);
+        //     }
+        //     else if(user && user.isCreatingAppeal){
+        //         await this.handleCreatingAppeal(message)
+        //     }
+        //     else{
+        //         await this.sendActualMessage(chatId);
+        //     }
+        // }catch(e){
+        //     if(message.text &&
+        //          message.text === InlineCommands.START && 
+        //          this.checkIsMessageHasOnlyText(message)){
+        //         await this.handleStart(chatId);
+        //     }
+        //     else{
                
                 
-            }
-        }
+        //     }
+        // }
+        this.messageHandler.handleMessage(message);
 
         if(chatId in queue){
             const messages = queue[chatId as string];
             queue[chatId as string]?.shift();
             if (messages && messages.length > 0) {
-                await this.messageHandler(messages[0] as TelegramBot.Message);
+                await this.processMessage(messages[0] as TelegramBot.Message);
             }
         }
         
