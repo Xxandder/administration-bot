@@ -10,6 +10,7 @@ import { getActualCreatingAppealMessageObject } from "./libs/helpers/get-actual-
 import { appealService } from "~/packages/appeals/appeals.js";
 import { Categories, MAX_NUMBER_OF_PHOTOS } from "./libs/constants/constants.js";
 import { ContentType } from "~/libs/enums/content-type.enum.js";
+import { CallbackHandler } from "./callback-handler.js";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ const queue: Record<string, TelegramBot.Message[]> = {};
 
 class TelegramBotService {
     private bot: TelegramBot;
+    private callbackHandler: CallbackHandler;
 
     public constructor(){
         this.checkIsMessageHasOnlyText = this.checkIsMessageHasOnlyText.bind(this);
@@ -26,9 +28,11 @@ class TelegramBotService {
         this.handleStart = this.handleStart.bind(this);
         this.sendActualMessage = this.sendActualMessage.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
-        this.callbackHandler = this.callbackHandler.bind(this);
+        // this.callbackHandler = this.callbackHandler.bind(this);
         this.handleCommonCallback = this.handleCommonCallback.bind(this);
         this.handleCreatingAppealCallback = this.handleCreatingAppealCallback.bind(this);
+
+        this.callbackHandler = new CallbackHandler(this);
 
         this.bot = new TelegramBot(process.env?.['TG_BOT_TOKEN'] ?? '', {polling:true});
         this.bot.on('message', async (message)=>{
@@ -50,7 +54,7 @@ class TelegramBotService {
                 chat_id: query.message?.chat.id as number,
                 message_id: query.message?.message_id as number
             });
-            await this.callbackHandler((query.message?.chat.id as number).toString(), query.data as string);
+            await this.callbackHandler.handleCallbackQuery(query);
     
         })
     }
@@ -94,27 +98,27 @@ class TelegramBotService {
     }
 
 
-    private async callbackHandler(chatId: string, callbackData: string){
+    // private async callbackHandler(chatId: string, callbackData: string){
         
-        try{
-            const user = await userService.findByChatId(chatId);
-            if(!user){
-                return null;
-            }
-            else if(!user.isRegistered){
-                await this.handleRegistrationCallback(chatId, callbackData);
-            }
-            else if(user.isCreatingAppeal){
-                await this.handleCreatingAppealCallback(chatId, callbackData)
-            }
-            else{
-                await this.handleCommonCallback(chatId, callbackData);
-            }
-        }catch(e){
-            console.log(e)
-        }
+    //     try{
+    //         const user = await userService.findByChatId(chatId);
+    //         if(!user){
+    //             return null;
+    //         }
+    //         else if(!user.isRegistered){
+    //             await this.handleRegistrationCallback(chatId, callbackData);
+    //         }
+    //         else if(user.isCreatingAppeal){
+    //             await this.handleCreatingAppealCallback(chatId, callbackData)
+    //         }
+    //         else{
+    //             await this.handleCommonCallback(chatId, callbackData);
+    //         }
+    //     }catch(e){
+    //         console.log(e)
+    //     }
 
-    }
+    // }
 
     private async handleCommonCallback(chatId: string, callbackData: string){
         const user = await userService.findByChatId(chatId);
