@@ -362,7 +362,7 @@ class TelegramBotService {
         await this.sendActualMessage(chatId);
     }
     
-    private async sendAppeal(chatId: string, appealId: number){
+    public async sendAppeal(chatId: string, appealId: number){
         const photoIds = await appealService.getPhotosFilePaths(appealId);
 
         const appeal = await appealService.findById(appealId);
@@ -380,7 +380,7 @@ class TelegramBotService {
         await this.sendActualMessage(chatId);
     }
 
-    private async sendActualMessage(chatId: string){
+    public  async sendActualMessage(chatId: string){
         
         try{
             const user = await userService.findByChatId(chatId);
@@ -407,7 +407,7 @@ class TelegramBotService {
         }
     }
 
-    private async sendMessage(chatId: string, text: string, keyboard?: ReplyKeyboardMarkup  | InlineKeyboardMarkup  ) {
+    public async sendMessage(chatId: string, text: string, keyboard?: ReplyKeyboardMarkup  | InlineKeyboardMarkup  ) {
         const messageOptions: TelegramBot.SendMessageOptions = {
             reply_markup: keyboard,
             parse_mode: 'Markdown'
