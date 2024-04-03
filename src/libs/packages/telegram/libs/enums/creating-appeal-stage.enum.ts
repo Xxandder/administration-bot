@@ -3,6 +3,8 @@ const CreatingAppealStage = {
     ENTER_DESCRIPTION: 'enterDescription',
     SEND_PHOTOS: 'sendPhotos',
     SEND_GEO: 'sendGeo',
+    CHOOSE_LOCALITY: 'chooseLocality',
+    ENTER_ADDRESS: 'enterAddress',
     CONFIRMATION: 'confirmation'
 } as const
 
