@@ -62,6 +62,8 @@ class UserService {
         
     }
 
+    
+
     public async moveToPreviousRegistrationStage(id: number){
         const updatedUser = await this.userRepository.updateRegistrationStage({id, backwards: true});
         if(!updatedUser){
@@ -72,7 +74,7 @@ class UserService {
 
     public async moveToNextCreatingAppealStage(id: number){
         try{
-            const updatedUser = await this.userRepository.updateCreatingAppealStage({id, backwards: false});
+            const updatedUser = await this.userRepository.moveToCreatingAppealStage({id, backwards: false});
             if(!updatedUser){
                 throw new Error('User not found');
             }
@@ -83,7 +85,7 @@ class UserService {
     }
 
     public async moveToPreviousCreatingAppealStage(id: number){
-        const updatedUser = await this.userRepository.updateCreatingAppealStage({id, backwards: true});
+        const updatedUser = await this.userRepository.moveToCreatingAppealStage({id, backwards: true});
         if(!updatedUser){
             throw new Error('User not found');
         }

@@ -220,7 +220,7 @@ class UserRepository implements Repository{
             })
     }
 
-    public async updateCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
+    public async moveToCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()
