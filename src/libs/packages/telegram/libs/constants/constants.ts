@@ -3,6 +3,8 @@ const MIN_FULL_NAME_LENGTH = 3;
 const MIN_DESCRIPTION_LENGTH = 10;
 const MAX_DESCRIPTION_LENGTH = 255;
 const MAX_NUMBER_OF_PHOTOS = 3;
+const MAX_ADDRESS_LENGTH = 255;
+const MIN_ADDRESS_LENGTH = 5;
 
 const Categories = [
     'Аварійне видалення дерев/гілля',
@@ -27,5 +29,7 @@ export {
         MIN_DESCRIPTION_LENGTH,
         MAX_DESCRIPTION_LENGTH,
         MAX_NUMBER_OF_PHOTOS,
+        MAX_ADDRESS_LENGTH,
+        MIN_ADDRESS_LENGTH,
         Categories
 };
