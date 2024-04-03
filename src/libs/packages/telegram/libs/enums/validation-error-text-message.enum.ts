@@ -9,6 +9,7 @@ const ValidationErrorTextMessage = {
     NAME_TOO_SHORT: `Довжина ім\'я має бути більше ${MIN_FULL_NAME_LENGTH} символів завдовшки`,
     DESCRIPTION_TOO_SHORT: `Опис має містити що найменше ${MIN_DESCRIPTION_LENGTH} символів`,
     DESCRIPTION_TOO_LONG: `Опис має містити не більше ${MAX_DESCRIPTION_LENGTH} символів`,
+    EMPTY_ADDRESS: 'Поле адреси не може бути пустим',
     ADDRESS_TO_SHORT: `Адреса має містити що найменше ${MIN_ADDRESS_LENGTH} символів`,
     ADDRESS_TO_LONG: `Адреса має містити не більше ${MAX_ADDRESS_LENGTH} символів`,
 }
