@@ -72,6 +72,18 @@ class UserService {
         return updatedUser.toObject();
     }
 
+    public async updateAppealStage(userId: number, stageName: string){
+        try{
+            const updatedUser = await this.userRepository.updateAppealStage(userId, stageName);
+            if(!updatedUser){
+                throw new Error('User not found');
+            }
+            return updatedUser.toObject();
+        }catch(e){
+           throw(e);
+        }
+    }
+
     public async moveToNextCreatingAppealStage(id: number){
         try{
             const updatedUser = await this.userRepository.moveToCreatingAppealStage({id, backwards: false});
