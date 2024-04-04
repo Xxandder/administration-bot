@@ -223,12 +223,17 @@ class UserRepository implements Repository{
     public async updateAppealStage(userId: number, stageName: string){
         const item = await creatingAppealStageRepository.findByName(stageName);
         const stage = item?.toObject();
+
+            await this.userModel
+        .query()
+        .where({ 'users.id': userId })
+        .patch({ creatingAppealStageId: stage?.id as number});
+
         const updatedUser = await this.userModel
         .query()
-        .patch({ creatingAppealStageId: stage?.id as number})
-        .where({ id: userId })
-        .first()
-        .castTo<UserQueryResponse>(); 
+        .findById(userId)
+        .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+        .castTo<UserQueryResponse>();
 
         return UserEntity.initialize({
             id: updatedUser.id,
@@ -242,6 +247,7 @@ class UserRepository implements Repository{
             fullName: updatedUser.details.fullName ?? null,
             phoneNumber: updatedUser.details.phoneNumber ?? null
         })
+        
     }
 
     public async moveToCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
