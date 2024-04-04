@@ -56,6 +56,25 @@ class BaseStageRepository implements Repository{
             orderNumber: stage.orderNumber
         })
     }
+
+    public async findByName(name: string): Promise<StageEntity | null>{
+        const stage = await this.stageModel
+        .query()
+        .findOne({name})
+        .castTo<StageQueryResponse | undefined>();
+
+        if(!stage){
+            return null;
+        }
+
+        return StageEntity.initialize({
+            id: stage.id,
+            createdAt: new Date(stage.createdAt),
+            updatedAt:  new Date(stage.updatedAt),
+            name: stage.name,
+            orderNumber: stage.orderNumber
+        })
+    }
         
     public async getLastOrderNumber(): Promise<number>{
         const result = await this.stageModel
