@@ -26,6 +26,11 @@ const getActualCreatingAppealMessageObject = async (chatId: string, stage: Creat
                 text: CreatingAppealStageMessage.SEND_PHOTOS,
                 options: {reply_markup:ConfirmPhotos}
             }
+        case CreatingAppealStage.ENTER_ADDRESS:
+            return {
+                text: CreatingAppealStageMessage.ENTER_ADDRESS,
+                options: {reply_markup:ReturnBack}
+            }
         case CreatingAppealStage.CONFIRMATION:
             return {
                 text: CreatingAppealStageMessage.CONFIRMATION,
