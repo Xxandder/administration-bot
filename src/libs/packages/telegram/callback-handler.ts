@@ -95,6 +95,9 @@ class CallbackHandler{
                 case CallbackDataCommands.CONFIRM_APPEAL:
                     await this.handleAppealConfirmation(currentAppeal, user);
                     break;
+                case CallbackDataCommands.ENTER_ADDRESS:
+                    await this.handleEnterAddressCommand(CreatingAppealStage.ENTER_ADDRESS, user);
+                    break;
                 default:
                     console.error('Invalid creating appeal callback.');
                     break;
@@ -107,7 +110,11 @@ class CallbackHandler{
         }
     }
 
-    
+    async handleEnterAddressCommand(stageName: string, 
+        user: ReturnType<UserEntity['toObject']>){
+            const updatedUser = await userService.updateAppealStage(user.id, stageName);
+    }
+
     async handleCategoryChoosing(currentAppeal: ReturnType<AppealEntity['toObject']>, 
         callbackData: string,
         user: ReturnType<UserEntity['toObject']>){
