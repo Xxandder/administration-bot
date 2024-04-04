@@ -111,6 +111,7 @@ class MessageHandler{
                         async (id, value)=>{
                             await appealService.updateDescription(id, value)
                     });
+                    await this.telegramBotService.sendActualMessage(chatId)
                     break;
                 case CreatingAppealStage.SEND_PHOTOS:
                     await this.handleSendingPhotos(message, user, currentAppeal)
@@ -127,6 +128,8 @@ class MessageHandler{
                         async (id, value)=>{
                             await appealService.updateLocation(id, {address: value})
                     });
+                    await this.telegramBotService.sendAppeal(user.chatId, currentAppeal?.id as number);
+                    await this.telegramBotService.sendActualMessage(chatId)
                     break;
                 default:
                     await this.telegramBotService.sendActualMessage(chatId)
@@ -154,7 +157,6 @@ class MessageHandler{
             } else {
                 await updateFunction(currentAppeal.id as number, value);
                 await userService.moveToNextCreatingAppealStage(user.id);
-                await this.telegramBotService.sendActualMessage(user.chatId);
             }
         }
     }
@@ -220,9 +222,10 @@ class MessageHandler{
                             await appealService.updateLocation(currentAppeal?.id as number,
                                 {longitude, latitude, address: 'Точка на мапі'} );
                         });
-                    await userService.moveToNextCreatingAppealStage(user.id);
+                        await userService.updateAppealStage(user.id, CreatingAppealStage.CONFIRMATION);
                    await this.telegramBotService.sendAppeal(user.chatId, currentAppeal?.id as number);
             }
+            await this.telegramBotService.sendActualMessage(user.chatId);
     }
 
 
