@@ -223,10 +223,25 @@ class UserRepository implements Repository{
     public async updateAppealStage(userId: number, stageName: string){
         const item = await creatingAppealStageRepository.findByName(stageName);
         const stage = item?.toObject();
-        await this.userModel
+        const updatedUser = await this.userModel
         .query()
         .patch({ creatingAppealStageId: stage?.id as number})
-        .where({ id: userId });
+        .where({ id: userId })
+        .first()
+        .castTo<UserQueryResponse>(); 
+
+        return UserEntity.initialize({
+            id: updatedUser.id,
+            createdAt: new Date(updatedUser.createdAt),
+            updatedAt:  new Date(updatedUser.updatedAt),
+            chatId: updatedUser.chatId,
+            isRegistered: updatedUser.isRegistered,
+            registrationStageId: updatedUser.registrationStage.id,
+            isCreatingAppeal: updatedUser.isCreatingAppeal,
+            creatingAppealStageId: updatedUser.creatingAppealStage.id,
+            fullName: updatedUser.details.fullName ?? null,
+            phoneNumber: updatedUser.details.phoneNumber ?? null
+        })
     }
 
     public async moveToCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
