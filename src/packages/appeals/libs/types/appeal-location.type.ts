@@ -1,6 +1,6 @@
 type AppealLocation = {
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
     address?: string
 }
 
