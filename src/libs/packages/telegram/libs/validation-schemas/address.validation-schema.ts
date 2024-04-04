@@ -2,7 +2,7 @@ import joi from 'joi';
 import { ValidationErrorTextMessage } from '../enums/enums.js';
 import { MIN_ADDRESS_LENGTH, MAX_ADDRESS_LENGTH } from '../constants/constants.js';
 
-const fullNameSchema = joi.string()
+const address = joi.string()
     .min(MIN_ADDRESS_LENGTH)
     .max(MAX_ADDRESS_LENGTH)
     .required()
@@ -13,4 +13,4 @@ const fullNameSchema = joi.string()
         'string.max': ValidationErrorTextMessage.ADDRESS_TO_LONG,
     });
 
-export { fullNameSchema };
+export { address };
