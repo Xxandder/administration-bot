@@ -131,6 +131,11 @@ class AppealService implements Service{
             location.address = DEFAULT_ADDRESS_VALUE;
         }
 
+        if(!location.latitude || !location.longitude){
+            location.latitude = null;
+            location.longitude = null;
+        }
+
         const updatedAppeal = await this.appealRepository.updateLocation(appealId, location);
 
         if(!updatedAppeal){
