@@ -72,7 +72,7 @@ class CallbackHandler{
     }
 
     async handleCreatingAppealCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
-
+       
         try {
             const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
             if(!currentAppeal){
@@ -81,7 +81,8 @@ class CallbackHandler{
             }
 
             const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-            if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY){
+            if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY &&
+                 callbackData !== CallbackDataCommands.GO_BACK){
                 await this.handleCategoryChoosing(currentAppeal, callbackData, user);
             }else{
                 switch (callbackData) {
@@ -143,12 +144,13 @@ class CallbackHandler{
     async handleGoBackCommand(currentAppeal: ReturnType<AppealEntity['toObject']>, 
      user: ReturnType<UserEntity['toObject']>) {
         const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-
+       
         switch(creatingAppealStage?.name){
             case CreatingAppealStage.SEND_GEO:
                 await appealService.deletePhotos(currentAppeal?.id as number);
                 break;
             case CreatingAppealStage.CHOOSE_CATEGORY:
+               
                 await appealService.delete(currentAppeal?.id as number);
                 break;
         }
