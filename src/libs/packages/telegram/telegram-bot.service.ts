@@ -83,6 +83,7 @@ class TelegramBotService {
     }
     
     public async sendAppeal(chatId: string, appealId: number){
+        await this.sendMessage(chatId, '🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦');
         const photoIds = await appealService.getPhotosFilePaths(appealId);
 
         const appeal = await appealService.findById(appealId);
@@ -97,7 +98,7 @@ class TelegramBotService {
             await this.bot.sendMediaGroup(chatId, options)
         }
         await this.sendMessage(chatId, appeal?.address ?? 'Точка на мапі');
-        
+        await this.sendMessage(chatId, '🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦');
     }
 
     public  async sendActualMessage(chatId: string){
