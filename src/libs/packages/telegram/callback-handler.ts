@@ -138,7 +138,16 @@ class CallbackHandler{
         await userService.moveToNextCreatingAppealStage(user.id);
         await userService.updateIsCreatingAppeal(
             {id: user.id, isCreatingAppeal:false});
-        await appealService.updateIsFinished(currentAppeal?.id as number, true);    
+        await appealService.updateIsFinished(currentAppeal?.id as number, true);  
+        try{
+            await this.telegramBotService.sendMessage(process.env['APPEALS_CHAT_ID'] as string, '🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦');
+            await this.telegramBotService.sendAppeal(process.env['APPEALS_CHAT_ID'] as string,
+            currentAppeal.id as number)  
+            await this.telegramBotService.sendMessage(process.env['APPEALS_CHAT_ID'] as string, '🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦🇺🇦');
+        }catch(e){
+            console.log('Error with sending appeal')
+        }
+        
     }
 
     async handleGoBackCommand(currentAppeal: ReturnType<AppealEntity['toObject']>, 

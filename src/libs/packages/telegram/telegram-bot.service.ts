@@ -97,7 +97,6 @@ class TelegramBotService {
             await this.bot.sendMediaGroup(chatId, options)
         }
         await this.sendMessage(chatId, appeal?.address ?? 'Точка на мапі');
-        
     }
 
     public  async sendActualMessage(chatId: string){
