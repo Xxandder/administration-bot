@@ -220,7 +220,37 @@ class UserRepository implements Repository{
             })
     }
 
-    public async updateCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
+    public async updateAppealStage(userId: number, stageName: string){
+        const item = await creatingAppealStageRepository.findByName(stageName);
+        const stage = item?.toObject();
+
+            await this.userModel
+        .query()
+        .where({ 'users.id': userId })
+        .patch({ creatingAppealStageId: stage?.id as number});
+
+        const updatedUser = await this.userModel
+        .query()
+        .findById(userId)
+        .withGraphJoined(`[${UserRelation.DETAILS}, ${UserRelation.REGISTRATION_STAGE}, ${UserRelation.CREATING_APPEAL_STAGE}]`)
+        .castTo<UserQueryResponse>();
+
+        return UserEntity.initialize({
+            id: updatedUser.id,
+            createdAt: new Date(updatedUser.createdAt),
+            updatedAt:  new Date(updatedUser.updatedAt),
+            chatId: updatedUser.chatId,
+            isRegistered: updatedUser.isRegistered,
+            registrationStageId: updatedUser.registrationStage.id,
+            isCreatingAppeal: updatedUser.isCreatingAppeal,
+            creatingAppealStageId: updatedUser.creatingAppealStage.id,
+            fullName: updatedUser.details.fullName ?? null,
+            phoneNumber: updatedUser.details.phoneNumber ?? null
+        })
+        
+    }
+
+    public async moveToCreatingAppealStage({id, backwards = false}: UpdateStagePayload): 
             Promise<UserEntity | null>{
         const user = await this.userModel
             .query()

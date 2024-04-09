@@ -1,7 +1,7 @@
 import { CreatingAppealStageValues, MessageData } from "../types/types.js";
 import { CommonStage, CreatingAppealStage, CreatingAppealStageMessage } from "../enums/enums.js";
 import { getActualCommonMessageObject } from "./helpers.js";
-import { CategoriesKeyboard, ConfirmAppeal, ConfirmPhotos, ReturnBack } from "../keyboards/keyboards.js";
+import { CategoriesKeyboard, ConfirmAppeal, ConfirmPhotos, ReturnBack, SendGeo } from "../keyboards/keyboards.js";
 
 const getActualCreatingAppealMessageObject = async (chatId: string, stage: CreatingAppealStageValues):
  Promise<MessageData> => {
@@ -19,12 +19,17 @@ const getActualCreatingAppealMessageObject = async (chatId: string, stage: Creat
         case CreatingAppealStage.SEND_GEO:
             return {
                 text: CreatingAppealStageMessage.SEND_GEO,
-                options: {reply_markup:ReturnBack}
+                options: {reply_markup:SendGeo}
             }
         case CreatingAppealStage.SEND_PHOTOS:
             return {
                 text: CreatingAppealStageMessage.SEND_PHOTOS,
                 options: {reply_markup:ConfirmPhotos}
+            }
+        case CreatingAppealStage.ENTER_ADDRESS:
+            return {
+                text: CreatingAppealStageMessage.ENTER_ADDRESS,
+                options: {reply_markup:ReturnBack}
             }
         case CreatingAppealStage.CONFIRMATION:
             return {

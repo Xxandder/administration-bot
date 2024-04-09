@@ -2,12 +2,13 @@ import { UserEntity, userService } from "~/packages/users/user.js";
 import { TelegramBotService } from "./telegram-bot.service.js"
 import TelegramBot from "node-telegram-bot-api";
 import { CreatingAppealStage, InlineCommands, RegistrationStage } from "./libs/enums/enums.js";
-import { descriptionSchema, fullNameSchema } from "./libs/validation-schemas/validation-schemas.js";
+import { descriptionSchema, fullNameSchema, address } from "./libs/validation-schemas/validation-schemas.js";
 import { ReturnBack } from "./libs/keyboards/keyboards.js";
 import { appealService } from "~/packages/appeals/appeals.js";
 import { AppealEntity } from "~/packages/appeals/appeal.entity.js";
 import { ContentType } from "~/libs/enums/enums.js";
 import { MAX_NUMBER_OF_PHOTOS } from "./libs/constants/constants.js";
+import Joi from "joi";
 
 class MessageHandler{
     private telegramBotService: TelegramBotService
@@ -102,13 +103,33 @@ class MessageHandler{
             const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
             switch(creatingAppealStage?.name){
                 case CreatingAppealStage.ENTER_DESCRIPTION:
-                    await this.handleEnteringDescription(message, user, currentAppeal);
+                    await this.handleEnteringData(
+                        message, 
+                        user, 
+                        currentAppeal,
+                        descriptionSchema,
+                        async (id, value)=>{
+                            await appealService.updateDescription(id, value)
+                    });
+                    await this.telegramBotService.sendActualMessage(chatId)
                     break;
                 case CreatingAppealStage.SEND_PHOTOS:
                     await this.handleSendingPhotos(message, user, currentAppeal)
                     break;
                 case CreatingAppealStage.SEND_GEO:
                     await this.handleSendingGeo(message, user, currentAppeal)
+                    break;
+                case CreatingAppealStage.ENTER_ADDRESS:
+                    await this.handleEnteringData(
+                        message, 
+                        user, 
+                        currentAppeal,
+                        address,
+                        async (id, value)=>{
+                            await appealService.updateLocation(id, {address: value})
+                    });
+                    await this.telegramBotService.sendAppeal(user.chatId, currentAppeal?.id as number);
+                    await this.telegramBotService.sendActualMessage(chatId)
                     break;
                 default:
                     await this.telegramBotService.sendActualMessage(chatId)
@@ -122,20 +143,25 @@ class MessageHandler{
         }
     }
 
-    async handleEnteringDescription(message: TelegramBot.Message,
+    async handleEnteringData(
+        message: TelegramBot.Message,
         user: ReturnType<UserEntity['toObject']>,
-        currentAppeal: ReturnType<AppealEntity['toObject']>) {
-            if (this.telegramBotService.checkIsMessageHasOnlyText(message)) {
-                const { error, value } = descriptionSchema.validate(message.text);
-                if (error) {
-                    await this.telegramBotService.sendMessage(user.chatId, error.details[0]?.message as string, ReturnBack);
-                } else {
-                    await appealService.updateDescription(currentAppeal.id as number, value);
-                    await userService.moveToNextCreatingAppealStage(user.id);
-                    await this.telegramBotService.sendActualMessage(user.chatId);
-                }
+        currentAppeal: ReturnType<AppealEntity['toObject']>,
+        schema: Joi.Schema,
+        updateFunction: (id: number, data: any) => Promise<void>
+    ) {
+        if (this.telegramBotService.checkIsMessageHasOnlyText(message)) {
+            const { error, value } = schema.validate(message.text);
+            if (error) {
+                await this.telegramBotService.sendMessage(user.chatId, error.details[0]?.message as string, ReturnBack);
+            } else {
+                await updateFunction(currentAppeal.id as number, value);
+                await userService.moveToNextCreatingAppealStage(user.id);
             }
+        }
     }
+
+    
 
     async handleSendingPhotos(message: TelegramBot.Message,
         user: ReturnType<UserEntity['toObject']>,
@@ -157,6 +183,8 @@ class MessageHandler{
                 }
             }
     }
+
+    
 
     async handleSendingGeo(message: TelegramBot.Message,
         user: ReturnType<UserEntity['toObject']>,
@@ -194,9 +222,10 @@ class MessageHandler{
                             await appealService.updateLocation(currentAppeal?.id as number,
                                 {longitude, latitude, address: 'Точка на мапі'} );
                         });
-                    await userService.moveToNextCreatingAppealStage(user.id);
+                        await userService.updateAppealStage(user.id, CreatingAppealStage.CONFIRMATION);
                    await this.telegramBotService.sendAppeal(user.chatId, currentAppeal?.id as number);
             }
+            await this.telegramBotService.sendActualMessage(user.chatId);
     }
 
 

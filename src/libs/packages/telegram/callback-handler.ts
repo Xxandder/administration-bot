@@ -72,7 +72,7 @@ class CallbackHandler{
     }
 
     async handleCreatingAppealCallback(callbackData: string, user: ReturnType<UserEntity['toObject']>){
-
+       
         try {
             const currentAppeal = await appealService.findNotFinishedByUserId(user.id);
             if(!currentAppeal){
@@ -81,38 +81,46 @@ class CallbackHandler{
             }
 
             const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-            if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY){
+            if(creatingAppealStage?.name === CreatingAppealStage.CHOOSE_CATEGORY &&
+                 callbackData !== CallbackDataCommands.GO_BACK){
                 await this.handleCategoryChoosing(currentAppeal, callbackData, user);
+            }else{
+                switch (callbackData) {
+                    case CallbackDataCommands.GO_BACK:
+                        await this.handleGoBackCommand(currentAppeal, user);
+                        break;
+                    case CallbackDataCommands.CONFIRM_PHOTOS:
+                        await this.handlePhotoConfirmation(user);
+                        break;
+                    case CallbackDataCommands.CONFIRM_APPEAL:
+                        await this.handleAppealConfirmation(currentAppeal, user);
+                        break;
+                    case CallbackDataCommands.ENTER_ADDRESS:
+                        await this.handleEnterAddressCommand(CreatingAppealStage.ENTER_ADDRESS, user);
+                        break;
+                    default:
+                        console.error('Invalid creating appeal callback.');
+                        break;
+                }
+    
+                
             }
-
-            switch (callbackData) {
-                case CallbackDataCommands.GO_BACK:
-                    await this.handleGoBackCommand(currentAppeal, user);
-                    break;
-                case CallbackDataCommands.CONFIRM_PHOTOS:
-                    await this.handlePhotoConfirmation(user);
-                    break;
-                case CallbackDataCommands.CONFIRM_APPEAL:
-                    await this.handleAppealConfirmation(currentAppeal, user);
-                    break;
-                default:
-                    console.error('Invalid creating appeal callback.');
-                    break;
-            }
-
             await this.telegramBotService.sendActualMessage(user.chatId);
+            
         } catch (error) {
             console.error('Error handling creating appeal callback:', error);
             throw error;
         }
     }
 
-    
+    async handleEnterAddressCommand(stageName: string, 
+        user: ReturnType<UserEntity['toObject']>){
+            const updatedUser = await userService.updateAppealStage(user.id, stageName);
+    }
+
     async handleCategoryChoosing(currentAppeal: ReturnType<AppealEntity['toObject']>, 
         callbackData: string,
         user: ReturnType<UserEntity['toObject']>){
-           
-
             const categoriesCallbackPattern = /^category\/\d+$/;
             if(categoriesCallbackPattern.test(callbackData)){
                     const categoryId = parseInt(callbackData.split('/')[1] as string);
@@ -136,12 +144,13 @@ class CallbackHandler{
     async handleGoBackCommand(currentAppeal: ReturnType<AppealEntity['toObject']>, 
      user: ReturnType<UserEntity['toObject']>) {
         const creatingAppealStage = await userService.getCreatingAppealStageByUserId(user.id as number);
-
+       
         switch(creatingAppealStage?.name){
             case CreatingAppealStage.SEND_GEO:
                 await appealService.deletePhotos(currentAppeal?.id as number);
                 break;
             case CreatingAppealStage.CHOOSE_CATEGORY:
+               
                 await appealService.delete(currentAppeal?.id as number);
                 break;
         }
