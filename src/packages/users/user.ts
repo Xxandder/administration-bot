@@ -5,6 +5,7 @@ import { RegistrationStageRepository } from './registration-stage.repository.js'
 import { UserModel } from "./user.model.js";
 import { UserRepository } from "./user.repository.js";
 import { UserService } from "./user.service.js";
+import { UserEntity } from "./user.entity.js";
 
 const registrationStageRepository = new RegistrationStageRepository(RegistrationStageModel);
 const creatingAppealStageRepository = new CreatingAppealStageRepository(CreatingAppealStageModel);
@@ -20,6 +21,8 @@ export {
     creatingAppealStageRepository
 };
 
-export { UserModel };
+export { UserModel,
+    UserEntity };
 
 export { UsersTableColumnName } from './libs/enums/enums.js';
+
