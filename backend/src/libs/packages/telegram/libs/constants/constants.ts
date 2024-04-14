@@ -11,7 +11,7 @@ import { MIN_DESCRIPTION_LENGTH,
     MAX_NUMBER_OF_PHOTOS,
     MAX_ADDRESS_LENGTH,
     MIN_ADDRESS_LENGTH
-} from '../../../../../../../shared/index.js';
+} from 'shared/index.js';
 
 const Categories = [
     'Аварійне видалення дерев/гілля',
