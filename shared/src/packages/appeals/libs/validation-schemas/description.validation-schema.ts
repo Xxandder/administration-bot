@@ -7,8 +7,8 @@ const descriptionSchema = joi.string()
     .max(MAX_DESCRIPTION_LENGTH)
     .required()
     .messages({
-        'string.base': AppealsValidationErrorTextMessage.EMPTY_ADDRESS,
-        'string.empty': AppealsValidationErrorTextMessage.EMPTY_ADDRESS,
+        'string.base': AppealsValidationErrorTextMessage.EMPTY_DESCRIPTION,
+        'string.empty': AppealsValidationErrorTextMessage.EMPTY_DESCRIPTION,
         'string.min': AppealsValidationErrorTextMessage.DESCRIPTION_TOO_SHORT,
         'string.max': AppealsValidationErrorTextMessage.DESCRIPTION_TOO_LONG,
     });
