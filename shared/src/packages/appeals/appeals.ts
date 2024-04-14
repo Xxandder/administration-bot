@@ -1,11 +1,9 @@
-
 export { MIN_DESCRIPTION_LENGTH,
     MAX_DESCRIPTION_LENGTH,
     MAX_NUMBER_OF_PHOTOS,
     MAX_ADDRESS_LENGTH,
     MIN_ADDRESS_LENGTH,
-    MAX_FULL_NAME_LENGTH,
-    MIN_FULL_NAME_LENGTH,
     Categories
-} from '@shared/index.js';
+} from './libs/constants/constants.js';
 
+export { descriptionSchema, address } from './libs/validation-schemas/validation-schemas.js';

@@ -11,7 +11,8 @@
     "moduleResolution": "NodeNext",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@shared/*": ["../shared/*"]
     },
     "outDir": "build",
     "skipLibCheck": true,
