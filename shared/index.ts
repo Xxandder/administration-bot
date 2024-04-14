@@ -10,4 +10,6 @@ export { MIN_DESCRIPTION_LENGTH,
 
 export { MAX_FULL_NAME_LENGTH,
     MIN_FULL_NAME_LENGTH
- } from './src/libs/constants/constatns.js'
+ } from './src/libs/constants/constatns.js';
+
+export { ContentType } from './src/libs/enums/enums.js';
