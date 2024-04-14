@@ -1,10 +1,19 @@
 {
+    "extends": "../tsconfig.json",
+    "include": ["src"],
+    "exclude": ["node_modules"],
     "compilerOptions": {
       "target": "ESNext",
-      "module": "NodeNext",
-      "strict": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules"]
+      "moduleResolution": "NodeNext",
+      "esModuleInterop": true,
+      "resolveJsonModule": true,
+      "baseUrl": ".",
+      "paths": {
+        "~/*": ["./src/*"]
+      },
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "skipLibCheck": true
+    }
   }
-  
