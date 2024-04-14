@@ -13,5 +13,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "pino": "^8.20.0",
+    "pino-pretty": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/pino-pretty": "^5.0.0"
+  }
 }

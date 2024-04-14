@@ -7,8 +7,7 @@ class BaseLogger implements Logger{
     public logger: LibraryLogger;
 
     public constructor(){
-        this.logger = pino(pretty({ sync: true }));
-
+        this.logger = pino(pretty.default());
         this.logger.info('Logger is created...')
     }
 
