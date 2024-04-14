@@ -1,4 +1,4 @@
-import * as joi from 'joi';
+import joi from 'joi';
 import { AppealsValidationErrorTextMessage } from '../enums/enums.js';
 import { MIN_DESCRIPTION_LENGTH, MAX_DESCRIPTION_LENGTH } from '../constants/constants.js';
 
