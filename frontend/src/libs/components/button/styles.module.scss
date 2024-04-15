@@ -1,6 +1,17 @@
 .square{
     background: linear-gradient(135deg, #0AF 0%, #009AE6 100%), linear-gradient(135deg, #5A9CFF 0%, #0457D4 100%), #D9D9D9;
-    // filter: blur(4.699999809265137px);
     border-radius: 6px;
     padding: 13px;
+}
+
+.primary{
+    color: var(--gray-300);
+    padding: 10px 30px;
+    font-family: Manrope;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    border-radius: 6px;
+    border: 1px solid #D2D2D2;
 }
