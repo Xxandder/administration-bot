@@ -8,7 +8,7 @@ import { Icon } from '../components.js';
 import styles from './styles.module.scss';
 
 type Properties = {
-  label: string;
+  label?: string;
   buttonType?: 'button' | 'submit';
   iconName?: IconName | undefined;
   iconWidth?: number;
