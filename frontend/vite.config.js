@@ -8,6 +8,6 @@ export default defineConfig({
   plugins: [
     reactRefresh(),
     tsconfigPathsPlugin(),
-    svgrPlugin(),
+    svgrPlugin({ icon: true })
   ],
 });
