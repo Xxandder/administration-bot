@@ -1,0 +1,27 @@
+.header{
+ padding: 15px 0;
+}
+
+.header__container{
+    max-width: 1480px;
+    padding: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header__menu{
+    display: flex;
+    font-weight: 600;
+    font-size: 18px;
+    gap: 40px;
+}
+
+.header__menu-item{
+
+}
+
+.header__buttons{
+    display: flex;
+    gap: 20px;
+}
