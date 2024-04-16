@@ -11,7 +11,7 @@ const Logo: React.FC = () => {
         '_ibg')}>
         <img src={logoImage} alt="" />
       </div>
-      <div className="logo__text">
+      <div className={styles["logo__text"]}>
       <div className={styles["logo__first-row"]}>
         Десята фортеця
       </div>
