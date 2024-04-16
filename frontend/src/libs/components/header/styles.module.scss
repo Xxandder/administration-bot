@@ -17,9 +17,10 @@
     gap: 40px;
 }
 
-.header__menu-item{
-
+.header__menu-item:hover{
+    transform: scale(1.1);
 }
+
 
 .header__buttons{
     display: flex;
