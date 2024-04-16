@@ -1,0 +1,1 @@
+export { type AppealCardsProperties } from './appeal-properties.type';
