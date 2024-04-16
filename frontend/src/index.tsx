@@ -6,6 +6,9 @@ import { App } from './pages/app/App';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { AppRoute } from './libs/enums/enums';
 import { Appeals } from './pages/appeals/appeals';
+import { AboutUs } from './pages/about-us/about-us';
+import { News } from './pages/news/news';
+import { Main } from './pages/main/main';
 
 const routes = createBrowserRouter([
       {
@@ -13,9 +16,21 @@ const routes = createBrowserRouter([
         element: <App />,
         children: [
             {
+              path: AppRoute.ROOT,
+              element: < Main/>
+            },
+            {
               path: AppRoute.APPEALS,
               element: < Appeals/>
-            }
+            },
+            {
+              path: AppRoute.ABOUT_US,
+              element: < AboutUs/>
+            },
+            {
+              path: AppRoute.NEWS,
+              element: < News/>
+            },
         ]
       },
     ])
