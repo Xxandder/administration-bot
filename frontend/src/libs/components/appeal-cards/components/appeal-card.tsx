@@ -3,6 +3,8 @@ import { Categories } from '~/libs/constants/constants';
 import { AppealStatus } from '~/libs/enums/enums';
 import { Status } from '../../status/status';
 
+import styles from './styles.module.scss';
+
 type Properties = {
   appealNumber: number;
   category: typeof Categories[number];
@@ -16,17 +18,17 @@ const AppealCard: React.FC<Properties> = ({
   status, 
   date}) => {
     return (
-      <div className="appeal-card">
-        <div className="appeal-card__container">
-          <div className="appeal-card__number">
-            Звернення<span>#{appealNumber}</span>
+      <div className={styles["appeal-card"]}>
+        <div className={styles["appeal-card__container"]}>
+          <div className={styles["appeal-card__number"]}>
+            Звернення<span> #{appealNumber}</span>
           </div>
-          <div className="appeal-card__title">
+          <div className={styles["appeal-card__title"]}>
             {category}
           </div>
-          <div className="appeal-card__state">
+          <div className={styles["appeal-card__state"]}>
             <Status type={status}/>
-            <div className="appeal-card__date">
+            <div className={styles["appeal-card__date"]}>
               {date}
             </div>
           </div>
