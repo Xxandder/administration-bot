@@ -1,0 +1,25 @@
+.logo{
+    color: var(--light-blue);
+    font-family: 'Unbounded';
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    line-height: 1.24;
+}
+
+.logo__image{
+    width: 39px;
+    height: 55px;
+}
+
+.logo__first-row{
+    font-weight: 600;
+    font-size: 30px;
+    
+}
+
+.logo__second-row{
+    font-weight: 400;
+    font-size: 17.52px;
+    margin-top: 1px;
+}
