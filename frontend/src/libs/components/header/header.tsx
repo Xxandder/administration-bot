@@ -2,6 +2,8 @@
 import styles from './styles.module.scss';
 import { Logo, Button } from '~/libs/components/components';
 import { getValidClassNames } from '~/libs/helpers/get-valid-class-names.helper';
+import { NavLink } from 'react-router-dom';
+import { AppRoute } from '~/libs/enums/app-route.enum';
 
 const Header: React.FC = () => {
 
@@ -16,16 +18,24 @@ const Header: React.FC = () => {
          
           <nav className={styles["header__menu"]}>
             <div className={styles["header__menu-item"]}>
-              ГОЛОВНА
+              <NavLink to={AppRoute.ROOT}>
+                ГОЛОВНА
+              </NavLink>
             </div>
             <div className={styles["header__menu-item"]}>
-              ПРО НАС
+              <NavLink to={AppRoute.ABOUT_US}>
+                ПРО НАС
+              </NavLink>
             </div>
             <div className={styles["header__menu-item"]}>
-              ЗВЕРНЕННЯ ГРОМАДЯН
+              <NavLink to={AppRoute.APPEALS}>
+                ЗВЕРНЕННЯ ГРОМАДЯН
+              </NavLink>
             </div>
             <div className={styles["header__menu-item"]}>
-              НОВИНИ
+              <NavLink to={AppRoute.NEWS}>
+                НОВИНИ
+              </NavLink>
             </div>
           </nav>
           <div className={styles["header__buttons"]}>
