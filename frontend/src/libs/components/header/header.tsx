@@ -1,9 +1,9 @@
 
 import styles from './styles.module.scss';
 import { Logo, Button } from '~/libs/components/components';
-import { getValidClassNames } from '~/libs/helpers/get-valid-class-names.helper';
+import { getValidClassNames } from '~/libs/helpers/helpers';
 import { NavLink } from 'react-router-dom';
-import { AppRoute } from '~/libs/enums/app-route.enum';
+import { AppRoute } from '~/libs/enums/enums';
 
 const Header: React.FC = () => {
 
