@@ -13,3 +13,5 @@ export { MAX_FULL_NAME_LENGTH,
  } from './src/libs/constants/constatns.js';
 
 export { ContentType } from './src/libs/enums/enums.js';
+
+export { type ValueOf } from './src/libs/types/types.js';
