@@ -4,6 +4,7 @@
     border-radius: 4px;
     font-weight: 700;
     font-size: 12px;
+    line-height: normal;
 }
 
 .appeal-status{
@@ -29,4 +30,22 @@
 .appeal-status_waiting{
     background-color: var(--yellow-100);
     color: var(--golden)
+}
+
+.appeal-status_in-work{
+    background-color: var(--blue-100);
+    color: var(--blue-500)
+}
+
+.appeal-status_in-work .appeal-status__text::before{
+    background-color: var(--blue-500);
+}
+
+.appeal-status_finished{
+    background-color: var(--green-100);
+    color: var(--green-500)
+}
+
+.appeal-status_finished .appeal-status__text::before{
+    background-color: var(--green-500);
 }
