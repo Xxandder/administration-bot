@@ -1,15 +1,15 @@
 import React from 'react';
-import { AppealStatuses } from '~/libs/enums/enums';
+import { AppealStatus } from '~/libs/enums/enums';
 
 
 type Properties = {
-    type: keyof typeof AppealStatuses
+    type: keyof typeof AppealStatus
 }
 
 const Status: React.FC<Properties> = ({type}) => {
   return (
     <div className="appeal-status">
-      <span className="appeal-status__text">{AppealStatuses[type]}</span>
+      <span className="appeal-status__text">{AppealStatus[type]}</span>
     </div>
   );
 };

@@ -1,2 +1,2 @@
 export { AppRoute } from './app-route.enum';
-export { AppealStatuses } from './appeal-statuses.enum'
+export { AppealStatus } from './appeal-status.enum'
