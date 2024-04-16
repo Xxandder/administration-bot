@@ -14,7 +14,9 @@ const Header: React.FC = () => {
           styles['header__container'],
           '_container'
         )}>
-          <Logo/>
+          <NavLink to={AppRoute.ROOT}>
+            <Logo/>
+          </NavLink>
          
           <nav className={styles["header__menu"]}>
             <div className={styles["header__menu-item"]}>
