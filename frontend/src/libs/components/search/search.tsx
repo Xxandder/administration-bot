@@ -8,10 +8,11 @@ type Properties = {
     defaultValue: string;
     placeholder: string;
     onValueChange: (search: string) => void;
+    onButtonClick: () => void;
     children?: ReactNode;
 }
 
-const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, onValueChange }) => {
+const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, onValueChange, onButtonClick }) => {
   const { control } = useForm({
       defaultValues: { search: defaultValue },
       mode: 'onChange',
@@ -42,7 +43,7 @@ const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, onValueC
             placeholder={placeholder}
             />
              <div className={styles["search-input__button"]}>
-                <Button style="square" iconName="arrow-right"/>
+                <Button style="square" iconName="arrow-right" onClick={onButtonClick}/>
              </div>
             
         </div>
