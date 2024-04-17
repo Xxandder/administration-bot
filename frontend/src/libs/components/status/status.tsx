@@ -1,9 +1,9 @@
 import React from 'react';
 import { AppealStatus } from '~/libs/enums/enums';
-import { getValidClassNames } from '~/libs/helpers/get-valid-class-names.helper';
+import { getValidClassNames } from '~/libs/helpers/helpers';
 
 import styles from './styles.module.scss';
-import { AppealStatusName } from './libs/enums/appeal-status-name.enum';
+import { AppealStatusName } from './libs/enums/enums';
 
 type Properties = {
     type: keyof typeof AppealStatus
