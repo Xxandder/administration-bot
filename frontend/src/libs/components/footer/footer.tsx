@@ -2,7 +2,7 @@ import React from 'react';
 import { Logo } from '../components';
 import { Icon } from '../components';
 
-import { getValidClassNames } from '~/libs/helpers/get-valid-class-names.helper';
+import { getValidClassNames } from '~/libs/helpers/helpers';
 
 import styles from './styles.module.scss';
 
