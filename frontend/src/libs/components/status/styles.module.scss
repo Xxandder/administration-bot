@@ -1,0 +1,51 @@
+.appeal-status{
+    padding: 8px 9px 8px 18px;
+    display: inline-block;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.appeal-status{
+    padding: 8px 9px 8px 18px;
+}
+
+.appeal-status__text{
+    position: relative;
+}
+
+.appeal-status__text::before{
+    content: '';
+    position: absolute;
+    height: 4px;
+    width: 4px;
+    border-radius: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    left: -8px;
+    background-color: var(--golden);
+}
+
+.appeal-status_waiting{
+    background-color: var(--yellow-100);
+    color: var(--golden)
+}
+
+.appeal-status_in-work{
+    background-color: var(--blue-100);
+    color: var(--blue-500)
+}
+
+.appeal-status_in-work .appeal-status__text::before{
+    background-color: var(--blue-500);
+}
+
+.appeal-status_finished{
+    background-color: var(--green-100);
+    color: var(--green-500)
+}
+
+.appeal-status_finished .appeal-status__text::before{
+    background-color: var(--green-500);
+}
