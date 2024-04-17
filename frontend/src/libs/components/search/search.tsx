@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback } from 'react';
-import { useController } from 'react-hook-form';
+import { useController, useForm } from 'react-hook-form';
 
 type Properties = {
     defaultValue: string;
@@ -9,9 +9,14 @@ type Properties = {
 }
 
 const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, children, onValueChange }) => {
+  const { control } = useForm({
+      defaultValues: { search: defaultValue },
+      mode: 'onChange',
+  });
   const { field } = useController({
     name: 'search',
     defaultValue,
+    control,
   });
   const { value, onChange } = field;
 
@@ -34,4 +39,4 @@ const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, children
   );
 };
 
-export default SearchInput;
+export { SearchInput };
