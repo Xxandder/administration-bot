@@ -16,7 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "pino": "^8.20.0",
-    "pino-pretty": "^11.0.0"
+    "pino-pretty": "^11.0.0",
+    "react-hook-form": "^7.51.3"
   },
   "devDependencies": {
     "@types/pino-pretty": "^5.0.0",
