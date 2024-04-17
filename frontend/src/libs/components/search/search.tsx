@@ -2,6 +2,8 @@ import React, { ReactNode, useCallback } from 'react';
 import { useController, useForm } from 'react-hook-form';
 import { Button, Icon } from '../components';
 
+import styles from './styles.module.scss';
+
 type Properties = {
     defaultValue: string;
     placeholder: string;
@@ -27,17 +29,22 @@ const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, onValueC
   };
 
   return (
-    <div className="search-input">
-        <div className="search-input__container">
-            <Icon name="loupe" width={22} height={22}/>
+    <div className={styles["search-input"]}>
+        <div className={styles["search-input__container"]}>
+            <div className={styles["search-input__icon"]}>
+                <Icon name="loupe" width={22} height={22}/>
+            </div>
+           
             <input
             type="text"
             value={value}
             onChange={handleChange}
             placeholder={placeholder}
-            className="search-input"
             />
-            <Button style="square" iconName="arrow-right"/>
+             <div className={styles["search-input__button"]}>
+                <Button style="square" iconName="arrow-right"/>
+             </div>
+            
         </div>
         
     </div>
