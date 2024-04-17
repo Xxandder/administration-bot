@@ -1,5 +1,6 @@
 import React, { ReactNode, useCallback } from 'react';
 import { useController, useForm } from 'react-hook-form';
+import { Button, Icon } from '../components';
 
 type Properties = {
     defaultValue: string;
@@ -8,7 +9,7 @@ type Properties = {
     children?: ReactNode;
 }
 
-const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, children, onValueChange }) => {
+const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, onValueChange }) => {
   const { control } = useForm({
       defaultValues: { search: defaultValue },
       mode: 'onChange',
@@ -26,15 +27,19 @@ const SearchInput: React.FC<Properties> = ({ defaultValue, placeholder, children
   };
 
   return (
-    <div className="search-input-container">
-      <input
-        type="text"
-        value={value}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className="search-input"
-      />
-      {children}
+    <div className="search-input">
+        <div className="search-input__container">
+            <Icon name="loupe" width={22} height={22}/>
+            <input
+            type="text"
+            value={value}
+            onChange={handleChange}
+            placeholder={placeholder}
+            className="search-input"
+            />
+            <Button style="square" iconName="arrow-right"/>
+        </div>
+        
     </div>
   );
 };
