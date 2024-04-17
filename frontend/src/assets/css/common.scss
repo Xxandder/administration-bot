@@ -12,7 +12,9 @@
     font-size: 14px;
     font-family: 'Manrope', Arial, sans-serif;
     line-height: 1.5;
-    color: var(--regular-black)
+    color: var(--regular-black);
+    display: flex;
+    flex-direction: column;
   }
 
   a{
