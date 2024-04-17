@@ -3,13 +3,15 @@ import { AppealCard } from './components/appeal-card';
 
 import { AppealCardsProperties } from './libs/types/types';
 
+import styles from './styles.module.scss'
+
 type Properties = {
   appeals: AppealCardsProperties[]
 }
 
 const AppealCards: React.FC<Properties> = ({appeals}) => {
   return (
-    <div className='appeals-cards'>
+    <div className={styles['appeals-cards']}>
      {
       appeals.map(appeal=>{
         return <AppealCard 

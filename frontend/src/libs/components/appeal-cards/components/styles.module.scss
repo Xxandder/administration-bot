@@ -2,7 +2,9 @@
     padding: 10px 15px;
     box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.07);
     display: inline-block;
-    min-width: 299px;
+    flex: 1 1 31%;
+    max-width: 299px;
+    min-width: 267px;
 }
 
 .appeal-card:hover{
